@@ -68,6 +68,7 @@
         "/Zi",
         "/EHsc",
         "/nologo",
+        "/FI${workspaceFolder}\\Sources\\Core\\CoreAPI.h",
         "/Fo${workspaceFolder}\\Intermediate\\Object\\${fileBasenameNoExtension}.obj",
         "/Fe${workspaceFolder}\\Execution\\${fileBasenameNoExtension}.exe",
         "${file}"
