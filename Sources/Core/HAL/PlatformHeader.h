@@ -1,4 +1,6 @@
+#ifdef _WIN32
 #pragma once
+#endif
 
 #ifndef MENGINE_PLATFORM_HEADER
 #define MENGINE_PLATFORM_HEADER
@@ -10,6 +12,6 @@
 #else
   #define PLATFORM_HEADER_NAME
   #error "Undefined platform"
-#endif
-
-#endif
+#endif // defined(_WIN32)
+ 
+#endif // MENGINE_PLATFORM_HEADER

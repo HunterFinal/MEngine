@@ -14,55 +14,36 @@
 //-------------------------------
 //* CPP Version Def
 //-------------------------------
-
 #define CPP_VER_CHECK(Version) (!!(CPP_STANDARD >= Version))
 
 // CPP98/03
-#ifndef CPP_98
-  #define CPP_98 199711L
-#endif 
 #ifndef HAS_CPP_98
-  #define HAS_CPP_98 CPP_VER_CHECK(CPP_98)
-#endif
-#ifndef CPP_03
-  #define CPP_03 CPP_98
+  #define HAS_CPP_98 CPP_VER_CHECK(199711L)
 #endif
 #ifndef HAS_CPP_03
-  #define HAS_CPP_03 CPP_VER_CHECK(CPP_03)
-#endif //-CPP98/03
+  #define HAS_CPP_03 HAS_CPP_98
+#endif
 
 // CPP11
-#ifndef CPP_11
-  #define CPP_11 201103L
-#endif
 #ifndef HAS_CPP_11
-  #define HAS_CPP_11 CPP_VER_CHECK(CPP_11)
-#endif //-CPP11
+  #define HAS_CPP_11 CPP_VER_CHECK(201103L)
+#endif
 
 // CPP14
-#ifndef CPP_14
-  #define CPP_14 201402L
-#endif 
 #ifndef HAS_CPP_14
-  #define HAS_CPP_14 CPP_VER_CHECK(CPP_14)
-#endif //-CPP14
+  #define HAS_CPP_14 CPP_VER_CHECK(201402L)
+#endif
 
 // CPP17
-#ifndef CPP_17
-  #define CPP_17 201703L
-#endif
 #ifndef HAS_CPP_17
-  #define HAS_CPP_17 CPP_VER_CHECK(CPP_17)
-#endif //-CPP17
+  #define HAS_CPP_17 CPP_VER_CHECK(201703L)
+#endif
 
 // CPP20
-#ifndef CPP_20
-  #define CPP_20 202002L
-#endif
 #ifndef HAS_CPP_20
-  #define HAS_CPP_20 CPP_VER_CHECK(CPP_20)
-#endif //-CPP20
+  #define HAS_CPP_20 CPP_VER_CHECK(202002L)
+#endif
 
 //------------------------------
 
-#endif
+#endif // MENGINE_CPP_VERSION

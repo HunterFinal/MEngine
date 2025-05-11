@@ -1,4 +1,4 @@
-// This is a precompiled header
+﻿// This is a precompiled header
 
 #ifdef _WIN32
 #pragma once
@@ -7,6 +7,18 @@
 #ifndef MENGINE_CORE_INCLUDE
 #define MENGINE_CORE_INCLUDE
 
-#include "HAL/Platform.h"
+#include "Macro/CPPVerMacro.h"
 
-#endif
+// 低レイヤーヘッダ
+#include "HAL/Platform.h"
+#include "Misc/CoreDefines.h"
+
+// よく使われるヘッダ
+#include "Macro/ClassMacroHelpers.h"
+#include "Macro/AssertionMacros.h"
+#include "Templates/METypeTraits.h"
+#include "Math/MEngineMathUtility.h"
+
+#include "Math/Vector.h"
+
+#endif // MENGINE_CORE_INCLUDE
