@@ -29,5 +29,16 @@ int main()
 
   // cout << (c.Equals(a) ? "Equals" : "Not equals") << endl;
 
+  Vector3 a {1.0,2.0,3.0};
+  Vector3f b {4.0f,5.0f,6.0f};
+
+  Vector3 c(b);
+
+  cout << c.X << endl;
+
+  Vector2 a2 {1,2};
+
+  
+
   return 0;
 }

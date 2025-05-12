@@ -141,5 +141,8 @@ TYPEDEF(MPlatformTypes::TYPE_NULLPTR, TYPE_NULLPTR);
 #ifndef OUT
 #define OUT
 #endif // OUT
+#ifndef DEFAULT_VAR
+#define DEFAULT_VAR
+#endif // DEFAULT_VAR
 
 #endif // MENGINE_HAL_PLATFORM

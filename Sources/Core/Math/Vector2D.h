@@ -1,12 +1,11 @@
-﻿// MEngine Vector
+﻿// MEngine Vector2D
 
 #ifdef _WIN32
 #pragma once
 #endif
 
-
-#ifndef MENGINE_MATH_VECTOR
-#define MENGINE_MATH_VECTOR
+#ifndef MENGINE_MATH_VECTOR2D
+#define MENGINE_MATH_VECTOR2D
 
 #include <cassert>
 #include <type_traits>
@@ -31,13 +30,13 @@ namespace MEngine
   namespace Math
   {
     template<typename FloatingType>
-    struct MVector
+    struct MVector2D
     {
-      static_assert(std::is_floating_point_v<FloatingType>, "Vector type must be floating point");
+      static_assert(std::is_floating_point_v<FloatingType>, "Vector2D type must be floating point");
       
       public:
         TYPEDEF(FloatingType, Type);
-        GENERATE_CLASS_DEF(MVector<Type>);
+        GENERATE_CLASS_DEF(MVector2D<Type>);
         
       union
       {
@@ -49,103 +48,77 @@ namespace MEngine
           // Vector's Y component;
           Type Y;
 
-          // Vector's Z component;
-          Type Z;
         };
 
         // internal use
-        Type XYZ[3];
+        Type XY[2];
       };
 
-      // zero vector(0, 0, 0)
-      static const MVector<Type> ZeroVector;
+      // zero vector (0, 0)
+      static const MVector2D<Type> ZeroVector;
 
-      // one vector(1, 1, 1)
-      static const MVector<Type> OneVector;
+      // one vector (1, 1)
+      static const MVector2D<Type> OneVector;
 
-      // MEngine right vector (1, 0, 0)
-      static const MVector<Type> RightVector;
+      // MEngine right vector (1, 0)
+      static const MVector2D<Type> RightVector;
 
-      // MEngine left vector (-1, 0, 0)
-      static const MVector<Type> LeftVector;
+      // MEngine left vector (-1, 0)
+      static const MVector2D<Type> LeftVector;
 
-      // MEngine up vector (0, 1, 0)
-      static const MVector<Type> UpVector;
+      // MEngine up vector (0, 1)
+      static const MVector2D<Type> UpVector;
 
-      // MEngine down vector (0, -1, 0)
-      static const MVector<Type> DownVector;
+      // MEngine down vector (0, -1)
+      static const MVector2D<Type> DownVector;
 
-      // MEngine forward vector (0, 0, 1)
-      static const MVector<Type> ForwardVector;
+      // Unit X axis vector (1, 0)
+      static const MVector2D<Type> XAxisVector;
 
-      // MEngine backward vector (0, 0, -1)
-      static const MVector<Type> BackwardVector;
-
-      // Unit X axis vector (1, 0, 0)
-      static const MVector<Type> XAxisVector;
-
-      // Unit Y axis vector (0, 1, 0)
-      static const MVector<Type> YAxisVector;
-
-      // Unit Z axis vector (0, 0, 1)
-      static const MVector<Type> ZAxisVector;
+      // Unit Y axis vector (0, 1)
+      static const MVector2D<Type> YAxisVector;
 
       // -----------------
       // static method
       // -----------------
-      static FORCEINLINE MVector<Type> Zero() 
+      static FORCEINLINE MVector2D<Type> Zero() 
       {
         return ZeroVector;
       } 
 
-      static FORCEINLINE MVector<Type> One()
+      static FORCEINLINE MVector2D<Type> One()
       {
         return OneVector;
       }
 
-      static FORCEINLINE MVector<Type> Right()
+      static FORCEINLINE MVector2D<Type> Right()
       {
-        return RightVector;
+        return RightVector
       }
 
-      static FORCEINLINE MVector<Type> Left()
+      static FORCEINLINE MVector2D<Type> Left()
       {
         return LeftVector;
       }
 
-      static FORCEINLINE MVector<Type> Up()
+      static FORCEINLINE MVector2D<Type> Up()
       {
         return UpVector;
       }
 
-      static FORCEINLINE MVector<Type> Down()
+      static FORCEINLINE MVector2D<Type> Down()
       {
         return DownVector;
       }
 
-      static FORCEINLINE MVector<Type> Forward()
-      {
-        return ForwardVector;
-      } 
-
-      static FORCEINLINE MVector<Type> Backward()
-      {
-        return BackwardVector;
-      }
-
-      static FORCEINLINE MVector<Type> UnitX()
+      static FORCEINLINE MVector2D<Type> UnitX()
       {
         return XAxisVector;
       }
 
-      static FORCEINLINE MVector<Type> UnitY()
+      static FORCEINLINE MVector2D<Type> UnitY()
       {
         return YAxisVector;
-      }
-
-      static FORCEINLINE MVector<Type> UnitZ()
-      {
-        return ZAxisVector;
       }
 
       // ---------------
@@ -153,41 +126,23 @@ namespace MEngine
       // ---------------
 
       // default Constructors
-      FORCEINLINE MVector();
+      FORCEINLINE MVector2D();
 
       /** 
        * using initial values for each component
        *
        * @param InX X coord
        * @param InY Y coord
-       * @param InZ Z coord
        */
-      FORCEINLINE MVector(IN Type InX, IN Type InY, IN Type InZ);
+      FORCEINLINE MVector2D(IN Type InX, IN Type InY);
 
       /**
        * Convert different type vector to this type
        */
       template<typename DiffType, TEMPLATE_CONDITION(!std::is_same_v<Type, DiffType>)>
-      explicit MVector(IN const MVector<DiffType>& Other);
+      explicit MVector2D(const MVector2D<DiffType>& Other);
 
       // end of Constructors
-
-      /**
-       * Calculate cross product
-       * 
-       * @param OtherV The other vector
-       * @return The cross product
-       */
-      FORCEINLINE MVector<Type> Cross(IN const ThisClass& OtherV) const;
-
-      /**
-       * Calculate cross product of two vectors
-       * 
-       * @param V1 The first vector
-       * @param V2 The second vector
-       * @return The cross product
-       */
-      FORCEINLINE static MVector<Type> CrossProduct(IN const ThisClass& V1, IN const ThisClass& V2);
 
       /**
        * Calculate dot product
@@ -195,7 +150,7 @@ namespace MEngine
        * @param OtherV The other vector
        * @return The dot product
        */
-      FORCEINLINE Type Dot(IN const ThisClass& OtherV) const;
+      FORCEINLINE Type Dot(const ThisClass& OtherV) const;
 
       /**
        * Calculate dot product of two vectors
@@ -204,18 +159,9 @@ namespace MEngine
        * @param V2 The second vector
        * @return The dot product
        */
-       FORCEINLINE static Type DotProduct(IN const ThisClass& V1, IN const ThisClass& V2);
+       FORCEINLINE static Type DotProduct(const ThisClass& V1, const ThisClass& V2);
 
       private:
-        /**
-         * INNER FUNCTION
-         * Calculate cross product
-         * 
-         * @param OtherV The other vector
-         * @return The cross product
-         */
-        FORCEINLINE MVector<Type> CrossInner(IN const ThisClass& OtherV) const;
-
         /**
          * INNER FUNCTION
          * Calculate dot product
@@ -223,7 +169,7 @@ namespace MEngine
          * @param OtherV The other vector
          * @return The dot product
          */
-        FORCEINLINE Type DotInner(IN const ThisClass& OtherV) const;
+        FORCEINLINE Type DotInner(const ThisClass& OtherV) const;
 
       public:
 
@@ -234,7 +180,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return true if the vectors are equal within tolerance limits, false otherwise
          */
-        FORCEINLINE bool Equals(IN const MVector<Type>& OtherV, DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
+        FORCEINLINE bool Equals(const ThisClass& OtherV, Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
 
         /**
          * Check two vectors for equality
@@ -244,7 +190,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return true if the vectors are equal within tolerance limits, false otherwise
          */
-        static FORCEINLINE bool Equals(IN const MVector<Type>& V1, IN const MVector<Type>& V2, DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL);
+        static FORCEINLINE bool Equals(const ThisClass& V1, const ThisClass& V2, Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL);
 
         /**
          * Check vector is zero vector
@@ -259,7 +205,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return true if the vector is near to zero, false otherwise
          */
-        FORCEINLINE bool IsNearlyZero(DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
+        FORCEINLINE bool IsNearlyZero(Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
 
         /**
          * Get the magnitude of this vector
@@ -288,7 +234,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return true if normalize successfully, false otherwise
          */
-        FORCEINLINE bool Normalize(DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL);
+        FORCEINLINE bool Normalize(Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL);
         
         /**
          * Gets normalized version of this vector if it's magnitude is larger than a tolerance, return ZeroVector if not
@@ -296,33 +242,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return A normalized copy of this vector if success, ZeroVector otherwise
          */
-        FORCEINLINE MVector<Type> GetNormalizedCopy(DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
-
-        /**
-         * Gets projection vector based on other vector
-         * 
-         * @param V Vector to project onto
-         * @return Projected vector
-         */
-        FORCEINLINE MVector<Type> ProjectOnTo(IN const ThisClass& V) const;
-        
-        /**
-         * Gets projection vector based on specific axis
-         * 
-         * @param Axis Enum of axis
-         * @return Projected vector
-         */
-        FORCEINLINE MVector<Type> ProjectOnToAxis(IN EAxis Axis) const;
-
-        /**
-         * Gets projection vector of target vector based on other vector
-         * 
-         * @param TargetV The target vector
-         * @param OnToV Vector to project onto
-         * @return Projected vector
-         */
-        static FORCEINLINE MVector<Type> Projection(IN const ThisClass& TargetV, IN const ThisClass& OnToV);
-
+        FORCEINLINE MVector2D<Type> GetNormalizedCopy(Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
 
       public:
 
@@ -337,7 +257,7 @@ namespace MEngine
          * @return The result of vector addition
          */
         template<typename Type>
-        friend FORCEINLINE MVector<Type> operator+(IN const ThisClass& V1, IN const ThisClass& V2);
+        friend FORCEINLINE MVector2D<Type> operator+(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
          * Gets the result of component-wise subtraction of two vectors
@@ -347,7 +267,7 @@ namespace MEngine
          * @return The result of vector subtraction
          */
         template<typename Type>
-        friend FORCEINLINE MVector<Type> operator-(IN const ThisClass& V1, IN const ThisClass& V2);
+        friend FORCEINLINE MVector2D<Type> operator-(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
          * Gets the result of multiplying each component by scale
@@ -357,7 +277,7 @@ namespace MEngine
          * @return The result of multiplication
          */
         template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-        friend FORCEINLINE MVector<Type> operator*(IN const ThisClass& LhsV, IN ScaleType Scale);
+        friend FORCEINLINE MVector2D<Type> operator*(const MVector2D<Type>& LhsV, ScaleType Scale);
 
         /**
          * Gets the result of multiplying each component by scale
@@ -367,7 +287,7 @@ namespace MEngine
          * @return The result of multiplication
          */
         template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-        friend FORCEINLINE MVector<Type> operator*(IN ScaleType Scale, IN const ThisClass& RhsV);
+        friend FORCEINLINE MVector2D<Type> operator*(ScaleType Scale, const MVector2D<Type>& RhsV);
 
         /**
          * Gets the result of dividing each component by scale
@@ -377,7 +297,7 @@ namespace MEngine
          * @return The result of multiplication
          */
         template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-        friend FORCEINLINE MVector<Type> operator/(IN const ThisClass& V, IN ScaleType Scale);
+        friend FORCEINLINE MVector2D<Type> operator/(const MVector2D<Type>& V, ScaleType Scale);
 
         /**
          * Check two vectors for equality
@@ -387,7 +307,7 @@ namespace MEngine
          * @return true if the vectors are equal, false otherwise
          */
         template<typename Type>
-        friend FORCEINLINE bool operator==(IN const ThisClass& V1, IN const ThisClass& V2);
+        friend FORCEINLINE bool operator==(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
          * Check two vectors for inequality
@@ -397,7 +317,7 @@ namespace MEngine
          * @return true if the vectors are not equal, false otherwise
          */
         template<typename Type>
-        friend FORCEINLINE bool operator!=(IN const ThisClass& V1, IN const ThisClass& V2);
+        friend FORCEINLINE bool operator!=(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
          * Get a affirmed copy of this vector
@@ -405,14 +325,14 @@ namespace MEngine
          * 
          * @return A affirmed copy of this
          */
-        FORCEINLINE MVector<Type> operator+() const;
+        FORCEINLINE MVector2D<Type> operator+() const;
 
         /**
          * Get a negated copy of this vector
          * 
          * @return A negated copy of this
          */
-        FORCEINLINE MVector<Type> operator-() const;
+        FORCEINLINE MVector2D<Type> operator-() const;
 
         /**
          * Adds another vector to this vector
@@ -421,7 +341,7 @@ namespace MEngine
          * @param OtherV Vector to add from this
          * @return This vector after addition
          */
-        FORCEINLINE MVector<Type>& operator+=(IN const ThisClass& OtherV);
+        FORCEINLINE MVector2D<Type>& operator+=(const ThisClass& OtherV);
 
         /**
          * Subtracts another vector to this vector
@@ -430,7 +350,7 @@ namespace MEngine
          * @param OtherV Vector to subtract from this
          * @return This vector after subtraction
          */
-        FORCEINLINE MVector<Type>& operator-=(IN const ThisClass& OtherV);
+        FORCEINLINE MVector2D<Type>& operator-=(const ThisClass& OtherV);
 
         /**
          * Multiply this vector
@@ -440,7 +360,7 @@ namespace MEngine
          * @return This vector after Multiplication
          */
         template<typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-        FORCEINLINE MVector<Type>& operator*=(IN ScaleType Scale);
+        FORCEINLINE MVector2D<Type>& operator*=(ScaleType Scale);
 
         /**
          * Divide this vector
@@ -450,7 +370,7 @@ namespace MEngine
          * @return This vector after Dividing
          */
         template<typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-        FORCEINLINE MVector<Type>& operator/=(IN ScaleType Scale);
+        FORCEINLINE MVector2D<Type>& operator/=(ScaleType Scale);
 
         /**
          * Gets specific component of vector
@@ -458,7 +378,7 @@ namespace MEngine
          * @param Index the index of vector component
          * @return reference to component
          */
-        FORCEINLINE Type& operator[](IN SIZE_T Index) &;
+        FORCEINLINE Type& operator[](SIZE_T Index) &;
 
         /**
          * Gets specific component of vector
@@ -466,7 +386,7 @@ namespace MEngine
          * @param Index the index of vector component
          * @return const reference to component
          */
-        FORCEINLINE const Type& operator[](IN SIZE_T Index) const&;
+        FORCEINLINE const Type& operator[](SIZE_T Index) const&;
 
         /**
          * Gets specific component of vector
@@ -474,111 +394,85 @@ namespace MEngine
          * @param Index the index of vector component
          * @return copy of component
          */
-        FORCEINLINE Type operator[](IN SIZE_T Index) const&&;
+        FORCEINLINE Type operator[](SIZE_T Index) const&&;
     };
 
     
     template<typename Type>
-    FORCEINLINE MVector<Type>::MVector()
+    FORCEINLINE MVector2D<Type>::MVector2D()
       : X(0)
       , Y(0)
-      , Z(0)
     {}
 
     template<typename Type>
-    FORCEINLINE MVector<Type>::MVector(IN Type InX, IN Type InY, IN Type InZ)
+    FORCEINLINE MVector2D<Type>::MVector2D(IN Type InX, IN Type InY)
       : X(InX)
       , Y(InY)
-      , Z(InZ)
     {}
 
     template<typename Type>
     template<typename DiffType, typename std::enable_if_t<!std::is_same_v<Type, DiffType>, int>>
-    MVector<Type>::MVector(const MVector<DiffType>& Other)
-      : MVector<Type>((Type)Other.X, (Type)Other.Y, (Type)Other.Z)
+    MVector2D<Type>::MVector2D(const MVector2D<DiffType>& Other)
+      : MVector2D<Type>((Type)Other.X, (Type)Other.Y)
     {}
 
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::Cross(const ThisClass& OtherV) const
-    {
-      return CrossInner(OtherV);
-    }
-
-    template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::CrossProduct(const ThisClass& V1, const ThisClass& V2)
-    {
-      return V1.CrossInner(V2);
-    } 
-
-    template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::CrossInner(const ThisClass& OtherV) const
-    {
-      return MVector<Type>
-             {
-                Y * OtherV.Z - Z * OtherV.X,
-                Z * OtherV.X - X * OtherV.Z,
-                X * OtherV.Y - Y * OtherV.X
-             };
-    }
-
-    template<typename Type>
-    FORCEINLINE Type MVector<Type>::Dot(const ThisClass& OtherV) const
+    FORCEINLINE Type MVector2D<Type>::Dot(const MVector2D<Type>& OtherV) const
     {
       return DotInner(OtherV);
     }
 
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::DotProduct(const ThisClass& V1, const ThisClass& V2)
+    FORCEINLINE Type MVector2D<Type>::DotProduct(const MVector2D<Type>& V1, const MVector2D<Type>& V2)
     {
       return V1.DotInner(V2);
     } 
 
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::DotInner(const ThisClass& OtherV) const
+    FORCEINLINE Type MVector2D<Type>::DotInner(const MVector2D<Type>& OtherV) const
     {
-      return (X * OtherV.X) + (Y * OtherV.Y) + (Z * OtherV.Z);
+      return (X * OtherV.X) + (Y * OtherV.Y);
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::Equals(const ThisClass& OtherV, Type Tolerance) const
+    FORCEINLINE bool MVector2D<Type>::Equals(const MVector2D<Type>& OtherV, Type Tolerance) const
     {
-      return (MMath::Abs(X - OtherV.X) <= Tolerance) && (MMath::Abs(Y - OtherV.Y) <= Tolerance) && (MMath::Abs(Z - OtherV.Z) <= Tolerance);
+      return (MMath::Abs(X - OtherV.X) <= Tolerance) && (MMath::Abs(Y - OtherV.Y) <= Tolerance);
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::Equals(const ThisClass& V1, const ThisClass& V2, Type Tolerance)
+    FORCEINLINE bool MVector2D<Type>::Equals(const MVector2D<Type>& V1, const MVector2D<Type>& V2, Type Tolerance)
     {
-      return (MMath::Abs(V1.X - V2.X) <= Tolerance) && (MMath::Abs(V1.Y - V2.Y) <= Tolerance) && (MMath::Abs(V1.Z - V2.Z) <= Tolerance);
+      return (MMath::Abs(V1.X - V2.X) <= Tolerance) && (MMath::Abs(V1.Y - V2.Y) <= Tolerance);
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::IsZero() const
+    FORCEINLINE bool MVector2D<Type>::IsZero() const
     {
-      return (X == 0) && (Y == 0) && (Z == 0);
+      return (X == 0) && (Y == 0);
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::IsNearlyZero(Type Tolerance) const
+    FORCEINLINE bool MVector2D<Type>::IsNearlyZero(Type Tolerance) const
     {
       return (MMath::Abs(X) <= Tolerance) &&
-             (MMath::Abs(Y) <= Tolerance) &&
-             (MMath::Abs(Z) <= Tolerance);
+             (MMath::Abs(Y) <= Tolerance);
     }
 
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::Magnitude() const
+    FORCEINLINE Type MVector2D<Type>::Magnitude() const
     {
       return MMath::Sqrt(SquaredMagnitude());
     }
 
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::SquaredMagnitude() const
+    FORCEINLINE Type MVector2D<Type>::SquaredMagnitude() const
     {
-      return (X * X) + (Y * Y) + (Z * Z);
+      return (X * X) + (Y * Y);
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::IsNormalized() const
+    FORCEINLINE bool MVector2D<Type>::IsNormalized() const
     {
       return (MMath::Abs((Type)1 - SquaredMagnitude()) <= MMath::VECTOR_NORMALIZED_THRESHOLD);
     }
@@ -590,7 +484,7 @@ namespace MEngine
      * @return true if normalize successfully, false otherwise
      */
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::Normalize(Type Tolerance)
+    FORCEINLINE bool MVector2D<Type>::Normalize(Type Tolerance)
     {
       const Type squaredMag = SquaredMagnitude();
       if (squaredMag <= Tolerance)
@@ -602,12 +496,11 @@ namespace MEngine
 
       X *= realScale;
       Y *= realScale;
-      Z *= realScale;
       return true;
     }
     
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::GetNormalizedCopy(Type Tolerance) const
+    FORCEINLINE MVector2D<Type> MVector2D<Type>::GetNormalizedCopy(Type Tolerance) const
     {
       const Type squaredMag = SquaredMagnitude();
       if (squaredMag <= Tolerance)
@@ -616,47 +509,11 @@ namespace MEngine
       }
 
       const Type realScale = static_cast<Type>(1) / MMath::Sqrt(squaredMag);
-      return MVector<Type>
+      return MVector2D<Type>
              {
                 (X * realScale),
-                (Y * realScale),
-                (Z * realScale)
+                (Y * realScale)
              };
-    }
-
-    template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::ProjectOnTo(const ThisClass& V) const
-    {
-      return (Dot(V) / V.SquaredMagnitude()) * V;
-    }
-    
-    template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::ProjectOnToAxis(EAxis Axis) const
-    {
-      using enum EAxis;
-      switch (Axis)
-      {
-        case X:
-          return ProjectOnTo(XAxisVector);
-        case Y:
-          return ProjectOnTo(YAxisVector);
-        case Z:
-          return ProjectOnTo(ZAxisVector);
-        case XNegative:
-          return ProjectOnTo(-XAxisVector);
-        case YNegative:
-          return ProjectOnTo(-YAxisVector);
-        case ZNegative:
-          return ProjectOnTo(-ZAxisVector);
-        default:
-          return ZeroVector;
-      }
-    }
-    
-    template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::Projection(const ThisClass& TargetV, const ThisClass& OnToV)
-    {
-      return TargetV.ProjectOnTo(OnToV);
     }
 
     // -------------------------------------------------------
@@ -664,93 +521,87 @@ namespace MEngine
     // -------------------------------------------------------
 
     template<typename Type>
-    FORCEINLINE MVector<Type> operator+(const MVector<Type>& V1, const MVector<Type>& V2)
+    FORCEINLINE MVector2D<Type> operator+(const MVector2D<Type>& V1, const MVector2D<Type>& V2)
     {
-      return MVector<Type>
+      return MVector2D<Type>
              {
                 (V1.X + V2.X),
-                (V1.Y + V2.Y),
-                (V1.Z + V2.Z)              
+                (V1.Y + V2.Y)            
              };
     }
 
     template<typename Type>
-    FORCEINLINE MVector<Type> operator-(const MVector<Type>& V1, const MVector<Type>& V2)
+    FORCEINLINE MVector2D<Type> operator-(const MVector2D<Type>& V1, const MVector2D<Type>& V2)
     {
-      return MVector<Type>
+      return MVector2D<Type>
              {
                 (V1.X - V2.X),
-                (V1.Y - V2.Y),
-                (V1.Z - V2.Z)
+                (V1.Y - V2.Y)
              };
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-    FORCEINLINE MVector<Type> operator*(const MVector<Type>& LhsV, ScaleType Scale)
+    FORCEINLINE MVector2D<Type> operator*(const MVector2D<Type>& LhsV, ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(Scale);
-      return MVector<Type>
+      return MVector2D<Type>
              {
                 (LhsV.X * RealScale),
-                (LhsV.Y * RealScale),
-                (LhsV.Z * RealScale)
+                (LhsV.Y * RealScale)
              };
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-    FORCEINLINE MVector<Type> operator*(ScaleType Scale, const MVector<Type>& RhsV)
+    FORCEINLINE MVector2D<Type> operator*(ScaleType Scale, const MVector2D<Type>& RhsV)
     {
       const Type RealScale = static_cast<Type>(Scale);
-      return MVector<Type>
+      return MVector2D<Type>
              {
                 (RhsV.X * RealScale),
-                (RhsV.Y * RealScale),
-                (RhsV.Z * RealScale)
+                (RhsV.Y * RealScale)
              };
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
-    FORCEINLINE MVector<Type> operator/(const MVector<Type>& V, ScaleType Scale)
+    FORCEINLINE MVector2D<Type> operator/(const MVector2D<Type>& V, ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);
-      return MVector<Type>
+      return MVector2D<Type>
              {
                 (V.X * RealScale),
-                (V.Y * RealScale),
-                (V.Z * RealScale)
+                (V.Y * RealScale)
              };
     }
 
     template<typename Type>
-    FORCEINLINE bool operator==(const MVector<Type>& V1, const MVector<Type>& V2)
+    FORCEINLINE bool operator==(const MVector2D<Type>& V1, const MVector2D<Type>& V2)
     {
-      return (V1.X == V2.X) && (V1.Y == V2.Y) && (V1.Z == V2.Z);
+      return (V1.X == V2.X) && (V1.Y == V2.Y);
     }
 
     template<typename Type>
-    FORCEINLINE bool operator!=(const MVector<Type>& V1, const MVector<Type>& V2)
+    FORCEINLINE bool operator!=(const MVector2D<Type>& V1, const MVector2D<Type>& V2)
     {
       return !(V1 == V2);
     }
 
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::operator+() const
+    FORCEINLINE MVector2D<Type> MVector2D<Type>::operator+() const
     {
-      return MVector<Type>{X, Y, Z};
+      return MVector2D<Type>{X, Y};
     }
 
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::operator-() const
+    FORCEINLINE MVector2D<Type> MVector2D<Type>::operator-() const
     {
-      return MVector<Type>{-X, -Y, -Z};
+      return MVector2D<Type>{-X, -Y};
     }
 
     template<typename Type>
-    FORCEINLINE MVector<Type>& MVector<Type>::operator+=(const ThisClass& OtherV)
+    FORCEINLINE MVector2D<Type>& MVector2D<Type>::operator+=(const ThisClass& OtherV)
     {
       X += OtherV.X;
       Y += OtherV.Y;
-      Z += OtherV.Z;
 
       return *this;
     }
@@ -763,11 +614,10 @@ namespace MEngine
      * @return This vector after subtraction
      */
     template<typename Type>
-    FORCEINLINE MVector<Type>& MVector<Type>::operator-=(const ThisClass& OtherV)
+    FORCEINLINE MVector2D<Type>& MVector2D<Type>::operator-=(const ThisClass& OtherV)
     {
       X -= OtherV.X;
       Y -= OtherV.Y;
-      Z -= OtherV.Z;
 
       return *this;
     }
@@ -781,11 +631,10 @@ namespace MEngine
      */
     template<typename Type>
     template<typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
-    FORCEINLINE MVector<Type>& MVector<Type>::operator*=(ScaleType Scale)
+    FORCEINLINE MVector2D<Type>& MVector2D<Type>::operator*=(ScaleType Scale)
     {
       X *= Scale;
       Y *= Scale;
-      Z *= Scale;
 
       return *this;
     }
@@ -799,13 +648,12 @@ namespace MEngine
      */
     template<typename Type>
     template<typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
-    FORCEINLINE MVector<Type>& MVector<Type>::operator/=(ScaleType Scale)
+    FORCEINLINE MVector2D<Type>& MVector2D<Type>::operator/=(ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);
       
       X *= RealScale;
       Y *= RealScale;
-      Z *= RealScale;
 
       return *this;
     }
@@ -817,11 +665,11 @@ namespace MEngine
      * @return reference to component
      */
     template<typename Type>
-    FORCEINLINE Type& MVector<Type>::operator[](SIZE_T Index) &
+    FORCEINLINE Type& MVector2D<Type>::operator[](SIZE_T Index) &
     {
       // TODO
-      ME_CHECK_IMPL((Index >= 0) && (Index < 3));
-      return XYZ[Index];
+      ME_CHECK_IMPL((Index >= 0) && (Index < 2));
+      return XY[Index];
     }
 
     /**
@@ -831,11 +679,11 @@ namespace MEngine
      * @return const reference to component
      */
     template<typename Type>
-    FORCEINLINE const Type& MVector<Type>::operator[](SIZE_T Index) const&
+    FORCEINLINE const Type& MVector2D<Type>::operator[](SIZE_T Index) const&
     {
       // TODO
-      ME_CHECK_IMPL((Index >= 0) && (Index < 3));
-      return XYZ[Index];
+      ME_CHECK_IMPL((Index >= 0) && (Index < 2));
+      return XY[Index];
     }
 
     /**
@@ -845,11 +693,11 @@ namespace MEngine
      * @return copy of component
      */
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::operator[](SIZE_T Index) const&&
+    FORCEINLINE Type MVector2D<Type>::operator[](SIZE_T Index) const&&
     {
       // TODO
-      ME_CHECK_IMPL((Index >= 0) && (Index < 3));
-      return XYZ[Index];
+      ME_CHECK_IMPL((Index >= 0) && (Index < 2));
+      return XY[Index];
     }
   }
 }
@@ -858,4 +706,4 @@ namespace MEngine
 #pragma warning (pop) // (disable : 4459) (disable : 4544)
 #endif
 
-#endif // MENGINE_MATH_VECTOR
+#endif // MENGINE_MATH_VECTOR2D

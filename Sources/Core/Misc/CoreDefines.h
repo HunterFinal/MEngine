@@ -7,7 +7,10 @@
 
 namespace MEngine
 {
+  namespace Core
+  {
 
+  }
 }
 
 #endif // MISC_CORE_DEFINES

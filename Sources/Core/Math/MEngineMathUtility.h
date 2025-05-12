@@ -34,7 +34,9 @@ namespace MEngine
       static constexpr double MAX_DOUBLE =                   (1.7976931348623158e+308); // same as DBL_MAX in float.h
       static constexpr double DOUBLE_RAD_2_DEG =             (57.29577951308233);
       static constexpr double DOUBLE_DEG_2_RAD =             (0.0174532925199433);
-    
+
+      // Vector
+      static constexpr float VECTOR_NORMALIZED_THRESHOLD  =  (0.001f);
     };
   }
 }

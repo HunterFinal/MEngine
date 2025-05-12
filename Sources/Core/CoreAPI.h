@@ -20,5 +20,6 @@
 #include "Math/MEngineMathUtility.h"
 
 #include "Math/Vector.h"
+#include "Math/Vector2D.h"
 
 #endif // MENGINE_CORE_INCLUDE
