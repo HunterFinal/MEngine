@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿// MEngine entry point
+
+#include <iostream>
 
 using namespace std;
 
@@ -38,7 +40,7 @@ int main()
 
   Vector2 a2 {1,2};
 
-  
+  MMath::Max(0,9999999999);
 
   return 0;
 }

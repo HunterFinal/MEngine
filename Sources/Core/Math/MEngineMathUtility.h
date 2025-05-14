@@ -1,4 +1,6 @@
-﻿#ifdef _WIN32
+﻿// MEngine math utility class definitions
+
+#ifdef _WIN32
 #pragma once
 #endif
 

@@ -1,4 +1,6 @@
-﻿#ifdef _WIN32
+﻿// MEngine coordinate axis enum definition
+
+#ifdef _WIN32
 #pragma once
 #endif
 

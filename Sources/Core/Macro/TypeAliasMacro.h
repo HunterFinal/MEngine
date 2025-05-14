@@ -1,3 +1,5 @@
+// MEngine type alias macro definitions
+
 #ifdef _WIN32
 #pragma once
 #endif
@@ -9,6 +11,6 @@
   #define TYPEDEF(OldType, NewType) using NewType = OldType;         
 #else
   #define TYPEDEF(OldType, NewType) typedef OldType NewType;
-#endif
+#endif  // HAS_CPP_11
 
-#endif
+#endif // MENGINE_TYPE_ALIAS

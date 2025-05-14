@@ -1,4 +1,6 @@
-﻿#ifdef _WIN32
+﻿// MEngine HAL platform Math
+
+#ifdef _WIN32
 #pragma once
 #endif
 

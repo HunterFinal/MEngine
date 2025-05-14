@@ -1,4 +1,6 @@
-﻿#ifdef _WIN32
+﻿// MEngine assertion macro definitions
+
+#ifdef _WIN32
 #pragma once
 #endif
 

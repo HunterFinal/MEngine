@@ -1,4 +1,6 @@
-﻿#ifdef _WIN32
+﻿// MEngine class helper macro definitions
+
+#ifdef _WIN32
 #pragma once
 #endif
 

@@ -1,3 +1,5 @@
+// MEngine generic platform type definitions
+
 #ifdef _WIN32
 #pragma once
 #endif

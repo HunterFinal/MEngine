@@ -1,9 +1,8 @@
-﻿// MEngine Vector
+﻿// MEngine vector definition
 
 #ifdef _WIN32
 #pragma once
 #endif
-
 
 #ifndef MENGINE_MATH_VECTOR
 #define MENGINE_MATH_VECTOR

@@ -1,4 +1,4 @@
-﻿// MEngine Vector2D
+﻿// MEngine vector2D definitions
 
 #ifdef _WIN32
 #pragma once
@@ -93,7 +93,7 @@ namespace MEngine
 
       static FORCEINLINE MVector2D<Type> Right()
       {
-        return RightVector
+        return RightVector;
       }
 
       static FORCEINLINE MVector2D<Type> Left()
@@ -540,7 +540,7 @@ namespace MEngine
              };
     }
 
-    template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+    template<typename Type, typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
     FORCEINLINE MVector2D<Type> operator*(const MVector2D<Type>& LhsV, ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(Scale);
@@ -551,7 +551,7 @@ namespace MEngine
              };
     }
 
-    template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+    template<typename Type, typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
     FORCEINLINE MVector2D<Type> operator*(ScaleType Scale, const MVector2D<Type>& RhsV)
     {
       const Type RealScale = static_cast<Type>(Scale);
@@ -562,7 +562,7 @@ namespace MEngine
              };
     }
 
-    template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+    template<typename Type, typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
     FORCEINLINE MVector2D<Type> operator/(const MVector2D<Type>& V, ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);

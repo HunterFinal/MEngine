@@ -1,4 +1,6 @@
-﻿#ifdef _WIN32
+﻿// MEngine windows platform definitions
+
+#ifdef _WIN32
 #pragma once
 #endif
 
@@ -39,6 +41,24 @@ TYPEDEF(MPlatform::MWindowsPlatformTypes, MPlatformTypes);
 #define FORCEINLINE __forceinline
 // Force function as not inline
 #define FORCENOINLINE __declspec(noinline)
+
+// constexpr macro
+#if defined(__clang__) && (__clang__ >= 304)
+  #define CONSTEXPR constexpr
+#endif // __clang__
+#ifndef CONSTEXPR
+  #if defined(__GNUC__) && ((__GNUC__ >= 4) && (__GNUC_MINOR__ >= 9))
+    #define CONSTEXPR constexpr
+  #endif // __GNUC__
+#endif
+#ifndef CONSTEXPR
+  #if defined(_MSC_VER) && (_MSC_VER >= 1900)
+    #define CONSTEXPR constexpr
+  #endif // _MSC_VER
+#endif
+#ifndef CONSTEXPR
+  #define CONSTEXPR
+#endif
 
 // TODO
 // Unknown macros(need research)

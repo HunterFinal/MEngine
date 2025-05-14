@@ -1,3 +1,5 @@
+// MEngine Preprocessor helper macro definitions
+
 #ifdef _WIN32
 #pragma once
 #endif

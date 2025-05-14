@@ -1,3 +1,5 @@
+// MEngine platform header definitions
+
 #ifdef _WIN32
 #pragma once
 #endif

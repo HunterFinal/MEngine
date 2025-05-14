@@ -1,7 +1,8 @@
-﻿#ifdef _WIN32
+﻿// MEngine type traits definitions
+
+#ifdef _WIN32
 #pragma once
 #endif
-
 
 #ifndef MENGINE_TYPE_TRAITS
 #define MENGINE_TYPE_TRAITS

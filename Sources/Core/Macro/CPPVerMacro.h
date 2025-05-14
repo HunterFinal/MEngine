@@ -1,3 +1,5 @@
+// MEngine cpp version check macro definitions
+
 #ifdef _WIN32
 #pragma once
 #endif
