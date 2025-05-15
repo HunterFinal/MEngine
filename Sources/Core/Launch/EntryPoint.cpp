@@ -40,7 +40,7 @@ int main()
 
   Vector2 a2 {1,2};
 
-  MMath::Max(0,9999999999);
+  cout << MMath::Max(0,9999999999);
 
   return 0;
 }
