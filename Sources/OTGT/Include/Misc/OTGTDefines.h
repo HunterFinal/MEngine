@@ -1,0 +1,19 @@
+﻿#ifdef _WIN32
+#pragma once
+#endif
+
+#ifndef OTGT_DEFINES
+#define OTGT_DEFINES
+
+#ifndef DLLEXPORT
+#define DLLEXPORT __declspec(dllexport)
+#define DLLIMPORT __declspec(dllimport)
+#endif // #ifndef DLLEXPORT
+
+#ifdef OTGT_EXPORT
+#define OTGT_API DLLEXPORT
+#else
+#define OTGT_API DLLIMPORT
+#endif
+
+#endif

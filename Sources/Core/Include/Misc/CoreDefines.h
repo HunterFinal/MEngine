@@ -15,6 +15,12 @@
 #define OUT
 #endif
 
+#ifdef CORE_EXPORT
+#define CORE_API DLLEXPORT
+#else
+#define CORE_API DLLIMPORT
+#endif
+
 namespace MEngine
 {
   namespace Core

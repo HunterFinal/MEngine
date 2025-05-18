@@ -29,6 +29,7 @@ namespace MPlatform
 
 TYPEDEF(MPlatform::MWindowsPlatformTypes, MPlatformTypes);
 
+// TODO
 // DLL export and import definitions
 // 動的ライブラリマクロ定義
 #define DLLEXPORT __declspec(dllexport)
@@ -71,4 +72,5 @@ TYPEDEF(MPlatform::MWindowsPlatformTypes, MPlatformTypes);
   { \
     __nop(), __debugbreak(); \
   } 
+
 #endif // MENGINE_PLATFORM_WINDOWS

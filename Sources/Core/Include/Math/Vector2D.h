@@ -21,6 +21,8 @@
 // MSVCの仕様により、無名テンプレート引数 + デフォルト値が無視される警告メッセージ生成を防ぐ
 // Ensure Nameless template variable with default value don't generate warnings in MSVC
 #pragma warning (disable : 4544)
+// MSVCの仕様により、無名共用体と無名構造体に対する警告メッセージを無視
+#pragma warning (disable : 4201)
 #endif
 
 // MEngine namespace
@@ -55,28 +57,28 @@ namespace MEngine
       };
 
       // zero vector (0, 0)
-      static const MVector2D<Type> ZeroVector;
+      CORE_API static const MVector2D<Type> ZeroVector;
 
       // one vector (1, 1)
-      static const MVector2D<Type> OneVector;
+      CORE_API static const MVector2D<Type> OneVector;
 
       // MEngine right vector (1, 0)
-      static const MVector2D<Type> RightVector;
+      CORE_API static const MVector2D<Type> RightVector;
 
       // MEngine left vector (-1, 0)
-      static const MVector2D<Type> LeftVector;
+      CORE_API static const MVector2D<Type> LeftVector;
 
       // MEngine up vector (0, 1)
-      static const MVector2D<Type> UpVector;
+      CORE_API static const MVector2D<Type> UpVector;
 
       // MEngine down vector (0, -1)
-      static const MVector2D<Type> DownVector;
+      CORE_API static const MVector2D<Type> DownVector;
 
       // Unit X axis vector (1, 0)
-      static const MVector2D<Type> XAxisVector;
+      CORE_API static const MVector2D<Type> XAxisVector;
 
       // Unit Y axis vector (0, 1)
-      static const MVector2D<Type> YAxisVector;
+      CORE_API static const MVector2D<Type> YAxisVector;
 
       // -----------------
       // static method
@@ -139,7 +141,7 @@ namespace MEngine
       /**
        * Convert different type vector to this type
        */
-      template<typename DiffType, TEMPLATE_CONDITION(!std::is_same_v<Type, DiffType>)>
+      template<typename DiffType, TEMPLATE_CONDITION_DECLARATION(!std::is_same_v<Type, DiffType>)>
       explicit MVector2D(const MVector2D<DiffType>& Other);
 
       // end of Constructors
@@ -256,7 +258,6 @@ namespace MEngine
          * @param V2 The second vector
          * @return The result of vector addition
          */
-        template<typename Type>
         friend FORCEINLINE MVector2D<Type> operator+(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
@@ -266,7 +267,6 @@ namespace MEngine
          * @param V2 The second vector
          * @return The result of vector subtraction
          */
-        template<typename Type>
         friend FORCEINLINE MVector2D<Type> operator-(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
@@ -276,7 +276,7 @@ namespace MEngine
          * @param Scale Value to multiply each component
          * @return The result of multiplication
          */
-        template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+        template<typename ScaleType, TEMPLATE_CONDITION_DECLARATION(std::is_arithmetic_v<ScaleType>)>
         friend FORCEINLINE MVector2D<Type> operator*(const MVector2D<Type>& LhsV, ScaleType Scale);
 
         /**
@@ -286,7 +286,7 @@ namespace MEngine
          * @param RhsV The right-head side vector
          * @return The result of multiplication
          */
-        template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+        template<typename ScaleType, TEMPLATE_CONDITION_DECLARATION(std::is_arithmetic_v<ScaleType>)>
         friend FORCEINLINE MVector2D<Type> operator*(ScaleType Scale, const MVector2D<Type>& RhsV);
 
         /**
@@ -296,7 +296,7 @@ namespace MEngine
          * @param Scale Value to divide each component
          * @return The result of multiplication
          */
-        template<typename Type, typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+        template<typename ScaleType, TEMPLATE_CONDITION_DECLARATION(std::is_arithmetic_v<ScaleType>)>
         friend FORCEINLINE MVector2D<Type> operator/(const MVector2D<Type>& V, ScaleType Scale);
 
         /**
@@ -306,7 +306,6 @@ namespace MEngine
          * @param V2 The second vector
          * @return true if the vectors are equal, false otherwise
          */
-        template<typename Type>
         friend FORCEINLINE bool operator==(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
@@ -316,7 +315,6 @@ namespace MEngine
          * @param V2 The second vector
          * @return true if the vectors are not equal, false otherwise
          */
-        template<typename Type>
         friend FORCEINLINE bool operator!=(const MVector2D<Type>& V1, const MVector2D<Type>& V2);
 
         /**
@@ -359,7 +357,7 @@ namespace MEngine
          * @param Scale Value to multiply each component
          * @return This vector after Multiplication
          */
-        template<typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+        template<typename ScaleType, TEMPLATE_CONDITION_DECLARATION(std::is_arithmetic_v<ScaleType>)>
         FORCEINLINE MVector2D<Type>& operator*=(ScaleType Scale);
 
         /**
@@ -369,7 +367,7 @@ namespace MEngine
          * @param Scale Value to divide each component
          * @return This vector after Dividing
          */
-        template<typename ScaleType, TEMPLATE_CONDITION(std::is_arithmetic_v<ScaleType>)>
+        template<typename ScaleType, TEMPLATE_CONDITION_DECLARATION(std::is_arithmetic_v<ScaleType>)>
         FORCEINLINE MVector2D<Type>& operator/=(ScaleType Scale);
 
         /**
@@ -411,7 +409,7 @@ namespace MEngine
     {}
 
     template<typename Type>
-    template<typename DiffType, typename std::enable_if_t<!std::is_same_v<Type, DiffType>, int>>
+    template<typename DiffType, TEMPLATE_CONDITION_DEFINITION(!std::is_same_v<Type, DiffType>)>
     MVector2D<Type>::MVector2D(const MVector2D<DiffType>& Other)
       : MVector2D<Type>((Type)Other.X, (Type)Other.Y)
     {}
@@ -540,7 +538,7 @@ namespace MEngine
              };
     }
 
-    template<typename Type, typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
+    template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type> operator*(const MVector2D<Type>& LhsV, ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(Scale);
@@ -551,7 +549,7 @@ namespace MEngine
              };
     }
 
-    template<typename Type, typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
+    template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type> operator*(ScaleType Scale, const MVector2D<Type>& RhsV)
     {
       const Type RealScale = static_cast<Type>(Scale);
@@ -562,7 +560,7 @@ namespace MEngine
              };
     }
 
-    template<typename Type, typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
+    template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type> operator/(const MVector2D<Type>& V, ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);
@@ -630,7 +628,7 @@ namespace MEngine
      * @return This vector after Multiplication
      */
     template<typename Type>
-    template<typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
+    template<typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type>& MVector2D<Type>::operator*=(ScaleType Scale)
     {
       X *= Scale;
@@ -647,7 +645,7 @@ namespace MEngine
      * @return This vector after Dividing
      */
     template<typename Type>
-    template<typename ScaleType, typename std::enable_if_t<std::is_arithmetic_v<ScaleType>, int>>
+    template<typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type>& MVector2D<Type>::operator/=(ScaleType Scale)
     {
       const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);

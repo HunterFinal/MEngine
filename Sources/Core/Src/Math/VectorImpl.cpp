@@ -1,7 +1,7 @@
 ﻿// MEngine Vector static variables definitions
 
-#include "Vector.h"
-#include "Vector2D.h"
+#include "Math/Vector.h"
+#include "Math/Vector2D.h"
 
 // MVector<Type>
 template<> const Vector3 Vector3::ZeroVector(0.0, 0.0, 0.0);

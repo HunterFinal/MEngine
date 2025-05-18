@@ -18,14 +18,6 @@
 //-------------------------------
 #define CPP_VER_CHECK(Version) (!!(CPP_STANDARD >= Version))
 
-// CPP98/03
-#ifndef HAS_CPP_98
-  #define HAS_CPP_98 CPP_VER_CHECK(199711L)
-#endif
-#ifndef HAS_CPP_03
-  #define HAS_CPP_03 HAS_CPP_98
-#endif
-
 // CPP11
 #ifndef HAS_CPP_11
   #define HAS_CPP_11 CPP_VER_CHECK(201103L)
