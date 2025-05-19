@@ -19,6 +19,7 @@ target_compile_definitions(
   Game
   PRIVATE
   GAME_DLL_BUILD
+  APP_DLL_BUILD
 )
 
 target_include_directories(
@@ -26,6 +27,7 @@ target_include_directories(
   PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Application
 )
 
 if(MSVC)
@@ -38,3 +40,9 @@ if(MSVC)
 else()
   
 endif()
+
+target_link_libraries(
+  Game
+  PRIVATE
+  APP
+)

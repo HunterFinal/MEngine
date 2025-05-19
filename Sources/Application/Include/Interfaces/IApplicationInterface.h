@@ -18,6 +18,6 @@ struct APP_API IApplicationInterface
     virtual void Terminate() {};
 };
 
-APP_API FORCEINLINE IApplicationInterface* GenerateAPP(); 
+extern "C" APP_API IApplicationInterface* GenerateAPP(); 
 
 #endif // ME_APP_INTERFACE

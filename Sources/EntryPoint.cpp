@@ -69,6 +69,11 @@ int main(int argc, char** argv)
 
   {
     IApplicationInterface* app = GenerateAPP();
+    if (app != nullptr)
+    {
+      app->Startup();
+      app->Terminate();
+    }
     delete app;
   }
 
