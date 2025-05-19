@@ -5,6 +5,8 @@
 #ifndef OTGT_DEFINES
 #define OTGT_DEFINES
 
+#include <cassert>
+
 #ifndef DLLEXPORT
 #define DLLEXPORT __declspec(dllexport)
 #define DLLIMPORT __declspec(dllimport)

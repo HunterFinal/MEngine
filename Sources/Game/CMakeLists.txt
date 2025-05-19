@@ -1,28 +1,28 @@
 ﻿cmake_minimum_required(VERSION 3.29.0)
 
-file(GLOB_RECURSE CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+file(GLOB_RECURSE Game_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
 
 add_library(
-  Core 
+  Game 
   SHARED 
-  ${CORE_SOURCES} 
+  ${Game_SOURCES} 
 )
 
 target_compile_features(
-  Core 
+  Game 
   PRIVATE 
   cxx_std_20
 )
 
 # DLL define helper macro
 target_compile_definitions(
-  Core
+  Game
   PRIVATE
-  CORE_EXPORT
+  GAME_DLL_BUILD
 )
 
 target_include_directories(
-  Core 
+  Game 
   PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Include
@@ -30,11 +30,10 @@ target_include_directories(
 
 if(MSVC)
   target_compile_options(
-    Core 
+    Game 
     PRIVATE 
     /W4
     /std:c++20
-    /FI${PROJECT_SOURCE_DIR}/CoreAPI.h
   )
 else()
   

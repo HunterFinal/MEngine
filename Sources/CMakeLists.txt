@@ -8,7 +8,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(MEngine VERSION 0.1.0 LANGUAGES C CXX)
 
 add_executable(MEngine ${CMAKE_CURRENT_SOURCE_DIR}/EntryPoint.cpp)
-target_compile_features(MEngine PRIVATE cxx_std_20)
+
+target_compile_features(
+  MEngine 
+  PRIVATE 
+  cxx_std_20
+)
+
 set_target_properties(
   MEngine
   PROPERTIES
@@ -29,28 +35,38 @@ else()
 endif()
 
 add_subdirectory(Core)
-add_subdirectory(Extension)
+add_subdirectory(Extensions)
 add_subdirectory(Runtime)
 add_subdirectory(Utilities)
 add_subdirectory(OTGT)
+add_subdirectory(Application)
 
 
 target_link_libraries(
   MEngine
   Core
   OTGT
+  APP
+  Game
 )
 
 target_include_directories(
   MEngine
   PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/Core
   ${CMAKE_CURRENT_SOURCE_DIR}/Core/Include
+  ${CMAKE_CURRENT_SOURCE_DIR}/OTGT
   ${CMAKE_CURRENT_SOURCE_DIR}/OTGT/Include
+  ${CMAKE_CURRENT_SOURCE_DIR}/Application
+  ${CMAKE_CURRENT_SOURCE_DIR}/Application/Include
+  ${CMAKE_CURRENT_SOURCE_DIR}/Game
+  ${CMAKE_CURRENT_SOURCE_DIR}/Game/Include
 )
 
 add_custom_command(TARGET MEngine POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
           $<TARGET_FILE:Core>
           $<TARGET_FILE:OTGT>
+          $<TARGET_FILE:APP>
           $<TARGET_FILE_DIR:MEngine>
 )

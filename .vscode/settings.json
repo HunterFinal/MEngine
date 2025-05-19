@@ -2,16 +2,14 @@
   "C_Cpp.default.cppStandard": "c++20",
   "C_Cpp.default.cStandard": "c23",
   "files.encoding": "utf8bom",
-  "cmake.cmakePath": "D:\\CMake\\cmake-3.29.1-windows-x86_64\\cmake-3.29.1-windows-x86_64\\bin\\cmake.exe",
   "cmake.generator": "Ninja",
   "cmake.buildDirectory": "${workspaceFolder}/Intermediate",
   "cmake.installPrefix": "${workspaceFolder}/Execution",
   "cmake.configureOnOpen": true,
   "cmake.configureArgs": [],
-  "cmake.sourceDirectory": "H:/GithubRepository/MEngine/Sources",
+  "cmake.sourceDirectory": "${workspaceFolder}/Source",
   "cmake.configureSettings": 
   {
     "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-    "CMAKE_MAKE_PROGRAM" : "D:\\CMake\\Ninja\\ninja-win\\ninja.exe"
   }
 }

@@ -296,6 +296,7 @@ namespace MEngine
       static FORCEINLINE float ATan(IN const float Val) { return std::atanf(Val); }
       static FORCEINLINE double ATan(IN const double Val) { return std::atan(Val); }
       static FORCEINLINE long double ATan(IN const long double Val) { return std::atanl(Val); }
+      
     };
  
     /**

@@ -22,4 +22,7 @@
 #include "Math/Vector.h"
 #include "Math/Vector2D.h"
 
+// アプリケーション
+#include "Application/ApplicationAPI.h"
+
 #endif // MENGINE_CORE_INCLUDE
