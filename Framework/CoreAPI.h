@@ -23,7 +23,7 @@
 #include "Application/ApplicationAPI.h"
 
 // ログ
-#include "Logging/Logger.h"
-#include "Logging/SystemLogger.h"
+#include "Logging/IOutputInterface.h"
+#include "Logging/ConsoleLogger.h"
 
 #endif // MENGINE_CORE_INCLUDE

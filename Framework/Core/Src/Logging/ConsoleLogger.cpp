@@ -1,12 +1,15 @@
-﻿#include "Logging/SystemLogger.h"
+﻿#include "Logging/ConsoleLogger.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+
+#include <format>
+#include <cstring>
 
 namespace MEngine
 {
   namespace Core
   {
-    struct SystemLogger::Impl
+    struct ConsoleLogger::Impl
     {
       private:
         TYPEDEF(spdlog::logger, LoggerEntity);
@@ -40,6 +43,8 @@ namespace MEngine
           if (m_logger != nullptr)
           {
             m_logger->set_level(spdlog::level::trace);
+            m_logger->trace("Hello! Var{0}", 100);
+            m_logger->warn("FFFFF");
           }
 
           m_bIsStartingup = true;
@@ -51,22 +56,29 @@ namespace MEngine
           m_bIsStartingup = false;
         }
 
+        void Serialize_Impl(const ANSICHAR* Data)
+        {
+          std::string str{Data};
+          m_logger->info(str);
+        }
+
       private:
         std::shared_ptr<LoggerEntity> m_logger;
         uint8 m_bIsStartingup : 1;
 
     };
 
-    SystemLogger::SystemLogger()
+    ConsoleLogger::ConsoleLogger()
       : m_pImpl(std::make_unique<Impl>())
     { }
 
-    SystemLogger::~SystemLogger()
+    ConsoleLogger::~ConsoleLogger()
     {
       m_pImpl.release();
     }
 
-    void SystemLogger::Startup() { m_pImpl->Startup_Impl(); }
-    void SystemLogger::Terminate() { m_pImpl->Terminate_Impl(); }
+    void ConsoleLogger::Startup() { m_pImpl->Startup_Impl(); }
+    void ConsoleLogger::Terminate() { m_pImpl->Terminate_Impl(); }
+    void ConsoleLogger::Serialize(const ANSICHAR* Data) { m_pImpl->Serialize_Impl(Data); }
   }
 }

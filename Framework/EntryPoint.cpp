@@ -4,6 +4,10 @@
 #include "OTGTAPI.h"
 #include "ApplicationAPI.h"
 
+// TODO
+#include <spdlog/fmt/bundled/format.h>
+#include <cstring>
+
 using namespace std;
 
 class TestCase1 final : public OTGT::ITestCaseInterface
@@ -78,8 +82,12 @@ int main(int argc, char** argv)
   }
 
   {
-    MEngine::Core::Logger* logger = new MEngine::Core::SystemLogger();
+    MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
     logger->Startup();
+    int a = 5;
+    double b = 3.14;
+    std::string str = fmt::format("ABCDE{},{}", a, b);
+    logger->Serialize(str.c_str());
     logger->Terminate();
     delete logger;
   }

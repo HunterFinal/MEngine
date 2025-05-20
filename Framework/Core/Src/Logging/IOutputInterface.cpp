@@ -1,4 +1,4 @@
-﻿#include "Logging/Logger.h"
+﻿#include "Logging/IOutputInterface.h"
 
 namespace MEngine
 {
