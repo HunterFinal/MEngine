@@ -7,7 +7,7 @@
   "cmake.installPrefix": "${workspaceFolder}/Execution",
   "cmake.configureOnOpen": true,
   "cmake.configureArgs": [],
-  "cmake.sourceDirectory": "${workspaceFolder}/Sources",
+  "cmake.sourceDirectory": "${workspaceFolder}",
   "cmake.configureSettings": 
   {
     "CMAKE_EXPORT_COMPILE_COMMANDS": true,
