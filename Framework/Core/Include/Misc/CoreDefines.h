@@ -4,14 +4,6 @@
 #ifndef MISC_CORE_DEFINES
 #define MISC_CORE_DEFINES
 
-// IN/OUT 
-#ifndef IN
-#define IN
-#endif
-#ifndef OUT
-#define OUT
-#endif
-
 #ifdef CORE_EXPORT
 #define CORE_API DLLEXPORT
 #else

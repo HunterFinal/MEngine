@@ -9,4 +9,14 @@
   #define GAME_API __declspec(dllimport)
 #endif
 
+#ifndef IN
+  #define IN
+#endif
+#ifndef OUT
+  #define OUT
+#endif
+#ifndef DEFAULT_VAR
+  #define DEFAULT_VAR
+#endif
+
 #endif // GAME_DEFINES

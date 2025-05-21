@@ -9,6 +9,7 @@
 
 #include "Math/MathForward.h"
 #include "Math/Axis.h"
+#include "Macro/AssertionMacros.h"
 
 #ifdef _MSC_VER
 #pragma warning (push)

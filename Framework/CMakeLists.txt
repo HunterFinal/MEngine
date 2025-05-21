@@ -50,9 +50,10 @@ target_link_libraries(
   Core
   OTGT
   Game
+  Application
 )
 
-# Core and Test module
+# Modules
 target_include_directories(
   MEngine
   PRIVATE
@@ -60,12 +61,6 @@ target_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Core/Include
   ${CMAKE_CURRENT_SOURCE_DIR}/OTGT
   ${CMAKE_CURRENT_SOURCE_DIR}/OTGT/Include
-)
-
-# Application module
-target_include_directories(
-  MEngine
-  PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Application
   ${CMAKE_CURRENT_SOURCE_DIR}/Application/Include
 )

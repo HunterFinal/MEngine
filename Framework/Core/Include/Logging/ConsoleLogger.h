@@ -20,7 +20,7 @@ namespace MEngine
         #pragma region IOutputInterface interface
           virtual void Startup() override;
           virtual void Terminate() override;
-          virtual void Serialize(const ANSICHAR* Data) override;
+          virtual void Serialize(IN const ANSICHAR* Data) override;
         #pragma endregion IOutputInterface interface
         /**End of IOutputInterface interface */
 

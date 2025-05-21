@@ -1,11 +1,9 @@
-﻿#ifdef _WIN32
-#pragma once
-#endif
+﻿#pragma once
 
 #ifndef ME_APP_INTERFACE
 #define ME_APP_INTERFACE
 
-#include "Include/ApplicationDefines.h" 
+#include "Macro/ApplicationDefines.h" 
 
 struct APP_API IApplicationInterface
 {

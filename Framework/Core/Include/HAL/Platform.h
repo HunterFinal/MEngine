@@ -8,12 +8,6 @@
 
 #include PLATFORM_HEADER(Platform.h)
 
-// DLL export and import definitions
-#ifndef DLLEXPORT
-  #define DLLEXPORT
-  #define DLLIMPORT
-#endif // DLLEXPORT
-
 //~Global types base
 
 // 8-bit unsigned integer
@@ -133,15 +127,27 @@ TYPEDEF(MPlatformTypes::TYPE_NULLPTR, TYPE_NULLPTR);
   #define NORETURN
 #endif // NORETURN
 
+// indicate that something unused
+#if !defined(MAYBE_UNUSED) && defined(__has_cpp_attribute)
+  #if __has_cpp_attribute(maybe_unused)
+    #define MAYBE_UNUSED [[maybe_unused]]
+  #endif //  __has_cpp_attribute(maybe_unused)
+#endif // !defined(MAYBE_UNUSED) && defined(__has_cpp_attribute)
+#ifndef MAYBE_UNUSED
+  #define MAYBE_UNUSED
+#endif
+
 // variables signature
 #ifndef IN
-#define IN
+  #define IN
 #endif // IN
 #ifndef OUT
-#define OUT
+  #define OUT
 #endif // OUT
 #ifndef DEFAULT_VAR
-#define DEFAULT_VAR
+  #define DEFAULT_VAR
 #endif // DEFAULT_VAR
+
+
 
 #endif // MENGINE_HAL_PLATFORM

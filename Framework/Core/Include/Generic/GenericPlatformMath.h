@@ -4,8 +4,9 @@
 #ifndef MENGINE_GENERIC_MATH
 #define MENGINE_GENERIC_MATH
 
-#include <cmath>
 #include "Templates/METypeAmbiguityResolve.h"
+#include "Templates/METypeTraits.h"
+#include <cmath>
 
 namespace MEngine
 {

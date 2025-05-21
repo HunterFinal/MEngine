@@ -26,7 +26,7 @@ namespace MEngine
     const double MMath::DOUBLE_RAD_2_DEG =             (57.29577951308233);
     const double MMath::DOUBLE_DEG_2_RAD =             (0.0174532925199433);
 
-    const float MMath::VECTOR_NORMALIZED_THRESHOLD =   (0.001f)
+    const float MMath::VECTOR_NORMALIZED_THRESHOLD =   (0.001f);
   }
 }
 #endif

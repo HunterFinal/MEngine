@@ -15,15 +15,15 @@ SampleGame::~SampleGame()
 
 void SampleGame::Startup()
 {
-  cout << "SampleGame Startup" << endl;
+
 }
 
 void SampleGame::Update(float DeltaTime)
 {
-  cout << "SampleGame Update" << endl;
+
 }
 
 void SampleGame::Terminate()
 {
-  cout << "SampleGame Terminate" << endl;
+
 }

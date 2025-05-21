@@ -52,8 +52,8 @@ if(MSVC)
     PRIVATE 
     /W4
     /std:c++20
-    /FI${PROJECT_SOURCE_DIR}/Framework/CoreAPI.h
   )
 else()
   
 endif()
+

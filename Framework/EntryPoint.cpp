@@ -52,23 +52,19 @@ class TestCase1 final : public OTGT::ITestCaseInterface
       assert(MMath::Sign(2) == 1);
       assert(MMath::Sign(0) == 0);
       
-      
     }
 };
 
 int main(int argc, char** argv)
 {
-  cout << -2.5 << endl;
-  cout << MMath::CeilToInt32(-2.5) << endl;
-  cout << 2.5 << endl;
-  cout << MMath::CeilToInt32(2.5) << endl;
-  cout << MMath::Fraction(-3.5) << endl;
-  cout << MMath::Fraction(3.5) << endl;
-
+  
+  MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
+  logger->Startup();
   {
-    OTGT::ITestCaseInterface* pTest = new TestCase1();
-    pTest->RunTest_Interface();
-    delete pTest;
+    int a = 5;
+    double b = 3.14;
+    std::string str = fmt::format("ABCDE{},{}", a, b);
+    logger->Serialize(str.c_str());
   }
 
   {
@@ -82,16 +78,15 @@ int main(int argc, char** argv)
   }
 
   {
-    MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
-    logger->Startup();
-    int a = 5;
-    double b = 3.14;
-    std::string str = fmt::format("ABCDE{},{}", a, b);
-    logger->Serialize(str.c_str());
-    logger->Terminate();
-    delete logger;
+    OTGT::ITestCaseInterface* pTest = new TestCase1();
+    pTest->RunTest_Interface();
+    delete pTest;
   }
 
+  int a;
+  cin >> a;
+  logger->Terminate();
+  delete logger;
   return 0;
 }
 

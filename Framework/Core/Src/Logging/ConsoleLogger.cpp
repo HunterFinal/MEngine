@@ -1,9 +1,16 @@
-﻿#include "Logging/ConsoleLogger.h"
+﻿// MEngine ConsoleLogger definition
+
+#include "Logging/ConsoleLogger.h"
+
+// Third party
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-#include <format>
 #include <cstring>
+#include <fcntl.h>
+#include <format>
+#include <io.h>
+#include <windows.h>
 
 namespace MEngine
 {
@@ -13,6 +20,7 @@ namespace MEngine
     {
       private:
         TYPEDEF(spdlog::logger, LoggerEntity);
+
       public:
         Impl()
           : m_logger{nullptr}
@@ -20,14 +28,14 @@ namespace MEngine
         { 
           // TODO
           spdlog::set_pattern("%^[%T] %n: %v%$");
+
+          // TODO
+          // Free another console when use ConsoleLogger!!!!
+          FreeConsole();
         }
         ~Impl()
         {
-          if (m_bIsStartingup)
-          {
-            m_logger.reset();
-            m_bIsStartingup = false;
-          }
+          Terminate_Impl();
 
           ::memset(this, 0, sizeof(*this));
         }
@@ -39,6 +47,39 @@ namespace MEngine
             return;
           }
 
+          // Free console if it exists
+          if (GetConsoleWindow() != nullptr)
+          {
+            FreeConsole();
+          }
+
+          // Create new console
+          if (!AllocConsole())
+          {
+            return;
+          }
+
+          // Set stdout target
+          {
+            // Redirection stdout,stderr,stdin
+            {
+              FILE* stream;
+  
+              _wfreopen_s(&stream, L"CONOUT$", L"w+", stdout);
+              _wfreopen_s(&stream, L"CONOUT$", L"w+", stderr);
+              _wfreopen_s(&stream, L"CONIN$" , L"w+", stdin );
+            }
+
+            #if USE_UTF8_CHAR
+              _setmode(fileno(stdout), _O_U8TEXT);
+              _setmode(fileno(stderr), _O_U8TEXT);
+            #else
+              _setmode(fileno(stdout), _O_TEXT);
+              _setmode(fileno(stderr), _O_TEXT);
+            #endif
+          }
+
+          m_bIsStartingup = true;
           m_logger = spdlog::stdout_color_mt("SYS_LOGGER");
           if (m_logger != nullptr)
           {
@@ -46,17 +87,19 @@ namespace MEngine
             m_logger->trace("Hello! Var{0}", 100);
             m_logger->warn("FFFFF");
           }
-
-          m_bIsStartingup = true;
         }
 
         void Terminate_Impl()
         {
-          m_logger.reset();
-          m_bIsStartingup = false;
+          if (m_bIsStartingup)
+          {
+            FreeConsole();
+            m_logger.reset();
+            m_bIsStartingup = false;
+          }
         }
 
-        void Serialize_Impl(const ANSICHAR* Data)
+        void Serialize_Impl(IN const ANSICHAR* Data)
         {
           std::string str{Data};
           m_logger->info(str);
@@ -79,6 +122,6 @@ namespace MEngine
 
     void ConsoleLogger::Startup() { m_pImpl->Startup_Impl(); }
     void ConsoleLogger::Terminate() { m_pImpl->Terminate_Impl(); }
-    void ConsoleLogger::Serialize(const ANSICHAR* Data) { m_pImpl->Serialize_Impl(Data); }
+    void ConsoleLogger::Serialize(IN const ANSICHAR* Data) { m_pImpl->Serialize_Impl(Data); }
   }
 }

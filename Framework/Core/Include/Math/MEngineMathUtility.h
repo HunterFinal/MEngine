@@ -6,6 +6,7 @@
 
 #include "HAL/Platform.h"
 #include "HAL/PlatformMath.h"
+#include "Macro/CPPVerMacro.h"
 
 namespace MEngine
 {
