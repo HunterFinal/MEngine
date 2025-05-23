@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <format>
 #include <io.h>
+#include <iostream>
 #include <windows.h>
 
 namespace MEngine
@@ -67,7 +68,16 @@ namespace MEngine
   
               _wfreopen_s(&stream, L"CONOUT$", L"w+", stdout);
               _wfreopen_s(&stream, L"CONOUT$", L"w+", stderr);
-              _wfreopen_s(&stream, L"CONIN$" , L"w+", stdin );
+              _wfreopen_s(&stream, L"CONIN$" , L"r", stdin );
+
+              //bstd::ios::sync_with_stdio();
+
+              std::cout.clear();
+              std::wcout.clear();
+              std::cerr.clear();
+              std::wcerr.clear();
+              std::cin.clear();
+              std::wcin.clear();
             }
 
             #if USE_UTF8_CHAR

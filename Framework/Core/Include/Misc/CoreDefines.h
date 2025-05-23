@@ -4,6 +4,9 @@
 #ifndef MISC_CORE_DEFINES
 #define MISC_CORE_DEFINES
 
+#include "Macro/TypeAliasMacro.h"
+
+
 #ifdef CORE_EXPORT
 #define CORE_API DLLEXPORT
 #else
@@ -12,10 +15,15 @@
 
 namespace MEngine
 {
+  // Forward declaration
+  struct IEventListener;
   namespace Core
   {
 
   }
+
 }
+
+TYPEDEF(MEngine::IEventListener, IEventListener);
 
 #endif // MISC_CORE_DEFINES

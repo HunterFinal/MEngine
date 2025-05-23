@@ -8,7 +8,8 @@
 #include <spdlog/fmt/bundled/format.h>
 #include <cstring>
 
-using namespace std;
+// #define CONSOLE_MAIN
+#define WINDOWGUI_MAIN
 
 class TestCase1 final : public OTGT::ITestCaseInterface
 {
@@ -55,7 +56,14 @@ class TestCase1 final : public OTGT::ITestCaseInterface
     }
 };
 
+
+#if defined(CONSOLE_MAIN)
 int main(int argc, char** argv)
+#elif defined(WINDOWGUI_MAIN)
+#include <windows.h>
+#include <tchar.h>
+int APIENTRY _tWinMain(IN HINSTANCE hInstance, IN HINSTANCE hPrevInstance, IN LPTSTR lpCmdLinem, IN int32 nShowCmd)
+#endif
 {
   
   MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
@@ -63,7 +71,9 @@ int main(int argc, char** argv)
   {
     int a = 5;
     double b = 3.14;
+    // TODO
     std::string str = fmt::format("ABCDE{},{}", a, b);
+    std::cout << str << std::endl;
     logger->Serialize(str.c_str());
   }
 
@@ -84,7 +94,7 @@ int main(int argc, char** argv)
   }
 
   int a;
-  cin >> a;
+  std::cin >> a;
   logger->Terminate();
   delete logger;
   return 0;

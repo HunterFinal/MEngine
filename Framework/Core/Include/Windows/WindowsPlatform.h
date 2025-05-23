@@ -62,7 +62,7 @@ TYPEDEF(MPlatform::MWindowsPlatformTypes, MPlatformTypes);
 // TODO
 // Unknown macros(need research)
 #undef USE_UTF8_CHAR
-#define USE_UTF8_CHAR 1
+#define USE_UTF8_CHAR 0
 
 // TODO
 // __nop() before __debugbreak()

@@ -8,7 +8,11 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 # project(MEngine VERSION 0.1.0 LANGUAGES C CXX)
 
-add_executable(MEngine ${CMAKE_CURRENT_SOURCE_DIR}/EntryPoint.cpp)
+add_executable(
+  MEngine 
+  WIN32 
+  ${CMAKE_CURRENT_SOURCE_DIR}/EntryPoint.cpp
+)
 
 target_compile_features(
   MEngine 

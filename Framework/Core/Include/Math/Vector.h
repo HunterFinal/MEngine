@@ -387,7 +387,7 @@ namespace MEngine
          * 
          * @param V1 The first vector
          * @param V2 The second vector
-         * @return true if the vectors are equal, false otherwise
+         * @return true if the vectors are component qual, false otherwise
          */
         friend FORCEINLINE bool operator==(IN const MVector<Type>& V1, IN const MVector<Type>& V2);
 
@@ -396,7 +396,7 @@ namespace MEngine
          * 
          * @param V1 The first vector
          * @param V2 The second vector
-         * @return true if the vectors are not equal, false otherwise
+         * @return true if the vectors are not component equal, false otherwise
          */
         friend FORCEINLINE bool operator!=(IN const MVector<Type>& V1, IN const MVector<Type>& V2);
 
