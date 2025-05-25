@@ -6,7 +6,6 @@
 
 #include "Macro/TypeAliasMacro.h"
 
-
 #ifdef CORE_EXPORT
 #define CORE_API DLLEXPORT
 #else

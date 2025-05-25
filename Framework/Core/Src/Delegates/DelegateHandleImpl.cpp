@@ -1,12 +1,18 @@
-﻿#include "IDelegateInterface.h"
+﻿// MDelegateHandle definition
 
+#include "Delegates/IDelegateInterface.h"
+
+#include <atomic>
+
+namespace
+{
+  std::atomic<uint64> gNextDelegateHandleID{1};
+}
 namespace MEngine
 {
   namespace Core
   {
-    MDelegateHandle::MDelegateHandle()
-      : m_handleID(0)
-    { }
+    const MDelegateHandle MDelegateHandle::NullHandle = MDelegateHandle{};
 
     MDelegateHandle::MDelegateHandle(InitProtocol Protocol)
       : m_handleID(0)
@@ -18,6 +24,41 @@ namespace MEngine
         default:
           break;
       }
+    }
+
+    bool MDelegateHandle::IsValid() const
+    {
+      return *this != NullHandle;
+    }
+
+    void MDelegateHandle::Reset()
+    {
+      m_handleID = 0;
+    }
+
+    bool operator==(const MEngine::Core::MDelegateHandle& Lhs, const MEngine::Core::MDelegateHandle& Rhs)
+    {
+      return Lhs.m_handleID == Rhs.m_handleID;
+    }
+
+    bool operator!=(const MEngine::Core::MDelegateHandle& Lhs, const MEngine::Core::MDelegateHandle& Rhs)
+    {
+      return Lhs.m_handleID != Rhs.m_handleID;
+    }
+
+    uint64 MDelegateHandle::GenerateNewID()
+    {
+      /**Use self increment to generate ID */
+      uint64 resultID = 0ull; // ull = unsigned long long
+
+      resultID = ++gNextDelegateHandleID;
+      
+      if (resultID == 0ull)
+      {
+        resultID = ++gNextDelegateHandleID;
+      }
+
+      return resultID;
     }
   }
 }

@@ -9,6 +9,18 @@ namespace MEngine
   {
     class MAbstractDelegate
     {
+      /**
+       * Default constructor
+       */
+      protected:
+        explicit MAbstractDelegate() = default;
+
+      public:
+        virtual ~MAbstractDelegate();
+
+        MAbstractDelegate(MAbstractDelegate&& Other) noexcept;
+        MAbstractDelegate& operator=(MAbstractDelegate&& Other) noexcept;
+
       private:
         
     };

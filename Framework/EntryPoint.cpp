@@ -3,6 +3,7 @@
 #include <iostream>
 #include "OTGTAPI.h"
 #include "ApplicationAPI.h"
+#include "Delegates/DelegateInstanceImpl.h"
 
 // TODO
 #include <spdlog/fmt/bundled/format.h>
@@ -56,6 +57,25 @@ class TestCase1 final : public OTGT::ITestCaseInterface
     }
 };
 
+void func()
+{
+  std::cout << 42 << std::endl;
+}
+
+class AAA
+{
+  public:
+    void func()
+    {
+      std::cout << "not const" << std::endl;
+    }
+
+    void funcConst() const
+    {
+      std::cout << "const" << std::endl;
+    }
+};
+
 
 #if defined(CONSOLE_MAIN)
 int main(int argc, char** argv)
@@ -65,7 +85,6 @@ int main(int argc, char** argv)
 int APIENTRY _tWinMain(IN HINSTANCE hInstance, IN HINSTANCE hPrevInstance, IN LPTSTR lpCmdLinem, IN int32 nShowCmd)
 #endif
 {
-  
   MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
   logger->Startup();
   {
@@ -97,6 +116,7 @@ int APIENTRY _tWinMain(IN HINSTANCE hInstance, IN HINSTANCE hPrevInstance, IN LP
   std::cin >> a;
   logger->Terminate();
   delete logger;
+
   return 0;
 }
 

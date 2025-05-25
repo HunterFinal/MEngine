@@ -15,7 +15,7 @@ namespace MEngine
     /**
      * Handle to a specific delegate
      */
-    struct MDelegateHandle
+    struct CORE_API MDelegateHandle
     {
       /**
        * Delegate handle initialization protocol
@@ -25,17 +25,16 @@ namespace MEngine
         GenerateNew,
       };
 
-      #if HAS_CPP_17
-        static constexpr MDelegateHandle NullHandle = MDelegateHandle{};
-      #else
-        static const MDelegateHandle;
-      #endif
+      /**Null Handle with ID = 0 */
+      static const MDelegateHandle NullHandle;
 
       /**
        * Default constructor
-       * Generate an invalid handle
+       * Generate an invalid handle with ID = 0
        */
-      MDelegateHandle();
+      CONSTEXPR MDelegateHandle()
+        : m_handleID(0)
+      { }
 
       /**
        * Constructor that use protocol
@@ -87,10 +86,40 @@ namespace MEngine
 
     };
 
+    /**
+     * Delegate instance interface
+     */
+    struct IDelegateInterface
+    {
+      
+      /**
+       * Destructor
+       */
+      virtual ~IDelegateInterface() = default;
+
+      /**
+       * Get the instance ptr that this delegate instance is bound to.
+       * 
+       * @return Pointer of instance,return nullptr if not bound to an instance.
+       */
+      virtual void* GetInstancePtr() const = 0;
+
+      /**
+       * Checks if the instance ptr bound to this delegate instance is valid
+       * 
+       * @return True if the instance ptr is valid, false otherwise
+       */
+      virtual bool IsSafeToInvoke() const = 0;
+
+      /**
+       * Returns a handle of this delegate instance
+       * 
+       * @return Valid handle of this delegate instance, or invalid handle if it's not bound to any functor
+       */
+      virtual MDelegateHandle GetHandle() const = 0;
+    };
   }
 }
 
-bool operator==(const MEngine::Core::MDelegateHandle& Lhs, const MEngine::Core::MDelegateHandle& Rhs);
-bool operator!=(const MEngine::Core::MDelegateHandle& Lhs, const MEngine::Core::MDelegateHandle& Rhs);
 
 #endif // ME_DELEGATE_INTERFACE
