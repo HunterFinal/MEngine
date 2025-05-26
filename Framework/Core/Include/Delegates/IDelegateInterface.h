@@ -4,7 +4,6 @@
 #ifndef ME_DELEGATE_INTERFACE
 #define ME_DELEGATE_INTERFACE
 
-#include "HAL/Platform.h"
 #include "Misc/CoreDefines.h"
 #include "Macro/CPPVerMacro.h"
 
@@ -32,7 +31,7 @@ namespace MEngine
        * Default constructor
        * Generate an invalid handle with ID = 0
        */
-      CONSTEXPR MDelegateHandle()
+      explicit CONSTEXPR MDelegateHandle()
         : m_handleID(0)
       { }
 
@@ -62,7 +61,7 @@ namespace MEngine
        * @param Rhs The second handle
        * @return true if two handles have same ID, false otherwise
        */
-      friend bool operator==(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
+      friend CORE_API bool operator==(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
 
       /**
        * Check two handles for inequality
@@ -71,7 +70,7 @@ namespace MEngine
        * @param Rhs The second handle
        * @return true if two handles have different ID, false otherwise
        */
-      friend bool operator!=(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
+      friend CORE_API bool operator!=(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
 
       private:
 
@@ -103,6 +102,14 @@ namespace MEngine
        * @return Pointer of instance,return nullptr if not bound to an instance.
        */
       virtual void* GetInstancePtr() const = 0;
+
+      /**
+       * Check if this delegate is bound to specific instance
+       * 
+       * @param InstancePtr Pointer of instance
+       * @return true if bound to specific instance, false otherwise
+       */
+      virtual bool IsBoundToInstance(IN const void* InstancePtr) const = 0;
 
       /**
        * Checks if the instance ptr bound to this delegate instance is valid

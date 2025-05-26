@@ -137,17 +137,4 @@ TYPEDEF(MPlatformTypes::TYPE_NULLPTR, TYPE_NULLPTR);
   #define MAYBE_UNUSED
 #endif
 
-// variables signature
-#ifndef IN
-  #define IN
-#endif // IN
-#ifndef OUT
-  #define OUT
-#endif // OUT
-#ifndef DEFAULT_VAR
-  #define DEFAULT_VAR
-#endif // DEFAULT_VAR
-
-
-
 #endif // MENGINE_HAL_PLATFORM

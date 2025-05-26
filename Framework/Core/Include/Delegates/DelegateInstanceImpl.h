@@ -71,6 +71,7 @@ namespace MEngine
         /**Start of IDelegateInterface interface */
         void* GetInstancePtr() const final;
         bool IsSafeToInvoke() const final;
+        bool IsBoundToInstance(IN const void* InstancePtr) const final;
         /**End of IDelegateInterface interface */
 
         /**Start of IDelegateInstanceInterface interface */
@@ -99,16 +100,24 @@ namespace MEngine
     template<typename ReturnType, typename... ArgTypes>
     void* MStaticFunctionDelegateInstance<ReturnType(ArgTypes...)>::GetInstancePtr() const
     {
-      /**Regular c/c++ function don't need an instance */
+      // Regular c/c++ function don't need an instance
       return nullptr;
     }
 
     template<typename ReturnType, typename... ArgTypes>
     bool MStaticFunctionDelegateInstance<ReturnType(ArgTypes...)>::IsSafeToInvoke() const
     {
-      /**Always safe to invoke */
+      // Always safe to invoke
       return true;
     }
+
+    template<typename ReturnType, typename... ArgTypes>
+    bool MStaticFunctionDelegateInstance<ReturnType(ArgTypes...)>::IsBoundToInstance(IN MAYBE_UNUSED const void* InstancePtr) const
+    {
+      // Regular c/c++ function don't have an instance
+      return false;
+    }
+
 
     template<typename ReturnType, typename... ArgTypes>
     ReturnType MStaticFunctionDelegateInstance<ReturnType(ArgTypes...)>::Invoke(IN ArgTypes... Args) const
@@ -135,9 +144,11 @@ namespace MEngine
     class MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)> final : public MDelegateInstanceHandleHolder<ReturnType(ArgTypes...)>
     {
       public:
-        // TYPEDEF((typename ClassMemberFuncPtrType<IsConst, UserClass, ReturnType(ArgTypes...)>::Type), MemberFuncType);
-        using MemberFuncType = typename ClassMemberFuncPtrType<IsConst, UserClass, ReturnType(ArgTypes...)>::Type;
+        // TODO Avoid macro comma detection
+        #define COMMA ,
+        TYPEDEF(typename ClassMemberFuncPtrType<IsConst COMMA UserClass COMMA ReturnType(ArgTypes...)>::Type, MemberFuncType);
         TYPEDEF(MDelegateInstanceHandleHolder<ReturnType(ArgTypes...)>, Super);
+        #undef COMMA
 
         explicit MClassMethodDelegateInstance(IN UserClass* UserInstancePtr, IN MemberFuncType MemberFuncPtr);
         ~MClassMethodDelegateInstance();
@@ -145,6 +156,7 @@ namespace MEngine
         /**Start of IDelegateInterface interface */
         void* GetInstancePtr() const final;
         bool IsSafeToInvoke() const final;
+        bool IsBoundToInstance(IN const void* InstancePtr) const final;
         /**End of IDelegateInterface interface */
 
         /**Start of IDelegateInstanceInterface interface */
@@ -176,7 +188,7 @@ namespace MEngine
     template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>
     void* MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)>::GetInstancePtr() const
     {
-      return static_cast<void*>(m_userInstancePtr);
+      return const_cast<void*>(static_cast<const void*>(m_userInstancePtr));
     }
 
     template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>
@@ -185,6 +197,12 @@ namespace MEngine
       // We never know whether or not it is safe to dereference a raw pointer,
       // so we try to trust the user
       return true;
+    }
+
+    template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>
+    bool MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)>::IsBoundToInstance(IN const void* InstancePtr) const
+    {
+      return GetInstancePtr() == InstancePtr;
     }
 
     template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>

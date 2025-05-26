@@ -4,6 +4,7 @@
 #ifndef MISC_CORE_DEFINES
 #define MISC_CORE_DEFINES
 
+#include "HAL/Platform.h"
 #include "Macro/TypeAliasMacro.h"
 
 #ifdef CORE_EXPORT
@@ -11,6 +12,17 @@
 #else
 #define CORE_API DLLIMPORT
 #endif
+
+// variables signature
+#ifndef IN
+  #define IN
+#endif // IN
+#ifndef OUT
+  #define OUT
+#endif // OUT
+#ifndef DEFAULT_VAR
+  #define DEFAULT_VAR
+#endif // DEFAULT_VAR
 
 namespace MEngine
 {
