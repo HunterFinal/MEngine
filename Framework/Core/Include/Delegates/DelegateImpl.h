@@ -4,6 +4,7 @@
 #define ME_DELEGATE_IMPL
 
 #include "Delegates/AbstractDelegate.h"
+#include "Delegates/DelegateFactory.h"
 #include "Delegates/DelegateInstanceImplFwd.h"
 #include "Delegates/FunctionPointerTypeTraits.h"
 #include "Delegates/IDelegateInstanceInterface.h"
@@ -18,21 +19,27 @@ namespace MEngine
 {
   namespace Core
   {
-    template<typename FuncType>
+    template<typename FuncType, typename FactoryType = MDefaultDelegateFactory>
     class MDelegate;
     
-    template<typename ReturnType, typename... ArgTypes>
-    class MDelegate<ReturnType(ArgTypes...)> : public MAbstractDelegate
+    template<typename ReturnType, typename... ArgTypes, typename FactoryType>
+    class MDelegate<ReturnType(ArgTypes...), FactoryType> : public MAbstractDelegate
     {
+      /**
+       * make factory friend
+       */
+      friend FactoryType;
+
       public:
         TYPEDEF(ReturnType(ArgTypes...), FuncType);
+        TYPEDEF(ReturnType (*)(ArgTypes...), FuncPtrType);
         TYPEDEF(MAbstractDelegate, Super);
         TYPEDEF(IDelegateInstanceInterface<FuncType>, IDelegateInstanceInterfaceType);
         
         // Avoid macro comma detection
         #define COMMA , 
-        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<false COMMA UserClass COMMA FuncType>::Type, MemFuncType);
-        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<true COMMA const UserClass COMMA FuncType>::Type, ConstMemFuncType);
+        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<false COMMA UserClass COMMA FuncType>::Type, MemFuncPtrType);
+        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<true COMMA const UserClass COMMA FuncType>::Type, ConstMemFuncPtrType);
         #undef COMMA
 
       public:
@@ -53,6 +60,39 @@ namespace MEngine
           CopyImpl(Other);
           return *this;
         }
+
+        /**
+         * Create delegate instance by factory
+         */
+
+        /**Start of MDelegate create function group */
+        #pragma region MDelegate create function group
+        // Regular c/c++ function
+        NODISCARD_MSG("Ignore delegate by CreateStatic") FORCEINLINE static MDelegate<FuncType, FactoryType> CreateStatic(IN FuncPtrType FuncPtr)
+        {
+          return FactoryType::template CreateStaticDelegateInstance<ReturnType, ArgTypes...>(FuncPtr);
+        }
+
+        // Struct/Class member function
+        // non-const version
+        template<typename UserClass>
+        NODISCARD_MSG("Ignore delegate by CreateClass") FORCEINLINE static MDelegate<ReturnType(ArgTypes...), FactoryType> CreateClass(IN UserClass* InstancePtr, IN MemFuncPtrType<UserClass> MemFuncPtr)
+        {
+          static_assert(!std::is_const_v<UserClass>, "Can't create a delegate instance with const instance pointer and non-const member function.");
+
+          return FactoryType::template CreateClassDelegateInstance<UserClass, ReturnType, ArgTypes...>(InstancePtr, MemFuncPtr);
+        }
+
+        // const version
+        template<typename UserClass>
+        NODISCARD_MSG("Ignore delegate by CreateClass(Const)") FORCEINLINE static MDelegate<ReturnType(ArgTypes...), FactoryType> CreateClass(IN UserClass* InstancePtr, IN ConstMemFuncPtrType<UserClass> ConstMemFuncPtr)
+        {
+          return FactoryType::template CreateClassDelegateInstance<UserClass, ReturnType, ArgTypes...>(InstancePtr, ConstMemFuncPtr);
+        }
+
+        #pragma endregion MDelegate create function group
+        /**End of MDelegate create function group */
+
         /**
          * Bind function to delegate
          */
@@ -69,14 +109,16 @@ namespace MEngine
         // Struct/Class member function
         // non-const version
         template<typename UserClass>
-        FORCEINLINE void BindClass(IN UserClass* InstancePtr, IN MemFuncType<UserClass> MemFuncPtr)
+        FORCEINLINE void BindClass(IN UserClass* InstancePtr, IN MemFuncPtrType<UserClass> MemFuncPtr)
         {
           static_assert(!std::is_const_v<UserClass>, "Can't bind a delegate with const instance pointer and non-const member function.");
-          Super::CreateDelegateInstance<MClassMethodDelegateInstance<false, UserClass, FuncType>>(InstancePtr,MemFuncPtr);
+
+          Super::CreateDelegateInstance<MClassMethodDelegateInstance<false, UserClass, FuncType>>(InstancePtr, MemFuncPtr);
         }
+
         // const version
         template<typename UserClass>
-        FORCEINLINE void BindClass(IN const UserClass* InstancePtr, IN ConstMemFuncType<UserClass> ConstMemFuncPtr)
+        FORCEINLINE void BindClass(IN const UserClass* InstancePtr, IN ConstMemFuncPtrType<UserClass> ConstMemFuncPtr)
         {
           Super::CreateDelegateInstance<MClassMethodDelegateInstance<true, const UserClass, FuncType>>(InstancePtr, ConstMemFuncPtr);
         }

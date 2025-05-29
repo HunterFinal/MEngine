@@ -60,7 +60,7 @@ namespace MEngine
       void Allocate(IN SIZE_T ElementNum, IN SIZE_T ByteSizePerElement)
       {
         // overflow check
-        bool bInvalidAlloc = (ByteSizePerElement < 1) || (ByteSizePerElement > std::numeric_limits<int32>::max());
+        bool bInvalidAlloc = (ByteSizePerElement < static_cast<SIZE_T>(1)) || (ByteSizePerElement > static_cast<SIZE_T>(std::numeric_limits<int32>::max()));
         assert(!bInvalidAlloc);
 
         // TODO

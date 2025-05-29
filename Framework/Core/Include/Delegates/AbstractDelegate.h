@@ -71,7 +71,7 @@ namespace MEngine
          * @return User instance ptr as specific type, return nullptr if it's not inherited to <UserClass>
          */
         template<typename UserClass>
-        CORE_API FORCEINLINE UserClass* GetTypedInstancePtr() const;
+        FORCEINLINE UserClass* GetTypedInstancePtr() const;
 
         /**
          * Check if this delegate is bound to a valid delegate instance
@@ -127,8 +127,8 @@ namespace MEngine
         {
           // TODO
           // 16 is a magic number of block size of each delegate instance;
-          const SIZE_T delegateInstanceElementNum = MMath::DivideCeil(AllocSize, 16ull);
-          m_allocator.Allocate(delegateInstanceElementNum, 16ull);
+          const SIZE_T delegateInstanceElementNum = MMath::DivideCeil(AllocSize, static_cast<SIZE_T>(16));
+          m_allocator.Allocate(delegateInstanceElementNum, static_cast<SIZE_T>(16));
 
           return reinterpret_cast<void*>(m_allocator.GetAllocation());
         }

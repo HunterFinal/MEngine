@@ -33,14 +33,15 @@ namespace MEngine
     {
       private:
         TYPEDEF(void(ArgTypes...), FuncType);
+        TYPEDEF(void (*)(ArgTypes...), FuncPtrType);
         TYPEDEF(MAbstractMulticastDelegate, Super);
         TYPEDEF(IDelegateInstanceInterface<FuncType>, IDelegateInstanceInterfaceType);
         TYPEDEF(MDelegate<void(ArgTypes...)>, SingleDelegate);
 
         // Avoid macro comma detection
         #define COMMA , 
-        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<false COMMA UserClass COMMA FuncType>::Type, MemFuncType);
-        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<true COMMA const UserClass COMMA FuncType>::Type, ConstMemFuncType);
+        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<false COMMA UserClass COMMA FuncType>::Type, MemFuncPtrType);
+        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<true COMMA const UserClass COMMA FuncType>::Type, ConstMemFuncPtrType);
         #undef COMMA
 
       public:
@@ -75,7 +76,7 @@ namespace MEngine
         }
 
         template<typename UserClass>
-        FORCEINLINE MDelegateHandle AddClass(IN UserClass* InstancePtr, IN MemFuncType<UserClass> MemFuncPtr)
+        FORCEINLINE MDelegateHandle AddClass(IN UserClass* InstancePtr, IN MemFuncPtrType<UserClass> MemFuncPtr)
         {
           static_assert(!std::is_const_v<UserClass>, "Can't bind a delegate with const instance pointer and non-const member function.");
           
@@ -86,7 +87,7 @@ namespace MEngine
         }
 
         template<typename UserClass>
-        FORCEINLINE MDelegateHandle AddClass(IN const UserClass* InstancePtr, IN ConstMemFuncType<UserClass> ConstMemFuncPtr)
+        FORCEINLINE MDelegateHandle AddClass(IN const UserClass* InstancePtr, IN ConstMemFuncPtrType<UserClass> ConstMemFuncPtr)
         {
           SingleDelegate newDelegate{};
           newDelegate.BindClass(InstancePtr, ConstMemFuncPtr);

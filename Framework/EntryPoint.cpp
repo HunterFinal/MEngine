@@ -126,17 +126,14 @@ class DelegateTestCase final : public OTGT::ITestCaseInterface
 
     void RunTest_Implementation() override
     {
-      MDelegateHandle handle1 = (MultiDele1 += Dele3);
-      MDelegateHandle handle2 = MultiDele1.AddDelegate(Dele3);
 
-      std::cout << (handle1 == handle2) << std::endl;
 
+      MultiDele1.AddDelegate(MDelegate<void(int, int)>::CreateStatic(&func2));
+      MultiDele1.AddDelegate(MDelegate<void(int, int)>::CreateClass(m_testClassInstance, &DelegateTestClass::II_Case1));
       MultiDele1(34, 56);
 
-      MultiDele1.Remove(handle1);
       MultiDele1.Invoke(56, 78);
 
-      MultiDele1.Remove(handle2);
     }
   
   private:
