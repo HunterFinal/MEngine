@@ -12,7 +12,7 @@ struct APP_API IApplicationInterface
 
   public:
     virtual void Startup() {};
-    virtual void Update(float DeltaTime) {};
+    virtual void Update(IN [[maybe_unused]] float DeltaTime) {};
     virtual void Terminate() {};
 };
 

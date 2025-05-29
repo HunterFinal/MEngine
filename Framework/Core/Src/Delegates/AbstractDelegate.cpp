@@ -9,48 +9,45 @@ namespace MEngine
       Unbind();
     }
 
-    MAbstractDelegate::MAbstractDelegate(IN MAbstractDelegate&& Other) noexcept
-      : m_delegateInterface(std::move(Other.m_delegateInterface))
-    { 
-      Other.m_delegateInterface.reset();
-    }
-  
-    MAbstractDelegate& MAbstractDelegate::operator=(IN MAbstractDelegate&& Other) noexcept
-    {
-      if (this != &Other)
-      {
-        std::unique_ptr<IDelegateInterface> temp = std::move(Other.m_delegateInterface);
-        m_delegateInterface = std::move(temp);
-        Other.m_delegateInterface.reset();
-      }
-
-      return *this;
-    }
-
     void MAbstractDelegate::Unbind()
     {
-      m_delegateInterface.reset();
-    }
+      const IDelegateInterface* delegateInterface = GetDelegateInterfaceInternal();
+      if (delegateInterface != nullptr)
+      {
+        delegateInterface->~IDelegateInterface();
 
-    void* MAbstractDelegate::GetInstancePtr() const
-    {
-      return (m_delegateInterface != nullptr) ? m_delegateInterface->GetInstancePtr() : nullptr;
+        //TODO 
+        // 16 is magic number for a delegate instance memory block minimal size
+        m_allocator.Allocate(0, 16ull);
+      }
     }
 
     bool MAbstractDelegate::IsBound() const
     {
-      return (m_delegateInterface != nullptr) ? m_delegateInterface->IsSafeToInvoke() : false;
+      const IDelegateInterface* delegateInterface = GetDelegateInterfaceInternal();
+      return (delegateInterface != nullptr) ? delegateInterface->IsSafeToInvoke() : false;
     }
 
     bool MAbstractDelegate::IsBoundToInstance(IN const void* InstancePtr) const
     {
-      return (m_delegateInterface != nullptr) ? m_delegateInterface->IsBoundToInstance(InstancePtr) : false;
+      const IDelegateInterface* delegateInterface = GetDelegateInterfaceInternal();
+      return (delegateInterface != nullptr) ? delegateInterface->IsBoundToInstance(InstancePtr) : false;
     }
 
     MDelegateHandle MAbstractDelegate::GetHandle() const
     {
-      return (m_delegateInterface != nullptr) ? m_delegateInterface->GetHandle() : MDelegateHandle::NullHandle;
+      const IDelegateInterface* delegateInterface = GetDelegateInterfaceInternal();
+      return (delegateInterface != nullptr) ? delegateInterface->GetHandle() : MDelegateHandle::NullHandle;
+    }
+        
+    bool operator==(IN const MAbstractDelegate& Lhs, IN const MAbstractDelegate& Rhs)
+    {
+      return Lhs.GetDelegateInterfaceInternal() == Rhs.GetDelegateInterfaceInternal();
     }
 
+    bool operator!=(IN const MAbstractDelegate& Lhs, IN const MAbstractDelegate& Rhs)
+    {
+      return Lhs.GetDelegateInterfaceInternal() != Rhs.GetDelegateInterfaceInternal();
+    }
   }
 }

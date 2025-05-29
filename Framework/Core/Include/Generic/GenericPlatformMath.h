@@ -163,6 +163,21 @@ namespace MEngine
       static FORCEINLINE long double Ceil(IN const long double Val) { return std::ceill(Val); }
 
       /**
+       * Divide two number and converts to the nearest greater or equal integer
+       * 
+       * @param Dividend Value of dividend
+       * @param Divisor  Value of divisor
+       * @return An integer greater or equal to (Dividend / Divisor)
+       */
+      template<typename Type, TEMPLATE_CONDITION_DECLARATION(std::is_integral_v<Type>)>
+      NODISCARD_MSG("Ignoring return value of DivideCeil") static CONSTEXPR FORCEINLINE Type DivideCeil(IN const Type Dividend, IN const Type Divisor)
+      {
+        return (Dividend + Divisor - (Type)1) / Divisor; 
+      }
+
+      RESOLVE_SIGNED_INTS_AMBIGUITY_2ARGS(DivideCeil, NODISCARD_MSG("Ignoring return value of DivideCeil") static CONSTEXPR FORCEINLINE);
+
+      /**
        * Converts a floating-type num to the nearest less or equal integer
        * 
        * @param Val Value to convert
@@ -301,20 +316,9 @@ namespace MEngine
     /**
      *  Template specialization
      */ 
-    template<> FORCEINLINE float MGenericPlatformMath::Abs(IN const float Val)
-    {
-      return std::fabsf(Val);
-    }
-
-    template<> FORCEINLINE double MGenericPlatformMath::Abs(IN const double Val)
-    {
-      return std::fabs(Val);
-    }
-
-    template<> FORCEINLINE long double MGenericPlatformMath::Abs(IN const long double Val)
-    {
-      return std::fabsl(Val);
-    }
+    template<> FORCEINLINE float MGenericPlatformMath::Abs(IN const float Val) { return std::fabsf(Val); }
+    template<> FORCEINLINE double MGenericPlatformMath::Abs(IN const double Val) { return std::fabs(Val); }
+    template<> FORCEINLINE long double MGenericPlatformMath::Abs(IN const long double Val) { return std::fabsl(Val); }
   }
 }
 

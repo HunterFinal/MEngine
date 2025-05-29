@@ -17,12 +17,12 @@ class TestCase1 final : public OTGT::ITestCaseInterface
   public:
     TestCase1() = default;
   private: 
-    void StartupTest_Implementation() const override
+    void StartupTest_Implementation() override
     {
 
     }
 
-    void RunTest_Implementation() const override
+    void RunTest_Implementation() override
     {
       // Abs Test(Integer)
       assert(MMath::Abs(-2) == 2);
@@ -67,6 +67,7 @@ class DelegateTestClass
     void VII_Case1(int a, int b)
     {
       result = a * b;
+      std::cout << result << "=" << a << "*" << b << std::endl;
     }
 
     int I_ConstCase1() const
@@ -83,6 +84,11 @@ class DelegateTestClass
     {
       return f * 6.28f;
     }
+
+    void II_Case1(int a, int b)
+    {
+      std::cout << a + b + a << std::endl;
+    }
   private:
     int result;
 };
@@ -92,20 +98,20 @@ void func(int a, int b)
   std::cout << a / b << std::endl;
 }
 
+void func2(int a, int b)
+{
+  std::cout << a + b << std::endl;
+}
+
 class DelegateTestCase final : public OTGT::ITestCaseInterface
 {
  public:
     DelegateTestCase()
       : m_testClassInstance(new DelegateTestClass())
-      , m_v_ii_staticFuncDele1{&func}
-      , m_v_ii_classMemDele1{m_testClassInstance, &DelegateTestClass::VII_Case1}
-      , m_i_v_const_classMemDele2{m_testClassInstance, &DelegateTestClass::I_ConstCase1}
     {
       Dele.BindStatic(&MMath::Sign);
       Dele2.BindClass(m_testClassInstance, &DelegateTestClass::FF_Case1);
-      std::cout << Dele2(3.14f) << std::endl;
-            
-      Dele2.BindClass(m_testClassInstance, &DelegateTestClass::FF_ConstCase1);
+      Dele3.BindClass(m_testClassInstance, &DelegateTestClass::II_Case1);
     }
     ~DelegateTestCase()
     {
@@ -113,35 +119,32 @@ class DelegateTestCase final : public OTGT::ITestCaseInterface
       m_testClassInstance = nullptr;
     }
   private: 
-    void StartupTest_Implementation() const override
+    void StartupTest_Implementation() override
     {
       assert(m_testClassInstance != nullptr);
-
     }
 
-    void RunTest_Implementation() const override
+    void RunTest_Implementation() override
     {
-      m_v_ii_staticFuncDele1(1,2);
-      m_v_ii_staticFuncDele1.Invoke(2,1);
+      MDelegateHandle handle1 = (MultiDele1 += Dele3);
+      MDelegateHandle handle2 = MultiDele1.AddDelegate(Dele3);
 
-      m_v_ii_classMemDele1(42, 56);
-      assert(m_i_v_const_classMemDele2.Invoke() == (42 * 56));
+      std::cout << (handle1 == handle2) << std::endl;
 
-      m_v_ii_classMemDele1.Invoke(1234, 5678);
-      assert(m_i_v_const_classMemDele2() == (1234 * 5678));
-      assert(Dele.Invoke(-2.0f) == -1.0f);
-      std::cout << Dele.Invoke(3.1415926535f) << std::endl;
+      MultiDele1(34, 56);
 
-      std::cout << Dele2(1234.f) << std::endl;
+      MultiDele1.Remove(handle1);
+      MultiDele1.Invoke(56, 78);
+
+      MultiDele1.Remove(handle2);
     }
   
   private:
     DelegateTestClass* m_testClassInstance;
-    MEngine::Core::MStaticFunctionDelegateInstance<void(int,int)> m_v_ii_staticFuncDele1;
-    MEngine::Core::MClassMethodDelegateInstance<false, DelegateTestClass, void(int, int)> m_v_ii_classMemDele1;
-    MEngine::Core::MClassMethodDelegateInstance<true, DelegateTestClass, int()> m_i_v_const_classMemDele2;
-    MEngine::Core::MDelegate<float(float)> Dele;
-    MEngine::Core::MDelegate<float(float)> Dele2;
+    MDelegate<float(float)> Dele;
+    MDelegate<float(float)> Dele2;
+    MDelegate<void(int, int)> Dele3;
+    MAction<void(int, int)> MultiDele1;
 };
 
 void func()
@@ -169,19 +172,14 @@ int main(int argc, char** argv)
 #elif defined(WINDOWGUI_MAIN)
 #include <windows.h>
 #include <tchar.h>
-int APIENTRY _tWinMain(IN HINSTANCE hInstance, IN HINSTANCE hPrevInstance, IN LPTSTR lpCmdLinem, IN int32 nShowCmd)
+int APIENTRY _tWinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTANCE hPrevInstance, IN MAYBE_UNUSED LPTSTR lpCmdLinem, IN MAYBE_UNUSED int32 nShowCmd)
 #endif
 {
   MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
   logger->Startup();
-  {
-    int a = 5;
-    double b = 3.14;
-    // TODO
-    std::string str = fmt::format("ABCDE{},{}", a, b);
-    std::cout << str << std::endl;
-    logger->Serialize(str.c_str());
-  }
+  logger->Serialize("Test log 1");
+  logger->Serialize("Test log 2");
+  logger->Flush();
 
   {
     IApplicationInterface* app = GenerateAPP();
@@ -207,6 +205,7 @@ int APIENTRY _tWinMain(IN HINSTANCE hInstance, IN HINSTANCE hPrevInstance, IN LP
 
   int a;
   std::cin >> a;
+  
   logger->Terminate();
   delete logger;
 

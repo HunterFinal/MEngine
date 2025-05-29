@@ -3,8 +3,6 @@
 #ifndef ME_DELEGATE_INSTANCE_IMPL_FWD
 #define ME_DELEGATE_INSTANCE_IMPL_FWD
 
-#include "Misc/CoreDefines.h"
-
 namespace MEngine
 {
   namespace Core

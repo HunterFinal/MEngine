@@ -19,14 +19,6 @@ namespace MEngine
       public:
         IOutputInterface() = default;
         virtual ~IOutputInterface() = 0 { };
-      
-      /**
-       * Not copyable and not moveable
-       */
-      IOutputInterface(const IOutputInterface&) = delete;
-      IOutputInterface& operator=(const IOutputInterface&) = delete;
-      IOutputInterface(IOutputInterface&&) noexcept = delete;
-      IOutputInterface& operator=(IOutputInterface&&) noexcept = delete;
 
       /**
        * Start up output 
@@ -41,7 +33,7 @@ namespace MEngine
        * 
        * @param Data String data to serialize
        */
-      virtual void Serialize(IN const ANSICHAR* Data) { };
+      virtual void Serialize(IN MAYBE_UNUSED const ANSICHAR* Data) { };
       /**
        * Flush data stacking in buffer
        */
@@ -51,6 +43,13 @@ namespace MEngine
         virtual void Serialize_Debug(const ANSICHAR* Data) {};
       #endif
 
+      /**
+       * Uncopyable and Unmoveable
+       */
+      IOutputInterface(const IOutputInterface&) = delete;
+      IOutputInterface& operator=(const IOutputInterface&) = delete;
+      IOutputInterface(IOutputInterface&&) noexcept = delete;
+      IOutputInterface& operator=(IOutputInterface&&) noexcept = delete;
     }; 
   }
 }

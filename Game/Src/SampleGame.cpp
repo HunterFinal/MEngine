@@ -18,7 +18,7 @@ void SampleGame::Startup()
 
 }
 
-void SampleGame::Update(float DeltaTime)
+void SampleGame::Update(IN [[maybe_unused]] float DeltaTime)
 {
 
 }

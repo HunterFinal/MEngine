@@ -10,6 +10,7 @@
 #include "HAL/Platform.h"
 #include "Macro/TypeAliasMacro.h"
 #include "Misc/CoreDefines.h"
+
 #include <cassert>
 #include <type_traits>
 
@@ -21,27 +22,37 @@ namespace MEngine
     class MDelegate;
     
     template<typename ReturnType, typename... ArgTypes>
-    class CORE_API MDelegate<ReturnType(ArgTypes...)> : public MAbstractDelegate
+    class MDelegate<ReturnType(ArgTypes...)> : public MAbstractDelegate
     {
-      private:
+      public:
         TYPEDEF(ReturnType(ArgTypes...), FuncType);
         TYPEDEF(MAbstractDelegate, Super);
         TYPEDEF(IDelegateInstanceInterface<FuncType>, IDelegateInstanceInterfaceType);
+        
         // Avoid macro comma detection
         #define COMMA , 
         template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<false COMMA UserClass COMMA FuncType>::Type, MemFuncType);
-        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<true COMMA UserClass COMMA FuncType>::Type, ConstMemFuncType);
+        template<typename UserClass> TYPEDEF(typename ClassMemberFuncPtrType<true COMMA const UserClass COMMA FuncType>::Type, ConstMemFuncType);
         #undef COMMA
 
       public:
         explicit MDelegate() = default;
         ~MDelegate() = default;
-        explicit MDelegate(TYPE_NULLPTR)
+        FORCEINLINE explicit MDelegate(TYPE_NULLPTR)
         { }
     
         MDelegate(MDelegate&& Other) noexcept = default;
         MDelegate& operator=(MDelegate&& Other) noexcept = default;
-    
+
+        FORCEINLINE MDelegate(const MDelegate& Other)
+        {
+          CopyImpl(Other);
+        }
+        FORCEINLINE MDelegate& operator=(const MDelegate& Other)
+        {
+          CopyImpl(Other);
+          return *this;
+        }
         /**
          * Bind function to delegate
          */
@@ -52,22 +63,22 @@ namespace MEngine
         // Regular c/c++ function
         FORCEINLINE void BindStatic(IN typename MStaticFunctionDelegateInstance<FuncType>::FuncPtrType FuncPtr)
         {
-          Super::CreateInstance<MStaticFunctionDelegateInstance<FuncType>>(FuncPtr);
+          Super::CreateDelegateInstance<MStaticFunctionDelegateInstance<FuncType>>(FuncPtr);
         }
 
         // Struct/Class member function
         // non-const version
         template<typename UserClass>
-        FORCEINLINE void BindClass(IN UserClass* InstancePtr, IN ClassMemberFuncPtrType<false, UserClass, FuncType>::Type MemFuncPtr)
+        FORCEINLINE void BindClass(IN UserClass* InstancePtr, IN MemFuncType<UserClass> MemFuncPtr)
         {
           static_assert(!std::is_const_v<UserClass>, "Can't bind a delegate with const instance pointer and non-const member function.");
-          Super::CreateInstance<MClassMethodDelegateInstance<false, UserClass, FuncType>>(InstancePtr,MemFuncPtr);
+          Super::CreateDelegateInstance<MClassMethodDelegateInstance<false, UserClass, FuncType>>(InstancePtr,MemFuncPtr);
         }
         // const version
         template<typename UserClass>
-        FORCEINLINE void BindClass(IN const UserClass* InstancePtr, IN ClassMemberFuncPtrType<true, const UserClass, FuncType>::Type ConstMemFuncPtr)
+        FORCEINLINE void BindClass(IN const UserClass* InstancePtr, IN ConstMemFuncType<UserClass> ConstMemFuncPtr)
         {
-          Super::CreateInstance<MClassMethodDelegateInstance<true, const UserClass, FuncType>>(InstancePtr, ConstMemFuncPtr);
+          Super::CreateDelegateInstance<MClassMethodDelegateInstance<true, const UserClass, FuncType>>(InstancePtr, ConstMemFuncPtr);
         }
     
         #pragma endregion MDelegate bind function group
@@ -85,9 +96,6 @@ namespace MEngine
         {
           return this->Invoke(std::forward<ArgTypes>(Args)...);
         }
-        
-        MDelegate(const MDelegate& Other) = delete;
-        MDelegate& operator=(const MDelegate& Other) = delete;
 
       private:
         FORCEINLINE IDelegateInstanceInterfaceType* GetDelegateInterfaceInternal()
@@ -98,6 +106,27 @@ namespace MEngine
         FORCEINLINE const IDelegateInstanceInterfaceType* GetDelegateInterfaceInternal() const
         {
           return static_cast<const IDelegateInstanceInterfaceType*>(Super::GetDelegateInterfaceInternal());
+        }
+
+      private:
+        void CopyImpl(const MDelegate& Other)
+        {
+          if (this == &Other)
+          {
+            return;
+          }
+
+          MDelegate temp{};
+
+          {
+            const IDelegateInstanceInterface<ReturnType(ArgTypes...)>* delegateInterface = Other.GetDelegateInterfaceInternal();
+            if (delegateInterface != nullptr)
+            {
+              delegateInterface->CreateCopy(temp);
+            }
+          }
+
+          *this = std::move(temp);
         }
     };
   }

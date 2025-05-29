@@ -10,17 +10,18 @@ namespace MEngine
 {
   namespace Core
   {
-    struct CORE_API ConsoleLogger : public IOutputInterface
+    struct ConsoleLogger : public IOutputInterface
     {
       public:
-        ConsoleLogger();
-        virtual ~ConsoleLogger();
+        CORE_API ConsoleLogger();
+        CORE_API virtual ~ConsoleLogger() = default;
 
         /**Start of IOutputInterface interface */
         #pragma region IOutputInterface interface
-          virtual void Startup() override;
-          virtual void Terminate() override;
-          virtual void Serialize(IN const ANSICHAR* Data) override;
+          CORE_API virtual void Startup() override;
+          CORE_API virtual void Terminate() override;
+          CORE_API virtual void Serialize(IN const ANSICHAR* Data) override;
+          CORE_API virtual void Flush() override;
         #pragma endregion IOutputInterface interface
         /**End of IOutputInterface interface */
 

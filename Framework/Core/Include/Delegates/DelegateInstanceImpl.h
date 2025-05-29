@@ -3,6 +3,7 @@
 #ifndef ME_DELEGATE_INSTANCE_IMPL
 #define ME_DELEGATE_INSTANCE_IMPL
 
+#include "Delegates/AbstractDelegate.h"
 #include "Delegates/DelegateInstanceImplFwd.h"
 #include "Delegates/FunctionPointerTypeTraits.h"
 #include "Delegates/IDelegateInstanceInterface.h"
@@ -17,13 +18,21 @@ namespace MEngine
     template<typename FuncType>
     class MDelegateInstanceHandleHolder : public IDelegateInstanceInterface<FuncType>
     {
+      /**
+       * Default constructor
+       * Access only in derived class
+       */
       protected:
         explicit MDelegateInstanceHandleHolder();
 
+      /**
+       * Destructor
+       */
       public:
         virtual ~MDelegateInstanceHandleHolder();
+
         /**Start of IDelegateInterface interface */
-        FORCEINLINE MDelegateHandle GetHandle() const final;
+        FORCEINLINE MDelegateHandle GetHandle() const override final;
         /**End of IDelegateInterface interface */
 
       private:
@@ -52,7 +61,6 @@ namespace MEngine
     /**
      * Concentrate delegate instance
      */
-
     /**
      * regular c/c++ functions delegate instance
      */
@@ -65,18 +73,28 @@ namespace MEngine
         TYPEDEF(ReturnType(*)(ArgTypes...), FuncPtrType);
         TYPEDEF(MDelegateInstanceHandleHolder<ReturnType(ArgTypes...)>, Super);
 
+        /**
+         * Constructor
+         * 
+         * @param StaticFuncPtr Regular c/c++ function pointer
+         */
         explicit MStaticFunctionDelegateInstance(IN FuncPtrType StaticFuncPtr);
+
+        /**
+         * Destructor
+         */
         ~MStaticFunctionDelegateInstance();
 
         /**Start of IDelegateInterface interface */
-        void* GetInstancePtr() const final;
-        bool IsSafeToInvoke() const final;
-        bool IsBoundToInstance(IN const void* InstancePtr) const final;
+        void* GetInstancePtr() const override final;
+        bool IsSafeToInvoke() const override final;
+        bool IsBoundToInstance(IN const void* InstancePtr) const override final;
         /**End of IDelegateInterface interface */
 
         /**Start of IDelegateInstanceInterface interface */
-        ReturnType Invoke(IN ArgTypes... Args) const final;
-        ReturnType operator()(IN ArgTypes... Args) const final;
+        void CreateCopy(OUT MAbstractDelegate& DelegateCopy) const override final;
+        ReturnType Invoke(IN ArgTypes... Args) const override final;
+        ReturnType operator()(IN ArgTypes... Args) const override final;
         /**End of IDelegateInstanceInterface interface */
 
       private:
@@ -118,6 +136,11 @@ namespace MEngine
       return false;
     }
 
+    template<typename ReturnType, typename...ArgTypes>
+    void MStaticFunctionDelegateInstance<ReturnType(ArgTypes...)>::CreateCopy(OUT MAbstractDelegate& DelegateCopy) const
+    {
+      DelegateCopy.CreateDelegateInstance<MStaticFunctionDelegateInstance>(*this);
+    }
 
     template<typename ReturnType, typename... ArgTypes>
     ReturnType MStaticFunctionDelegateInstance<ReturnType(ArgTypes...)>::Invoke(IN ArgTypes... Args) const
@@ -150,18 +173,29 @@ namespace MEngine
         TYPEDEF(MDelegateInstanceHandleHolder<ReturnType(ArgTypes...)>, Super);
         #undef COMMA
 
+        /**
+         * Constructor
+         * 
+         * @param UserInstancePtr Pointer of user instance object
+         * @param MemberFuncPtr   UserClass member function pointer 
+         */
         explicit MClassMethodDelegateInstance(IN UserClass* UserInstancePtr, IN MemberFuncType MemberFuncPtr);
+
+        /**
+         * Destructor
+         */
         ~MClassMethodDelegateInstance();
 
         /**Start of IDelegateInterface interface */
-        void* GetInstancePtr() const final;
-        bool IsSafeToInvoke() const final;
-        bool IsBoundToInstance(IN const void* InstancePtr) const final;
+        void* GetInstancePtr() const override final;
+        bool IsSafeToInvoke() const override final;
+        bool IsBoundToInstance(IN const void* InstancePtr) const override final;
         /**End of IDelegateInterface interface */
 
         /**Start of IDelegateInstanceInterface interface */
-        ReturnType Invoke(IN ArgTypes... Args) const final;
-        ReturnType operator()(IN ArgTypes... Args) const final;
+        void CreateCopy(OUT MAbstractDelegate& DelegateCopy) const override final;
+        ReturnType Invoke(IN ArgTypes... Args) const override final;
+        ReturnType operator()(IN ArgTypes... Args) const override final;
         /**End of IDelegateInstanceInterface interface */
 
       private:
@@ -178,6 +212,7 @@ namespace MEngine
       assert(m_userInstancePtr != nullptr);
       assert(m_memberFuncPtr != nullptr);
     }
+
     template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>
     MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)>::~MClassMethodDelegateInstance()
     {
@@ -206,6 +241,12 @@ namespace MEngine
     }
 
     template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>
+    void MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)>::CreateCopy(OUT MAbstractDelegate& DelegateCopy) const
+    {
+      DelegateCopy.CreateDelegateInstance<MClassMethodDelegateInstance>(*this);
+    }
+
+    template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>
     ReturnType MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)>::Invoke(ArgTypes... Args) const
     {
       assert(m_userInstancePtr != nullptr);
@@ -219,7 +260,7 @@ namespace MEngine
     {
       return this->Invoke(std::forward<ArgTypes>(Args)...);
     }
-    #pragma endregion Regular C/C++ functions delegate instance
+    #pragma endregion Struct/Class member functions delegate
     /**End of struct/class member functions delegate instance */
   }
 }

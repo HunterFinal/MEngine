@@ -10,7 +10,7 @@ class GAME_API SampleGame final : public IApplicationInterface
   public:
     ~SampleGame();
     void Startup() override final;
-    void Update(IN float DeltaTime) override final;
+    void Update(IN [[maybe_unused]] float DeltaTime) override final;
     void Terminate() override final;
 
   private:

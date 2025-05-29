@@ -30,16 +30,16 @@ namespace OTGT
       /**
        * Start up test
        */
-      void StartupTest_Interface() const;
+      void StartupTest_Interface();
 
       /**
        * Run test case
        */
-      void RunTest_Interface() const;
+      void RunTest_Interface();
 
     private:
-      virtual void RunTest_Implementation() const = 0;
-      virtual void StartupTest_Implementation() const = 0;
+      virtual void RunTest_Implementation() = 0;
+      virtual void StartupTest_Implementation() = 0;
   };
 }
 

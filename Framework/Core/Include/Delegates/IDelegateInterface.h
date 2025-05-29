@@ -7,90 +7,89 @@
 #include "Misc/CoreDefines.h"
 #include "Macro/CPPVerMacro.h"
 
+/**
+ * Handle to a specific delegate
+ */
+struct CORE_API MDelegateHandle
+{
+  /**
+   * Delegate handle initialization protocol
+   */
+  enum InitProtocol
+  {
+    GenerateNew,
+  };
+
+  /**Null Handle with ID = 0 */
+  static const MDelegateHandle NullHandle;
+
+  /**
+   * Default constructor
+   * Generate an invalid handle with ID = 0
+   */
+  explicit CONSTEXPR MDelegateHandle()
+    : m_handleID(0)
+  { }
+
+  /**
+   * Constructor that use protocol
+   * 
+   * @param Protocol Initialization protocol
+   */
+  explicit MDelegateHandle(InitProtocol Protocol); 
+
+  /**
+   * Check if this handle is binding a valid delegate
+   * 
+   * @return true if is binding a valid delegate, false otherwise
+   */
+  bool IsValid() const;
+
+  /**
+   * Clear handle to indicate it is no longer bound delegate
+   */
+  void Reset();
+
+  /**
+   * Check two handles for equality
+   * 
+   * @param Lhs The first handle
+   * @param Rhs The second handle
+   * @return true if two handles have same ID, false otherwise
+   */
+  friend CORE_API bool operator==(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
+
+  /**
+   * Check two handles for inequality
+   * 
+   * @param Lhs The first handle
+   * @param Rhs The second handle
+   * @return true if two handles have different ID, false otherwise
+   */
+  friend CORE_API bool operator!=(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
+
+  private:
+
+    /**
+     * Generate new handle ID
+     * 
+     * @return new handle ID that differents to another handles
+     */
+    static uint64 GenerateNewID();
+
+    uint64 m_handleID;
+
+};
+
 namespace MEngine
 {
   namespace Core
   {
     /**
-     * Handle to a specific delegate
-     */
-    struct CORE_API MDelegateHandle
-    {
-      /**
-       * Delegate handle initialization protocol
-       */
-      enum InitProtocol
-      {
-        GenerateNew,
-      };
-
-      /**Null Handle with ID = 0 */
-      static const MDelegateHandle NullHandle;
-
-      /**
-       * Default constructor
-       * Generate an invalid handle with ID = 0
-       */
-      explicit CONSTEXPR MDelegateHandle()
-        : m_handleID(0)
-      { }
-
-      /**
-       * Constructor that use protocol
-       * 
-       * @param Protocol Initialization protocol
-       */
-      explicit MDelegateHandle(InitProtocol Protocol); 
-
-      /**
-       * Check if this handle is binding a valid delegate
-       * 
-       * @return true if is binding a valid delegate, false otherwise
-       */
-      bool IsValid() const;
-
-      /**
-       * Clear handle to indicate it is no longer bound delegate
-       */
-      void Reset();
-
-      /**
-       * Check two handles for equality
-       * 
-       * @param Lhs The first handle
-       * @param Rhs The second handle
-       * @return true if two handles have same ID, false otherwise
-       */
-      friend CORE_API bool operator==(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
-
-      /**
-       * Check two handles for inequality
-       * 
-       * @param Lhs The first handle
-       * @param Rhs The second handle
-       * @return true if two handles have different ID, false otherwise
-       */
-      friend CORE_API bool operator!=(const MDelegateHandle& Lhs, const MDelegateHandle& Rhs);
-
-      private:
-
-        /**
-         * Generate new handle ID
-         * 
-         * @return new handle ID that differents to another handles
-         */
-        static uint64 GenerateNewID();
-
-        uint64 m_handleID;
-
-    };
-
-    /**
      * Delegate instance interface
      */
     struct IDelegateInterface
     {
-      
       /**
        * Destructor
        */
@@ -127,6 +126,5 @@ namespace MEngine
     };
   }
 }
-
 
 #endif // ME_DELEGATE_INTERFACE
