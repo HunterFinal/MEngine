@@ -1,10 +1,11 @@
 ﻿#pragma once
 
-#ifndef ME_CORE_ALLOCATOR
-#define ME_CORE_ALLOCATOR
+#ifndef _ME_CORE_ALLOCATOR_
+#define _ME_CORE_ALLOCATOR_
 
 #include "HAL/Platform.h"
 #include "Misc/CoreDefines.h"
+
 #include <cassert>
 #include <limits>
 #include <type_traits>
@@ -63,8 +64,7 @@ namespace MEngine
         bool bInvalidAlloc = (ByteSizePerElement < static_cast<SIZE_T>(1)) || (ByteSizePerElement > static_cast<SIZE_T>(std::numeric_limits<int32>::max()));
         assert(!bInvalidAlloc);
 
-        // TODO
-        // m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
+        // TODO m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
         // (ElementNum * ByteSizePerElement == 0) || (m_data != nullptr): free(m_data) first and return nullptr; 
         m_data = reinterpret_cast<AllocatorElement*>(::realloc(m_data, ElementNum * ByteSizePerElement));
       }
@@ -102,5 +102,4 @@ namespace MEngine
   }
 }
 
-
-#endif // ME_CORE_ALLOCATOR
+#endif // _ME_CORE_ALLOCATOR_

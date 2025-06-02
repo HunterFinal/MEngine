@@ -4,6 +4,7 @@
 #include "OTGTAPI.h"
 #include "ApplicationAPI.h"
 #include "Delegates/Delegate.h"
+#include "Event/WindowEventInstances.h"
 
 // TODO
 #include <spdlog/fmt/bundled/format.h>
@@ -149,6 +150,11 @@ void func()
   std::cout << 42 << std::endl;
 }
 
+void func_out(uint32 a, uint32 b)
+{
+  std::cout << "Test" << a << "tseT" << b;
+}
+
 class AAA
 {
   public:
@@ -199,6 +205,18 @@ int APIENTRY _tWinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINS
     pTest->RunTest_Interface();
     delete pTest;
   }
+
+  MEngine::Core::MWindowResizeEventInstance* p;
+  p = new MEngine::Core::MWindowResizeEventInstance{};
+
+  p->ResizeEvent.AddStatic(&func_out);
+
+  p->InvokeEvent(100u, 200u);
+  p->InvokeEvent(200u, 300u);
+
+  // MEngine::Core::MWindowMoveEventInstance aaa;
+
+  delete p;
 
   int a;
   std::cin >> a;

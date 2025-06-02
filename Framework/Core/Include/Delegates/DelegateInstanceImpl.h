@@ -167,7 +167,7 @@ namespace MEngine
     class MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)> final : public MDelegateInstanceHandleHolder<ReturnType(ArgTypes...)>
     {
       public:
-        // TODO Avoid macro comma detection
+        // TODO: Avoid macro comma detection
         #define COMMA ,
         TYPEDEF(typename ClassMemberFuncPtrType<IsConst COMMA UserClass COMMA ReturnType(ArgTypes...)>::Type, MemberFuncType);
         TYPEDEF(MDelegateInstanceHandleHolder<ReturnType(ArgTypes...)>, Super);

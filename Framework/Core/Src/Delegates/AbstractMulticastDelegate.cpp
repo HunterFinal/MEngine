@@ -82,8 +82,7 @@ namespace MEngine
     {
       for (const std::unique_ptr<MAbstractDelegate>& delegatePtr : m_delegateList)
       {
-        // TODO
-        // friend class breaks encapsulation
+        // TODO friend class breaks encapsulation
         const IDelegateInterface* delegateInterface = delegatePtr->GetDelegateInterfaceInternal();
         if ((delegateInterface != nullptr) && delegateInterface->IsSafeToInvoke())
         {
@@ -96,8 +95,7 @@ namespace MEngine
 
     bool MAbstractMulticastDelegate::IsBoundToInstance(IN const void* InstancePtr) const
     {
-      // TODO
-      // friend class breaks encapsulation
+      // TODO friend class breaks encapsulation
       for (const std::unique_ptr<MAbstractDelegate>& delegatePtr : m_delegateList)
       {
         const IDelegateInterface* delegateInterface = delegatePtr->GetDelegateInterfaceInternal();

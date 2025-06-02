@@ -5,9 +5,6 @@
 #ifndef ME_CORE_OUTPUT_INTERFACE
 #define ME_CORE_OUTPUT_INTERFACE
 
-// TODO
-#include "HAL/Platform.h"
-
 #include "Misc/CoreDefines.h"
 
 namespace MEngine

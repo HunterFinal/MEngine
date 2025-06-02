@@ -104,12 +104,12 @@ namespace MEngine
       /**
        * Compact container of delegate
        */
-      void CompactDelegateContainer();
+      FORCEINLINE void CompactDelegateContainer();
 
       /**
        * Shrink the capacity of container
        */
-      void ShrinkDelegateContainer();
+      FORCEINLINE void ShrinkDelegateContainer();
 
       /**
        * Remove specific delegate from container
@@ -117,7 +117,7 @@ namespace MEngine
        * @param Delegate Delegate to remove
        * @return Remove count of delegate(may greater than 1 if have same delegates)
        */
-      size_t EraseDelegate(const std::unique_ptr<MAbstractDelegate>& DelegatePtr);
+      FORCEINLINE size_t EraseDelegate(const std::unique_ptr<MAbstractDelegate>& DelegatePtr);
 
     private:
       std::vector<std::unique_ptr<MAbstractDelegate>> m_delegateList;
@@ -174,8 +174,7 @@ namespace MEngine
       {
         std::unique_ptr<MAbstractDelegate>& delegatePtr = m_delegateList[listIndex];
 
-        // TODO 
-        // friend class breaks encapsulation
+        // TODO friend class breaks encapsulation
         IDelegateInterface* delegateInstance = delegatePtr->GetDelegateInterfaceInternal();
         if ((delegateInstance == nullptr) || !delegateInstance->IsSafeToInvoke())
         {

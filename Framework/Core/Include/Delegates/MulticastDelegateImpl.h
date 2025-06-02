@@ -61,8 +61,7 @@ namespace MEngine
 
         FORCEINLINE MDelegateHandle AddDelegate(const SingleDelegate& Delegate)
         {
-          // TODO
-          // need research:decay-copy
+          // TODO need research:decay-copy
           // extra copy and destructor cause performance decrease
           return Super::AddDelegateInstance(CopyTemp(Delegate));
         }

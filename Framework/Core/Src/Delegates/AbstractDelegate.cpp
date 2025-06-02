@@ -47,7 +47,7 @@ namespace MEngine
 
     bool operator!=(IN const MAbstractDelegate& Lhs, IN const MAbstractDelegate& Rhs)
     {
-      return Lhs.GetDelegateInterfaceInternal() != Rhs.GetDelegateInterfaceInternal();
+      return !(Lhs == Rhs);
     }
   }
 }

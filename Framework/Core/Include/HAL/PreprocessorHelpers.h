@@ -4,7 +4,7 @@
 #ifndef MENGINE_PREPROC_HELPERS
 #define MENGINE_PREPROC_HELPERS
 
-// TODO
+// TODO Should not include this one here
 #include "HAL/PlatformHeader.h"
 
 #ifndef PREPROCESSOR_PLACE_HOLDER

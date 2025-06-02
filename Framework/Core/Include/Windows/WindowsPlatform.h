@@ -26,8 +26,7 @@ namespace MPlatform
 
 TYPEDEF(MPlatform::MWindowsPlatformTypes, MPlatformTypes);
 
-// TODO
-// DONT DEFINE THIS HERE!!!!!!!
+// TODO DONT DEFINE THIS HERE!!!!!!!
 // DLL export and import definitions
 // 動的ライブラリマクロ定義
 #define DLLEXPORT __declspec(dllexport)
@@ -59,13 +58,11 @@ TYPEDEF(MPlatform::MWindowsPlatformTypes, MPlatformTypes);
   #define CONSTEXPR
 #endif
 
-// TODO
-// Unknown macros(need research)
+// TODO Unknown macros(need research)
 #undef USE_UTF8_CHAR
 #define USE_UTF8_CHAR 0
 
-// TODO
-// __nop() before __debugbreak()
+// TODO why use __nop() before __debugbreak()
 #define PLATFORM_BREAK() \
   { \
     __nop(), __debugbreak(); \

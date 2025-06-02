@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef ME_DELEGATE_IMPL
-#define ME_DELEGATE_IMPL
+#ifndef _ME_DELEGATE_IMPL_
+#define _ME_DELEGATE_IMPL_
 
 #include "Delegates/AbstractDelegate.h"
 #include "Delegates/DelegateFactory.h"
@@ -57,7 +57,11 @@ namespace MEngine
         }
         FORCEINLINE MDelegate& operator=(const MDelegate& Other)
         {
-          CopyImpl(Other);
+          if (this != &Other)
+          {
+            CopyImpl(Other);
+          }
+
           return *this;
         }
 
@@ -153,11 +157,6 @@ namespace MEngine
       private:
         void CopyImpl(const MDelegate& Other)
         {
-          if (this == &Other)
-          {
-            return;
-          }
-
           MDelegate temp{};
 
           {
@@ -174,4 +173,4 @@ namespace MEngine
   }
 }
 
-#endif // ME_DELEGATE_IMPL
+#endif // _ME_DELEGATE_IMPL_

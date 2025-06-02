@@ -1,29 +1,38 @@
-﻿#pragma once
+﻿/**
+ * Module : Delegates
+ * 
+ * デリゲート基底クラス
+ */
 
-#ifndef ME_ABSTRACT_DELEGATE
-#define ME_ABSTRACT_DELEGATE
+#pragma once
 
-#include "Math/MEngineMathUtility.h"
-#include "Misc/CoreDefines.h"
+#ifndef _ME_ABSTRACT_DELEGATE_
+#define _ME_ABSTRACT_DELEGATE_
+
 #include "Allocation/Allocator.h"
 #include "Delegates/IDelegateInterface.h"
-
-#include <memory>
+#include "Math/MEngineMathUtility.h"
+#include "Misc/CoreDefines.h"
 
 namespace MEngine
 {
   namespace Core
   {
     /**
-     * Base of singlecast delegate
-     * Non thread-safe
-     * Use it without multithreaded programming
+     * @brief Base of singlecast delegate
+     * 
+     *        Non thread-safe,use it without multithreaded programming
+     * 
+     *        シングルキャストデリゲートの基底クラス
+     * 
+     *        -----------------------------------------------------------
+     * 
+     *        ※スレッドセーフではない。マルチスレッドプログラミングに使わない
+     * 
+     *        -----------------------------------------------------------
      */
     class MAbstractDelegate
     {
-      /**
-       * friend class
-       */
       #pragma region Friend class
       template<typename>
       friend class MStaticFunctionDelegateInstance;
@@ -34,111 +43,180 @@ namespace MEngine
       friend class MAbstractMulticastDelegate;
       #pragma endregion Friend class
       
-      /**
-       * Default constructor
-       * Access only in derived class
-       */
       protected:
+        /**
+         * @brief Default constructor.Access only in derived class
+         * 
+         *        デフォルトコンストラクタ。自身と派生クラスにしかアクセスできない
+         */
         explicit MAbstractDelegate() = default;
-
-      /**
-       * Destructor
-       */
-      public:
+        public:
+  
+        /**
+         * @brief Destructor
+         * 
+         *        デストラクタ
+         */
         CORE_API virtual ~MAbstractDelegate();
 
         /**
-         * Move constructor
+         * @brief Move constructor
+         * 
+         *        ムーブコンストラクタ
          */
         MAbstractDelegate(IN MAbstractDelegate&& Other) noexcept = default;
+
+        /**
+         * @brief Move assignment
+         * 
+         *        ムーブアサインメント
+         */
         MAbstractDelegate& operator=(IN MAbstractDelegate&& Other) noexcept = default;
 
         /**
-         * Equality compare operator
+         * @brief Check if two delegates have the same handle
+         * 
+         *        二つのデリゲートが同じハンドルを持っているかを確認する
+         * 
+         * @param Lhs The first delegate
+         * @param Rhs The second delegate
+         * @return true if two delegate's instances have same handle, false otherwise
+         * 
+         *         同じハンドルを持っていればtrue、それ以外の状況はfalse
          */
         CORE_API friend bool operator==(IN const MAbstractDelegate& Lhs, IN const MAbstractDelegate& Rhs);
         CORE_API friend bool operator!=(IN const MAbstractDelegate& Lhs, IN const MAbstractDelegate& Rhs);
         
         /**
-         * Unbind delegate instance
+         * @brief Unbind delegate instance
+         * 
+         *        デリゲートの登録を解除する
          */
         CORE_API void Unbind();
 
         /**
-         * Get instance ptr used by delegate instance as specific <UserClass> type
+         * @brief Get instance pointer used by delegate instance as specific <UserClass> type
          * 
-         * @template UserClass User-defined class type
-         * @return User instance ptr as specific type, return nullptr if it's not inherited to <UserClass>
+         *        デリゲートに登録したユーザー定義クラスインスタントポインタを取得
+         * 
+         * @tparam UserClass User-defined class
+         * 
+         *         ユーザー定義クラス
+         * 
+         * @return User instance pointer as specific type,
+         *         nullptr if it doesn't inherit to <UserClass> or doesn't have an instance pointer
+         * 
+         *         ユーザー定義クラスインスタンスが<UserClass>じゃないもしくは存在しない場合、nullptrを返す
          */
         template<typename UserClass>
         FORCEINLINE UserClass* GetTypedInstancePtr() const;
 
         /**
-         * Check if this delegate is bound to a valid delegate instance
+         * @brief Check if this delegate is bound to a valid delegate instance
+         * 
+         *        デリゲートがバインドされている状態を確認する
          * 
          * @return true if bound to a valid delegate instance, false otherwise
+         * 
+         *         バインドされていたらtrueを返す、それ以外falseを返す
          */
         CORE_API bool IsBound() const;
 
         /**
-         * Check if this delegate has a user instance ptr
+         * @brief Check if this delegate has a user instance pointer
          * 
-         * @param InstancePtr User instance ptr
-         * @return true if has a valid delegata instance and using a user instance ptr, false otherwise
+         * @param InstancePtr User instance pointer
+         * 
+         *        ユーザー定義クラスインスタンスポインタ
+         * 
+         * @return true if has a valid delegata instance and using a user instance pointer, false otherwise
+         * 
+         *         有効なデリゲートインスタンスかつユーザー定義クラスインスタンスポインタを持っていればtrueを返す、それ以外falseを返す
          */
         CORE_API bool IsBoundToInstance(IN const void* InstancePtr) const;
 
         /**
-         * Get handle that is keeping by delegate instance
+         * @brief Get handle that is keeping by delegate instance
+         * 
+         *        ハンドルを返す
          * 
          * @return handle of delegate instance if delegate instance is valid, invalid handle otherwise
+         * 
+         *         デリゲートインスタントが有効だったら有効なハンドルを返す、それ以外無効なハンドルを返す
          */
         CORE_API MDelegateHandle GetHandle() const;
         
       protected:
         /**
-         * Create a delegate instance
-         * Access only in a derived class
+         * @brief Create a delegate instance.Access only in a derived class.
+         *        
+         *        デリゲートインスタントを作る。自身もしくは派生クラスしかアクセスできない。
          * 
-         * @template DelegateInstanceType Delegate instance that wants to create
-         * @template... InstanceConstrucParamTypes Parameter types to construct delegate instance
+         * @tparam DelegateInstanceType Delegate instance type that wants to create
+         * 
+         *         デリゲートインスタントの型
+         * 
+         * @tparam InstanceConstrucParamTypes Parameter types to construct delegate instance
+         * 
+         *         デリゲートインスタントを作るための可変長引数の型 
+         * 
          * @param Params Parameters use to construct delegate instance
+         * 
+         *        デリゲートインスタントを作るための可変長引数
          */
         template<typename DelegateType, typename... InstanceConstrucParamTypes>
         FORCEINLINE void CreateDelegateInstance(IN InstanceConstrucParamTypes... Params);
         
         /**
-         * Get delegate instance interface
-         * Access only in a derived class
+         * @brief Get delegate instance interface.Access only in a derived class.
+         * 
+         *        デリゲートインスタントインタフェースを取得。自身もしくは派生クラスしかアクセスできない。
          * 
          * @return Delegate instance interface, return nullptr if is not allocated
+         * 
+         *         デリゲートインスタントインタフェース
+         * 
+         * @note   インスタントが作られていないとnullptrを返す
          */
         FORCEINLINE IDelegateInterface* GetDelegateInterfaceInternal();
+
+        /**
+         * @brief Get delegate instance interface.Access only in a derived class.
+         * 
+         *        デリゲートインスタントインタフェースを取得。自身もしくは派生クラスしかアクセスできない。
+         * 
+         * @return Delegate instance interface, return nullptr if is not allocated
+         * 
+         *         デリゲートインスタントインタフェース
+         * 
+         * @note   インスタントが作られていないとnullptrを返す
+         */
         FORCEINLINE const IDelegateInterface* GetDelegateInterfaceInternal() const;
 
       private:
         /**
-         * Allocate memory for delegate instance
+         * @brief Allocate memory for delegate instance
+         * 
+         *        デリゲートインスタントメモリ確保
          * 
          * @param AllocSize Size(byte) of memory allocation
+         * 
+         *        確保するメモリのサイズ（バイト単位）
+         * 
          * @return Pointer of allocated delegate instance
+         * 
+         *         確保したメモリの先頭アドレス
          */
-        void* AllocateInternal(IN SIZE_T AllocSize)
-        {
-          // TODO
-          // 16 is a magic number of block size of each delegate instance;
-          const SIZE_T delegateInstanceElementNum = MMath::DivideCeil(AllocSize, static_cast<SIZE_T>(16));
-          m_allocator.Allocate(delegateInstanceElementNum, static_cast<SIZE_T>(16));
-
-          return reinterpret_cast<void*>(m_allocator.GetAllocation());
-        }
+        FORCEINLINE void* AllocateInternal(IN SIZE_T AllocSize);
 
       private:
         DefaultAllocator<IDelegateInterface> m_allocator; // Allocator that manage memory of delegate instance
 
       public:
         /**
-         * Uncopyable
+         * @breif Uncopyable
+         * 
+         *        コピー禁止
          */
         MAbstractDelegate(const MAbstractDelegate&) = delete;
         MAbstractDelegate& operator=(const MAbstractDelegate&) = delete;
@@ -156,12 +234,13 @@ namespace MEngine
       const IDelegateInterface* delegateInterface = m_allocator.GetAllocation();
 
       // placement new must call destructor manually
+      // プレイスメントnewで作ったインスタントは手動でデストラクタを呼ぶ
       if(delegateInterface != nullptr)
       {
         delegateInterface->~IDelegateInterface();
       }
 
-      new(AllocateInternal(sizeof(DelegateType))) DelegateType(std::forward<InstanceConstrucParamTypes>(Params)...);
+      new(AllocateInternal(sizeof(DelegateType))) DelegateType(Params...);
     }
 
     IDelegateInterface* MAbstractDelegate::GetDelegateInterfaceInternal()
@@ -173,7 +252,17 @@ namespace MEngine
     {
       return m_allocator.GetAllocation();
     }
+
+    void* MAbstractDelegate::AllocateInternal(IN SIZE_T AllocSize)
+    {
+      // TODO 16 is a magic number of block size of each delegate instance
+      // マジックナンバー16はデリゲートインスタントのメモリを確保するメモリブロックのサイズ
+      const SIZE_T delegateInstanceElementNum = MMath::DivideCeil(AllocSize, static_cast<SIZE_T>(16));
+      m_allocator.Allocate(delegateInstanceElementNum, static_cast<SIZE_T>(16));
+
+      return reinterpret_cast<void*>(m_allocator.GetAllocation());
+    }
   }
 }
 
-#endif // ME_ABSTRACT_DELEGATE
+#endif // _ME_ABSTRACT_DELEGATE_
