@@ -47,7 +47,6 @@ class TestCase1 final : public OTGT::ITestCaseInterface
       assert(MMath::Max(-22, -33) == -22);
 
       // 
-    
 
       
       // Sign Test(Integer)

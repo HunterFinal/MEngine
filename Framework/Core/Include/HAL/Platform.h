@@ -51,6 +51,8 @@ TYPEDEF(MPlatformTypes::int64, int64);
 TYPEDEF(MPlatformTypes::ANSICHAR, ANSICHAR);
 // ?-bit character(depends on platform)
 TYPEDEF(MPlatformTypes::WIDECHAR, WIDECHAR);
+// The switchable char. Either ANSICHAR or WIDECHAR
+TYPEDEF(MPlatformTypes::TCHAR, TCHAR);
 // Unicode 8-bit character
 TYPEDEF(MPlatformTypes::UTF8CHAR, UTF8CHAR);
 // Unicode 16-bit character
@@ -157,5 +159,56 @@ TYPEDEF(MPlatformTypes::TYPE_NULLPTR, TYPE_NULLPTR);
 #ifndef MAYBE_UNUSED
   #define MAYBE_UNUSED
 #endif
+
+/**
+ * indicate that allow the compiler to optimize for the case where paths of execution including
+ * that statement are more or less likely than any alternative path of execution that does not include such a statement
+ * // URL: https://en.cppreference.com/w/cpp/language/attributes/likely
+ */
+#if !defined(LIKELY) && defined(__has_cpp_attribute)
+  #ifdef likely
+    #undef likely
+  #endif
+
+  #if __has_cpp_attribute(likely)
+    #if HAS_CPP_20
+      #define LIKELY [[likely]]
+    #else
+      #define LIKELY
+    #endif // HAS_CPP_20
+  #endif // __has_cpp_attribute(likely)
+#endif // !defined(LIKELY) && defined(__has_cpp_attribute)
+#ifndef LIKELY
+  #define LIKELY
+#endif // LIKELY
+
+#if (defined(__clang__) || defined(__GNUC__))
+  #define LIKELY_EXPR(expr) __builtin_except(!!(expr), 1)
+#else
+  #define LIKELY_EXPR(expr) !!(expr)
+#endif // (defined(__clang__) || defined(__GNUC__))
+
+#if !defined(UNLIKELY) && defined(__has_cpp_attribute)
+  #ifdef unlikely
+    #undef unlikely
+  #endif
+
+  #if __has_cpp_attribute(unlikely)
+    #if HAS_CPP_20
+      #define UNLIKELY [[unlikely]]
+    #else
+      #define UNLIKELY
+    #endif // HAS_CPP_20
+  #endif // __has_cpp_attribute(likely)
+#endif // !defined(UNLIKELY) && defined(__has_cpp_attribute)
+#ifndef UNLIKELY
+  #define UNLIKELY
+#endif // UNLIKELY
+
+#if (defined(__clang__) || defined(__GNUC__))
+  #define UNLIKELY_EXPR(expr) __builtin_except(!!(expr), 0)
+#else
+  #define UNLIKELY_EXPR(expr) !!(expr)
+#endif // (defined(__clang__) || defined(__GNUC__))
 
 #endif // MENGINE_HAL_PLATFORM

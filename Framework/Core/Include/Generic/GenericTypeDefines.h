@@ -50,6 +50,9 @@ namespace MPlatform
       // Wide character (?-bit(Depends on Platform))
       TYPEDEF(wchar_t, WIDECHAR);
 
+      // Switchable character. Either ANSICHAR or WIDECHAR
+      TYPEDEF(WIDECHAR, TCHAR);
+
       // Unicode 8-bit character
       #if HAS_CPP_20
         TYPEDEF(char8_t, UTF8CHAR);

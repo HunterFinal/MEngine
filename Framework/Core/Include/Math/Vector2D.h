@@ -663,7 +663,7 @@ namespace MEngine
     template<typename Type>
     FORCEINLINE Type& MVector2D<Type>::operator[](SIZE_T Index) &
     {
-      ME_CHECK_IMPL((Index >= 0) && (Index < 2));
+      me_assert((Index >= 0) && (Index < 2));
 
       return XY[Index];
     }
@@ -677,7 +677,7 @@ namespace MEngine
     template<typename Type>
     FORCEINLINE const Type& MVector2D<Type>::operator[](SIZE_T Index) const&
     {
-      ME_CHECK_IMPL((Index >= 0) && (Index < 2));
+      me_assert((Index >= 0) && (Index < 2));
 
       return XY[Index];
     }
@@ -691,7 +691,7 @@ namespace MEngine
     template<typename Type>
     FORCEINLINE Type MVector2D<Type>::operator[](SIZE_T Index) const&&
     {
-      ME_CHECK_IMPL((Index >= 0) && (Index < 2));
+      me_assert((Index >= 0) && (Index < 2));
       
       return XY[Index];
     }
