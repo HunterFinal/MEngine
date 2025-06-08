@@ -1,8 +1,8 @@
 // MEngine cpp version check macro definitions
 #pragma once
 
-#ifndef MENGINE_CPP_VERSION
-#define MENGINE_CPP_VERSION
+#ifndef _ME_CPP_VERSION_
+#define _ME_CPP_VERSION_
 
 #if defined(__clang__) || defined(__GNUC__)
   #define CPP_STANDARD __cpluspluc
@@ -37,4 +37,4 @@
 
 //------------------------------
 
-#endif // MENGINE_CPP_VERSION
+#endif // _ME_CPP_VERSION_

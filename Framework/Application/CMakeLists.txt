@@ -8,6 +8,19 @@
     ${APP_SOURCES} 
   )
 
+  target_link_libraries(
+    Application
+    PRIVATE
+    Core
+  )
+
+  target_include_directories(
+    Application
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/Framework/Core
+    ${PROJECT_SOURCE_DIR}/Framework/Core/Include
+  )
+
   target_compile_features(
     Application 
     PRIVATE 
@@ -26,6 +39,12 @@
     PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
+  )
+
+  target_include_directories(
+    Application
+    PRIVATE
+    &{CMAKE_CURRENT_SOURCE_DIR}/Internal
   )
 
   if(MSVC)

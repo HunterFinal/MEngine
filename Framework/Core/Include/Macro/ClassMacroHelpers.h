@@ -1,8 +1,8 @@
 ﻿// MEngine class helper macro definitions
 #pragma once
 
-#ifndef MENGINE_CLASS_MACRO_HELPER
-#define MENGINE_CLASS_MACRO_HELPER
+#ifndef _ME_CLASS_MACRO_HELPER_
+#define _ME_CLASS_MACRO_HELPER_
 
 #include "TypeAliasMacro.h"
 
@@ -10,4 +10,4 @@
 #define GENERATE_CLASS_DEF_INNER(Class) \
     TYPEDEF(Class, ThisClass);
 
-#endif // MENGINE_CLASS_MACRO_HELPER
+#endif // _ME_CLASS_MACRO_HELPER_

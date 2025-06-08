@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef ME_APP_DEFINES
-#define ME_APP_DEFINES
+#ifndef _ME_APP_APPLICATION_DEFINES_
+#define _ME_APP_APPLICATION_DEFINES_
 
 #include "FunctionSymbolHelpers.h"
 
@@ -29,4 +29,4 @@
 #endif
 
 
-#endif // ME_APP_DEFINES
+#endif // _ME_APP_APPLICATION_DEFINES_

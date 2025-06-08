@@ -1,8 +1,8 @@
 ﻿// MEngine windows platform definitions
 #pragma once
 
-#ifndef MENGINE_PLATFORM_WINDOWS
-#define MENGINE_PLATFORM_WINDOWS
+#ifndef _ME_PLATFORM_WINDOWS_
+#define _ME_PLATFORM_WINDOWS_
 
 #include "Generic/GenericTypeDefines.h"
 
@@ -68,4 +68,4 @@ TYPEDEF(MPlatform::MWindowsPlatformTypes, MPlatformTypes);
     __nop(), __debugbreak(); \
   } 
 
-#endif // MENGINE_PLATFORM_WINDOWS
+#endif // _ME_PLATFORM_WINDOWS_

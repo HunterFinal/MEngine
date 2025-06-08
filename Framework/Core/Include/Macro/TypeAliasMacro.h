@@ -1,8 +1,8 @@
 // MEngine type alias macro definitions
 #pragma once
 
-#ifndef MENGINE_TYPE_ALIAS
-#define MENGINE_TYPE_ALIAS
+#ifndef _ME_TYPE_ALIAS_
+#define _ME_TYPE_ALIAS_
 
 #include "Macro/CPPVerMacro.h"
 
@@ -12,4 +12,4 @@
   #define TYPEDEF(OldType, NewType) typedef OldType NewType;
 #endif  // HAS_CPP_11
 
-#endif // MENGINE_TYPE_ALIAS
+#endif // _ME_TYPE_ALIAS_

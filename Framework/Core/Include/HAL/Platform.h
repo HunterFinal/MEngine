@@ -4,9 +4,30 @@
 #ifndef MENGINE_HAL_PLATFORM
 #define MENGINE_HAL_PLATFORM
 
+// TODO Should not include this here;
+#include "HAL/PlatformHeader.h"
+
 #include "HAL/PreprocessorHelpers.h"
 
+// Platform macro definitions
+// Make other platform macro definitions to 0
+#if !defined(PLATFORM_WINDOWS)
+  #define PLATFORM_WINDOWS 0
+#endif
+#if !defined(PLATFORM_LINUX)
+  #define PLATFORM_LINUX 0
+#endif
+#if !defined(PLATFORM_MAC)
+  #define PLATFORM_MAC 0
+#endif
+#if !defined(PLATFORM_MICROSOFT)
+  #define PLATFORM_MICROSOFT 0
+#endif
+
+// Include platform setup header
+// XXX/XXXPlatform.h
 #include PLATFORM_HEADER(Platform.h)
+
 
 //~Global types base
 

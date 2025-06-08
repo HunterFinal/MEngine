@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#ifndef BIT_OPERATION_MACROS
-#define BIT_OPERATION_MACROS
+#ifndef _ME_BIT_OPERATION_MACROS_
+#define _ME_BIT_OPERATION_MACROS_
 
 #define BIT_FLAG(BitDigit) (1 << BitDigit)
 
-#endif // BIT_OPERATION_MACROS
+#endif // _ME_BIT_OPERATION_MACROS_

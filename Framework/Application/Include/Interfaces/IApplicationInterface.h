@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef ME_APP_INTERFACE
-#define ME_APP_INTERFACE
+#ifndef _ME_APP_APPLICATION_INTERFACE_
+#define _ME_APP_APPLICATION_INTERFACE_
 
 #include "Macro/ApplicationDefines.h" 
 
@@ -20,4 +20,4 @@ ME_EXTERN_C_START
 APP_API IApplicationInterface* GenerateAPP(); 
 ME_EXTERN_C_END
 
-#endif // ME_APP_INTERFACE
+#endif // _ME_APP_APPLICATION_INTERFACE_

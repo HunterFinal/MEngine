@@ -1,16 +1,23 @@
 // MEngine platform header definitions
 #pragma once
 
-#ifndef MENGINE_PLATFORM_HEADER
-#define MENGINE_PLATFORM_HEADER
+#ifndef _ME_PLATFORM_HEADER_
+#define _ME_PLATFORM_HEADER_
 
-#if defined(_WIN32)
+
+
+#if defined(_WIN32) || defined(_WIN64)
   #define PLATFORM_HEADER_NAME Windows
-#elif defined(__unix) || defined(__unix__)
+  #define PLATFORM_WINDOWS 1
+  #define PLATFORM_MICROSOFT 1
+#elif defined(__unix) || defined(__unix__) 
   #define PLATFORM_HEADER_NAME Unix
+  #define PLATFORM_UNIX 1
+#elif defined(__linux__)
+  #define PLATFORM_HEADER_NAME Linux
+  #define PLATFORM_LINUX 1
 #else
-  #define PLATFORM_HEADER_NAME
   #error "Undefined platform"
-#endif // defined(_WIN32)
+#endif 
  
-#endif // MENGINE_PLATFORM_HEADER
+#endif // _ME_PLATFORM_HEADER_

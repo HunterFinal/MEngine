@@ -1,8 +1,8 @@
 ﻿// MEngine assertion macro definitions
 #pragma once
 
-#ifndef MENGINE_ASSERTION_MACROS
-#define MENGINE_ASSERTION_MACROS
+#ifndef _ME_ASSERTION_MACROS_
+#define _ME_ASSERTION_MACROS_
 
 #include "HAL/Platform.h"
 
@@ -24,4 +24,4 @@
   }
 #endif // !defined(HAS_CPP_20)
 
-#endif // MENGINE_ASSERTION_MACROS
+#endif // _ME_ASSERTION_MACROS_
