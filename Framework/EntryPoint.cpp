@@ -5,13 +5,12 @@
 #include "ApplicationAPI.h"
 #include "Delegates/Delegate.h"
 #include "Event/WindowEventInstances.h"
+#include "HAL/PlatformLowLevelAccessPort.h"
+#include "Windows/WindowsHeaderSet.h"
 
 // TODO
 #include <spdlog/fmt/bundled/format.h>
 #include <cstring>
-
-// #define CONSOLE_MAIN
-#define WINDOWGUI_MAIN
 
 class TestCase1 final : public OTGT::ITestCaseInterface
 {
@@ -53,6 +52,8 @@ class TestCase1 final : public OTGT::ITestCaseInterface
       assert(MMath::Sign(-2) == -1);
       assert(MMath::Sign(2) == 1);
       assert(MMath::Sign(0) == 0);
+
+      me_assert(1 == 2);
       
     }
 };
@@ -93,6 +94,7 @@ class DelegateTestClass
     int result;
 };
 
+
 void func(int a, int b)
 {
   std::cout << a / b << std::endl;
@@ -126,7 +128,6 @@ class DelegateTestCase final : public OTGT::ITestCaseInterface
 
     void RunTest_Implementation() override
     {
-
 
       MultiDele1.AddDelegate(MDelegate<void(int, int)>::CreateStatic(&func2));
       MultiDele1.AddDelegate(MDelegate<void(int, int)>::CreateClass(m_testClassInstance, &DelegateTestClass::II_Case1));
@@ -168,13 +169,10 @@ class AAA
     }
 };
 
-
-#if defined(CONSOLE_MAIN)
+#if 0
 int main(int argc, char** argv)
-#elif defined(WINDOWGUI_MAIN)
-#include <windows.h>
-#include <tchar.h>
-int APIENTRY _tWinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTANCE hPrevInstance, IN MAYBE_UNUSED LPTSTR lpCmdLinem, IN MAYBE_UNUSED int32 nShowCmd)
+#else
+int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTANCE hPrevInstance, IN MAYBE_UNUSED /**LPSTR */ char* lpCmdLine, IN MAYBE_UNUSED int32 nShowCmd)
 #endif
 {
   MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
@@ -222,7 +220,6 @@ int APIENTRY _tWinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINS
   
   logger->Terminate();
   delete logger;
-
   return 0;
 }
 

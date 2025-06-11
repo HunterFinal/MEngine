@@ -1,11 +1,14 @@
 ﻿// MEngine core definitions
 #pragma once
 
-#ifndef MISC_CORE_DEFINES
-#define MISC_CORE_DEFINES
+#ifndef _ME_CORE_DEFINES_
+#define _ME_CORE_DEFINES_
 
 #include "HAL/Platform.h"
+#include "Macro/CPPVerMacro.h"
 #include "Macro/TypeAliasMacro.h"
+#include "Misc/BuildDefines.h"
+
 
 #ifdef CORE_EXPORT
 #define CORE_API DLLEXPORT
@@ -37,4 +40,4 @@ namespace MEngine
 
 TYPEDEF(MEngine::IEventListener, IEventListener);
 
-#endif // MISC_CORE_DEFINES
+#endif // _ME_CORE_DEFINES_

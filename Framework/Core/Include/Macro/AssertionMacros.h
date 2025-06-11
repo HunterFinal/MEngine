@@ -4,7 +4,7 @@
 #ifndef _ME_ASSERTION_MACROS_
 #define _ME_ASSERTION_MACROS_
 
-#include "Debug/Debugger.h"
+#include "Debugging/Debugger.h"
 #include "HAL/Platform.h"
 #include "Macro/GenericMacroDefines.h"
 
@@ -29,7 +29,7 @@
     { \
       if (!(expr)) UNLIKELY \
       { \
-        if (MDebugger::GetGDebugger().Func()) \
+        if (MEngine::Core::MDebugger::AssertImpl(#expr, __FILE__, __func__, __LINE__)) \
         { \
           PLATFORM_BREAK(); \
           ABORT_ASSERT_INTERNAL(); \

@@ -4,8 +4,6 @@
 #ifndef _ME_PLATFORM_HEADER_
 #define _ME_PLATFORM_HEADER_
 
-
-
 #if defined(_WIN32) || defined(_WIN64)
   #define PLATFORM_HEADER_NAME Windows
   #define PLATFORM_WINDOWS 1

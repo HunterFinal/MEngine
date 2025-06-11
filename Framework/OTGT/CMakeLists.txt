@@ -38,3 +38,5 @@ if(MSVC)
 else()
   
 endif()
+
+MEngine_setup_target(OTGT)

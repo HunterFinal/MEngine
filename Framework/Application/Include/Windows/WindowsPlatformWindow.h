@@ -35,8 +35,8 @@ namespace MEngine
         APP_API WindowHandle GetWindowHandle() const;
 
         // [ ] make cross-platform string immediately
-        APP_API static const char* GetAppWindowClassA();
-        APP_API static const wchar_t* GetAppWindowClassW();
+        APP_API static const ANSICHAR* GetAppWindowClassA();
+        APP_API static const WIDECHAR* GetAppWindowClassW();
 
         /**Start of MAbstractWindow interface */
         #pragma region MAbstractWindow interface
@@ -49,7 +49,7 @@ namespace MEngine
         APP_API virtual void Minimize() override;
         APP_API virtual void Enable() override;
         APP_API virtual void Disable() override;
-        APP_API virtual void SetTitle(IN const char* Text) override;
+        APP_API virtual void SetTitle(IN const ANSICHAR* Text) override;
         APP_API virtual void SetWindowMode(IN EWindowMode NewWindowMode) override; 
         APP_API virtual bool IsMaximized() const override;
         APP_API virtual bool IsMinimized() const override;

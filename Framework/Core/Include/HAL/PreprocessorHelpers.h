@@ -1,8 +1,8 @@
 // MEngine Preprocessor helper macro definitions
 #pragma once
 
-#ifndef MENGINE_PREPROC_HELPERS
-#define MENGINE_PREPROC_HELPERS
+#ifndef _ME_PREPROCESSOR_HELPERS_
+#define _ME_PREPROCESSOR_HELPERS_
 
 // TODO Should not include this one here
 #include "HAL/PlatformHeader.h"
@@ -19,6 +19,4 @@
 
 #define PLATFORM_HEADER(Suffix) PREPROC_TO_STR(PREPROC_ASSEMBLE_STR(PLATFORM_HEADER_NAME/PLATFORM_HEADER_NAME, Suffix))
 
-
-
-#endif // MENGINE_PREPROC_HELPERS
+#endif // _ME_PREPROCESSOR_HELPERS_

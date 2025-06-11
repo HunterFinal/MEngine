@@ -148,7 +148,7 @@ namespace MEngine
 
     }
 
-    void MWindowsPlatformWindow::SetTitle(IN const char* Text)
+    void MWindowsPlatformWindow::SetTitle(IN const ANSICHAR* Text)
     {
 
     }
@@ -193,12 +193,12 @@ namespace MEngine
       , m_hwnd{std::make_shared<WindowHandle>(nullptr)}
     { }
 
-    const char* MWindowsPlatformWindow::GetAppWindowClassA()
+    const ANSICHAR* MWindowsPlatformWindow::GetAppWindowClassA()
     {
       return APP_WINDOW_CLASS_NAME_A;
     }
 
-    const wchar_t* MWindowsPlatformWindow::GetAppWindowClassW()
+    const WIDECHAR* MWindowsPlatformWindow::GetAppWindowClassW()
     {
       return APP_WINDOW_CLASS_NAME_W;
     }

@@ -57,3 +57,5 @@ else()
   
 endif()
 
+MEngine_setup_target(Core)
+

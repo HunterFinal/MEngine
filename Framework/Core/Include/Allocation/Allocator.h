@@ -3,30 +3,39 @@
 #ifndef _ME_CORE_ALLOCATOR_
 #define _ME_CORE_ALLOCATOR_
 
-#include "HAL/Platform.h"
 #include "Misc/CoreDefines.h"
 
 #include <cassert>
 #include <limits>
 #include <type_traits>
 
+#if CAN_USE_CONCEPT
+  template<typename ElementType>
+  concept AllocatorConcept = requires
+  {
+    requires !std::is_void_v<typename std::remove_pointer_t<ElementType>>;
+  };
+#endif
+
 namespace MEngine
 {
   namespace Core
   {
     // TODO Need more research
-    // use this as Allocator element header ptr instead of void*
+    // TODO use this as Allocator element header ptr instead of void*
     struct AllocatorElement
     {};
 
-    template<typename ElementType>
-    struct DefaultAllocator;
-
-    template<typename ElementType>
+    #if CAN_USE_CONCEPT
+      template<AllocatorConcept ElementType>
+    #else
+      template<typename ElementType>
+    #endif
     struct DefaultAllocator final
     {
-      static_assert(!std::is_void<std::remove_pointer<ElementType>::type>::value, "Can't use void or void* as element type of Allocator");
-
+      #if !CAN_USE_CONCEPT
+        static_assert(!std::is_void<std::remove_pointer<ElementType>::type>::value, "Can't use void or void* as element type of Allocator");
+      #endif
       explicit DefaultAllocator()
         : m_data(nullptr)
       { }
@@ -36,13 +45,13 @@ namespace MEngine
         Deallocate();
       }
 
-      DefaultAllocator(DefaultAllocator&& Other) noexcept
+      DefaultAllocator(IN DefaultAllocator&& Other) noexcept
         : m_data(Other.m_data)
       {
         Other.m_data = nullptr;
       }
 
-      DefaultAllocator& operator=(DefaultAllocator&& Other) noexcept
+      DefaultAllocator& operator=(IN DefaultAllocator&& Other) noexcept
       {
         if (this != &Other)
         {
@@ -65,7 +74,7 @@ namespace MEngine
         assert(!bInvalidAlloc);
 
         // TODO m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
-        // (ElementNum * ByteSizePerElement == 0) || (m_data != nullptr): free(m_data) first and return nullptr; 
+        // TODO (ElementNum * ByteSizePerElement == 0) || (m_data != nullptr): free(m_data) first and return nullptr; 
         m_data = reinterpret_cast<AllocatorElement*>(::realloc(m_data, ElementNum * ByteSizePerElement));
       }
 
@@ -96,8 +105,8 @@ namespace MEngine
        * Uncopyable
        */
       public:
-        DefaultAllocator(const DefaultAllocator& Other) = delete;
-        DefaultAllocator& operator=(const DefaultAllocator& Other) = delete;
+        DefaultAllocator(IN const DefaultAllocator& Other) = delete;
+        DefaultAllocator& operator=(IN const DefaultAllocator& Other) = delete;
     };
   }
 }

@@ -9,6 +9,8 @@
   #error "Can not include this if current platform is not Windows"
 #else
 
+#define WIN32_LEAN_AND_MEAN
+
 // include Windows specific header
   #include <Windows.h>
 #endif // !defined(PLATFORM_WINDOWS) || !PLATFORM_WINDOWS

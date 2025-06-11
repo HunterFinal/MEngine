@@ -1,8 +1,8 @@
 ﻿// MEngine HAL platform
 #pragma once
 
-#ifndef MENGINE_HAL_PLATFORM
-#define MENGINE_HAL_PLATFORM
+#ifndef _ME_HAL_PLATFORM_
+#define _ME_HAL_PLATFORM_
 
 // TODO Should not include this here;
 #include "HAL/PlatformHeader.h"
@@ -27,7 +27,6 @@
 // Include platform setup header
 // XXX/XXXPlatform.h
 #include PLATFORM_HEADER(Platform.h)
-
 
 //~Global types base
 
@@ -80,6 +79,7 @@ TYPEDEF(MPlatformTypes::TYPE_NULLPTR, TYPE_NULLPTR);
 
 #define UTF8TEXT_INNER(x) u8 ## x
 #define UTF16TEXT_INNER(x) u ## x
+#define UTF32TEXT_INNER(x) U ## x
 #if PLATFORM_WIDECHAR_IS_CHAR16
   #define WIDETEXT_INNER(x) UTF16TEXT_INNER(x)
 #else
@@ -211,4 +211,10 @@ TYPEDEF(MPlatformTypes::TYPE_NULLPTR, TYPE_NULLPTR);
   #define UNLIKELY_EXPR(expr) !!(expr)
 #endif // (defined(__clang__) || defined(__GNUC__))
 
-#endif // MENGINE_HAL_PLATFORM
+// Concept keyword useable macro
+#if HAS_CPP_20
+  #define CAN_USE_CONCEPT 1
+#else
+  #define CAN_USE_CONCEPT 0
+#endif
+#endif // _ME_HAL_PLATFORM_

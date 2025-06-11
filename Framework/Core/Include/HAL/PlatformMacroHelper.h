@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef ME_PLATFORM_MACRO_HELPER
-#define ME_PLATFORM_MACRO_HELPER
+#ifndef _ME_PLATFORM_MACRO_HELPER_
+#define _ME_PLATFORM_MACRO_HELPER_
 
 #if _WIN32
   #define POSIX_FIX(FunctionCall) _ ## FunctionCall
@@ -9,4 +9,4 @@
   #define POSIX_FIX(FunctionCall) FunctionCall
 #endif
 
-#endif // ME_PLATFORM_MACRO_HELPER
+#endif // _ME_PLATFORM_MACRO_HELPER_

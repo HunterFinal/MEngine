@@ -1,11 +1,22 @@
 ﻿// MEngine windows platform math definitions
 #pragma once
 
-#ifndef WINDOWS_PLATFORM_MATH
-#define WINDOWS_PLATFORM_MATH
+#ifndef _ME_CORE_WINDOWS_PLATFORM_MATH_
+#define _ME_CORE_WINDOWS_PLATFORM_MATH_
 
 #include "Generic/GenericPlatformMath.h"
 
-TYPEDEF(MEngine::Math::MGenericPlatformMath, MPlatformMath);
+namespace MEngine
+{
+  namespace Math
+  {
+    struct MWindowsPlatformMath : public MGenericPlatformMath
+    {
+      // TODO Add Windows specific math method later
+    };
+  }
+}
 
-#endif // WINDOWS_PLATFORM_MATH
+TYPEDEF(MEngine::Math::MWindowsPlatformMath, MPlatformMath);
+
+#endif // _ME_CORE_WINDOWS_PLATFORM_MATH_

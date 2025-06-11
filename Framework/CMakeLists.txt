@@ -20,6 +20,23 @@ target_compile_features(
   cxx_std_20
 )
 
+# Debug/Release specific macro
+function(MEngine_setup_target target)
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(
+      ${target}
+      PUBLIC
+      ME_DEBUG_ON=1
+    )
+  elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_definitions(
+      ${target}
+      PUBLIC
+      ME_RELEASE_ON=1
+    )
+  endif()
+endfunction()
+
 set_target_properties(
   MEngine
   PROPERTIES

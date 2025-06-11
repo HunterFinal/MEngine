@@ -1,11 +1,11 @@
 ﻿// MEngine HAL platform Math
 #pragma once
 
-#ifndef HAL_PLATFORM_MATH
-#define HAL_PLATFORM_MATH
+#ifndef _ME_HAL_PLATFORM_MATH_
+#define _ME_HAL_PLATFORM_MATH_
 
 #include "HAL/PreprocessorHelpers.h"
 
 #include PLATFORM_HEADER(PlatformMath.h)
 
-#endif // HAL_PLATFORM_MATH
+#endif // _ME_HAL_PLATFORM_MATH_

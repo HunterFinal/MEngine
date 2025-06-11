@@ -17,7 +17,7 @@ namespace MEngine
       float DesiredHeightOnScreen;
 
       // TODO maybe wstring
-      std::string Title;
+      std::wstring Title;
     };
   }
 }

@@ -5,6 +5,7 @@
 #define MENGINE_CORE_INCLUDE
 
 #include "Macro/CPPVerMacro.h"
+#include "Macro/DeprecationMacro.h"
 
 // 低レイヤーヘッダ
 #include "HAL/Platform.h"

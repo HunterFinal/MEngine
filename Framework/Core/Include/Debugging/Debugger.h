@@ -12,11 +12,11 @@ namespace MEngine
 {
   namespace Core
   {
+    extern CORE_API class MDebugger* GDebugger;
+
     class MDebugger
     {      
       public:
-        CORE_API virtual ~MDebugger() = default;
-
         template<typename DebuggerType, typename... ConstructArgTypes>
         static void ReplaceGDebugger(ConstructArgTypes... Args);
 
@@ -36,9 +36,9 @@ namespace MEngine
         
       protected:
         CORE_API explicit MDebugger() = default;
-        CORE_API ~MDebugger() = default;
+        CORE_API virtual ~MDebugger() = default;
 
-      private:
+      public:
         CORE_API static bool AssertImpl(IN const ANSICHAR* Expression, 
                                         IN const ANSICHAR* FileName  ,
                                         IN const ANSICHAR* FuncName  ,
@@ -70,6 +70,5 @@ namespace MEngine
   }
 }
 
-extern CORE_API class MEngine::Core::MDebugger* GDebugger;
 
 #endif // _ME_CORE_DEBUGGER_

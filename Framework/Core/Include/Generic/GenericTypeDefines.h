@@ -1,8 +1,6 @@
 // MEngine generic platform type definitions
 #pragma once
 
-
-
 #ifndef MENGINE_TYPE_DEF
 #define MENGINE_TYPE_DEF
 
