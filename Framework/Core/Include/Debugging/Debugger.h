@@ -8,6 +8,11 @@
 #include <cassert>
 #include <type_traits>
 
+namespace std
+{
+  struct source_location;
+}
+
 namespace MEngine
 {
   namespace Core
@@ -29,10 +34,7 @@ namespace MEngine
                                         IN const ANSICHAR* FuncName  ,
                                         IN const uint32 Line) const;
         
-        CORE_API virtual void PostAssert( IN const ANSICHAR* Expression, 
-                                          IN const ANSICHAR* FileName  ,
-                                          IN const ANSICHAR* FuncName  ,
-                                          IN const uint32 Line) const;
+        CORE_API virtual void PostAssert(IN const TCHAR* FormattedStr) const;
         
       protected:
         CORE_API explicit MDebugger() = default;
@@ -42,11 +44,17 @@ namespace MEngine
         CORE_API static bool AssertImpl(IN const ANSICHAR* Expression, 
                                         IN const ANSICHAR* FileName  ,
                                         IN const ANSICHAR* FuncName  ,
-                                        IN const uint32 Line);          
+                                        IN const uint32 Line);
+
+        CORE_API static bool AssertImplSrcLoc(IN const ANSICHAR* Expression,
+                                              IN const std::source_location& SourceLocation);   
+
         CORE_API static void LogAssertMessage(IN const ANSICHAR* Expression, 
                                               IN const ANSICHAR* FileName  ,
                                               IN const ANSICHAR* FuncName  ,
-                                              IN const uint32 Line);
+                                              IN const uint32 Line,
+                                              OUT TCHAR* OutFormattedLog,
+                                              IN const SIZE_T FormattedLogCount);
 
       public:
         MDebugger(const MDebugger& Other) = delete;

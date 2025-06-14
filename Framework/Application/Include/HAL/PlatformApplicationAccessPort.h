@@ -3,7 +3,7 @@
 #ifndef _ME_APP_APPLICATION_PLATFORM_APPLICATION_ACCESS_PORT_
 #define _ME_APP_APPLICATION_PLATFORM_APPLICATION_ACCESS_PORT_
 
-#include "HAL/Platform.h"
+#include "HAL/PreprocessorHelpers.h"
 
 #include PLATFORM_HEADER(PlatformApplicationAccessPort.h)
 

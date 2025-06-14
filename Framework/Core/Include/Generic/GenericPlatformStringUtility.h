@@ -20,20 +20,28 @@ namespace MEngine
         struct PrivateInner
         {
           CORE_API static SIZE_T CalcConvertedLength(IN const WIDECHAR* DestAddress, IN const UTF8CHAR* SrcAddress, IN const SIZE_T SrcLength);
-          CORE_API static void* MemoryCopy(IN void* Dest, IN const void* Src, IN const SIZE_T Size);
+          CORE_API static void* MemoryCopy(OUT void* Dest, IN const void* Src, IN const SIZE_T Size);
+          CORE_API static SIZE_T Min(IN const SIZE_T A, IN const SIZE_T B);
         };
 
       public:
-        // FIXME
         template<CHAR_TYPE_CONCEPT SourceEncoding, CHAR_TYPE_CONCEPT DestinationEncoding>
         FORCEINLINE static DestinationEncoding* ConvertToDest(
-          IN DestinationEncoding* DestAddress,
+          OUT DestinationEncoding* DestAddress,
           IN const SIZE_T DestSize,
-          IN SourceEncoding* SrcAddress,
+          IN const SourceEncoding* SrcAddress,
           IN const SIZE_T SrcSize
         )
         {
-          if constexpr (MEngine::TypeTraits::IsCharEncodingCompatible_V<SourceEncoding, DestinationEncoding>)
+          // For IsCharEncodingCompatible_V and IsCharFixedWidth_V use
+          using namespace MEngine::TypeTraits;
+          if ((DestAddress == nullptr) || (SrcAddress == nullptr))
+          {
+            return nullptr;
+          }
+
+          // Compatible encoding
+          if constexpr (IsCharEncodingCompatible_V<SourceEncoding, DestinationEncoding>)
           {
             if (DestSize < SrcSize)
             {
@@ -41,6 +49,19 @@ namespace MEngine
             }
 
             return static_cast<DestinationEncoding*>(PrivateInner::MemoryCopy(DestAddress, SrcAddress, SrcSize * sizeof(SourceEncoding))) + SrcSize;
+          }
+          // Fixed-width source encoding to a wider or same encoding
+          else if constexpr (IsCharFixedWidth_V<SourceEncoding> && sizeof(SourceEncoding) <= sizeof(DestinationEncoding))
+          {
+            const SIZE_T ConvertSize = PrivateInner::Min(DestSize, SrcSize);
+            for (int i = 0; i < ConvertSize; ++i)
+            {
+              SourceEncoding SrcChar = SrcAddress[i];
+              DestAddress[i] = static_cast<DestinationEncoding>(SrcChar);
+            }
+
+            // Return nullptr if source string is not fully converted
+            return (DestSize < SrcSize) ? nullptr : (DestAddress + SrcSize);
           }
           else
           {
@@ -56,7 +77,7 @@ namespace MEngine
         {
           if constexpr (
             MEngine::TypeTraits::IsCharEncodingCompatible_V<SourceEncoding, DestinationEncoding> ||
-            MEngine::TypeTraits::IsCharFixedWidth_V<SourceEncoding> && (sizeof(SourceEncoding) <= sizeof(DestinationEncoding)) 
+            (MEngine::TypeTraits::IsCharFixedWidth_V<SourceEncoding> && (sizeof(SourceEncoding) <= sizeof(DestinationEncoding))) 
           )
           {
             return SrcLength;

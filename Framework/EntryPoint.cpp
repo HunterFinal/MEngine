@@ -25,35 +25,37 @@ class TestCase1 final : public OTGT::ITestCaseInterface
     void RunTest_Implementation() override
     {
       // Abs Test(Integer)
-      assert(MMath::Abs(-2) == 2);
-      assert(MMath::Abs(2) == 2);
+      me_assert(MMath::Abs(-2) == 2);
+      me_assert(MMath::Abs(2) == 2);
       // Abs Test(Floating-type)
-      assert(MMath::IsNearlyEquals(MMath::Abs(-2.2), 2.2));
-      assert(MMath::IsNearlyEquals(MMath::Abs(2.2), 2.2));
-      assert(MMath::IsNearlyEquals(MMath::Abs(-1.11f), 1.11f));
-      assert(MMath::IsNearlyEquals(MMath::Abs(1.11f), 1.11f));
+      me_assert(MMath::IsNearlyEquals(MMath::Abs(-2.2), 2.2));
+      me_assert(MMath::IsNearlyEquals(MMath::Abs(2.2), 2.2));
+      me_assert(MMath::IsNearlyEquals(MMath::Abs(-1.11f), 1.11f));
+      me_assert(MMath::IsNearlyEquals(MMath::Abs(1.11f), 1.11f));
       // IsNearlyZero Test
-      assert(MMath::IsNearlyZero(0.000000001f));
-      assert(MMath::IsNearlyZero(0.000000001));
-      assert(MMath::IsNearlyZero(0.000000001l));
-      assert(MMath::IsNearlyZero(0.0f));
-      assert(MMath::IsNearlyZero(0.0));
-      assert(MMath::IsNearlyZero(0.0l));
+      me_assert(MMath::IsNearlyZero(0.000000001f));
+      me_assert(MMath::IsNearlyZero(0.000000001));
+      me_assert(MMath::IsNearlyZero(0.000000001l));
+      me_assert(MMath::IsNearlyZero(0.0f));
+      me_assert(MMath::IsNearlyZero(0.0));
+      me_assert(MMath::IsNearlyZero(0.0l));
 
       // Max Text(Integer)
-      assert(MMath::Max(22, 33) == 33);
-      assert(MMath::Max(0, 0) == 0);
-      assert(MMath::Max(-22, -33) == -22);
+      me_assert(MMath::Max(22, 33) == 33);
+      me_assert(MMath::Max(0, 0) == 0);
+      me_assert(MMath::Max(-22, -33) == -22);
 
       // 
 
       
       // Sign Test(Integer)
-      assert(MMath::Sign(-2) == -1);
-      assert(MMath::Sign(2) == 1);
-      assert(MMath::Sign(0) == 0);
+      me_assert(MMath::Sign(-2) == -1);
+      me_assert(MMath::Sign(2) == 1);
+      me_assert(MMath::Sign(0) == 0);
 
       me_assert(1 == 2);
+      me_assert(false);
+      me_assert(MMath::Sign(0) == 1);
       
     }
 };
@@ -191,6 +193,8 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
     delete app;
   }
 
+  MEngine::Core::MDebugger::CreateDefaultDebugger();
+
   {
     OTGT::ITestCaseInterface* pTest = new TestCase1();
     pTest->StartupTest_Interface();
@@ -220,6 +224,10 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   
   logger->Terminate();
   delete logger;
+
+  MEngine::Core::MDebugger::ReleaseCurrentDebugger();
+
+  MEngine::Application::MWindowsPlatformApplication::CreateWindowsApplication(hInstance, );
   return 0;
 }
 

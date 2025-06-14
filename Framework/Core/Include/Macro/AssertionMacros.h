@@ -21,13 +21,31 @@
 #if ME_DO_CHECK
   #define me_assert(expr) ME_EMPTY_MACRO_EXPR
 #else
-  #define me_assert(expr) me_assert_impl(!!(expr))
+  #define me_assert(expr) me_assert_impl(expr)
 #endif
 
-#define me_assert_impl(expr) \
+// TODO use std::source_location
+#if HAS_CPP_20
+  #include <source_location>
+  #define me_assert_impl(expr) \
     do \
     { \
-      if (!(expr)) UNLIKELY \
+      if (!(!!(expr))) UNLIKELY \
+      { \
+        const std::source_location curtLoc = std::source_location::current(); \
+        if (MEngine::Core::MDebugger::AssertImplSrcLoc(#expr, curtLoc)) \
+        { \
+          PLATFORM_BREAK(); \
+          ABORT_ASSERT_INTERNAL(); \
+        } \
+      } \
+    } while(0);
+
+#else
+  #define me_assert_impl(expr) \
+    do \
+    { \
+      if (!(!!(expr))) UNLIKELY \
       { \
         if (MEngine::Core::MDebugger::AssertImpl(#expr, __FILE__, __func__, __LINE__)) \
         { \
@@ -36,5 +54,6 @@
         } \
       } \
     } while(0);
+#endif
 
 #endif // _ME_ASSERTION_MACROS_

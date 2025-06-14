@@ -15,6 +15,10 @@ namespace MEngine
       CORE_API static SIZE_T Strlen(IN const ANSICHAR* Str);
       CORE_API static SIZE_T Strlen(IN const WIDECHAR* Str);
       CORE_API static SIZE_T Strlen(IN const UTF8CHAR* Str);
+      CORE_API static WIDECHAR* Strcpy(
+        OUT WIDECHAR* Dest, 
+        IN const WIDECHAR* Src, 
+        IN const SIZE_T DestCount);
     };
   }
 }

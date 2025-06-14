@@ -9,4 +9,7 @@
 #include "Macro/ApplicationDefines.h"
 #include "Interfaces/IApplicationInterface.h"
 
+#include "HAL/PlatformApplication.h"
+#include "HAL/PlatformApplicationAccessPort.h"
+
 #endif

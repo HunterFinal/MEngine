@@ -5,6 +5,7 @@
 #include "HAL/PlatformStringUtility.h"
 #include "Misc/ConceptsStoragePlace.h"
 
+#include <source_location>
 #include <string>
 
 namespace
@@ -17,12 +18,14 @@ namespace
     IN const ANSICHAR*  Expression,
     IN const ANSICHAR*  FileName,
     IN const ANSICHAR*  FuncName,
-    IN const uint32     Line);
+    IN const uint32     Line,
+    OUT TCHAR* FormattedLog,
+    IN const SIZE_T FormattedLogSize);
 
   /**
    * AssertBufferWriter
    */
-  template<SIZE_T Size>
+  template<SIZE_T BufferSize>
   struct MAssertBufferWriter
   {
     MAssertBufferWriter(const MAssertBufferWriter& Other) = delete;
@@ -57,16 +60,26 @@ namespace
     {
       const SIZE_T strLength = MPlatformStringUtility::Strlen(Str);
       const SIZE_T requiredLength = MPlatformStringUtility::ConvertedLength<TCHAR>(Str, strLength);
-      if (requiredLength + m_index < Size)
+      if (requiredLength + m_index < BufferSize)
       {
         MPlatformStringUtility::ConvertToDest(m_assertBuffer + m_index, requiredLength, Str, strLength);
         m_index += requiredLength;
       }
     }
 
+    void EndLine()
+    {
+      if (m_index >= BufferSize)
+      {
+        return;
+      }
+
+      Append(MTEXT("\n"));
+    }
+
     private:
       SIZE_T m_index;
-      TCHAR m_assertBuffer[Size];
+      TCHAR m_assertBuffer[BufferSize];
   };
 }
 
@@ -83,8 +96,8 @@ namespace MEngine
       {
         // TODO Weird design
         ReleaseCurrentDebugger();
-        GDebugger = new MDebugger();
       }
+      GDebugger = new MDebugger();
 
       return GDebugger;
     }
@@ -103,11 +116,9 @@ namespace MEngine
       // Empty implementation, override in derived class if needed
     }
 
-    void MDebugger::PostAssert( IN const ANSICHAR* Expression, 
-                                IN const ANSICHAR* FileName  ,
-                                IN const ANSICHAR* FuncName  ,
-                                IN const uint32 Line) const
+    void MDebugger::PostAssert(IN const TCHAR* FormattedStr) const
     {
+     wprintf(FormattedStr);
       // Empty implementation, override in derived class if needed
     }
  
@@ -121,25 +132,37 @@ namespace MEngine
         GDebugger->PreAssert(Expression, FileName, FuncName, Line);
       }
 
-      LogAssertMessage(Expression, FileName, FuncName, Line);
+      TCHAR formattedLog[ASSERT_BUFFER_SIZE];
+      LogAssertMessage(Expression, FileName, FuncName, Line, formattedLog, ASSERT_BUFFER_SIZE);
 
       if (GDebugger != nullptr) UNLIKELY
       {
-        GDebugger->PostAssert(Expression, FileName, FuncName, Line);
+        GDebugger->PostAssert(formattedLog);
       }
 
       return true;
     }
 
-    void MDebugger::LogAssertMessage( IN const ANSICHAR* Expression, 
-                                      IN const ANSICHAR* FileName  ,
-                                      IN const ANSICHAR* FuncName  ,
-                                      IN const uint32 Line)
+    bool MDebugger::AssertImplSrcLoc(IN const ANSICHAR* Expression,
+                                     IN const std::source_location& SourceLocation)
     {
-      // TODO
-      LogAssertMessageStatic(ASSERT_MSG_HEADER, Expression, FileName, FuncName, Line);
-    }
+      return AssertImpl(
+        Expression, 
+        SourceLocation.file_name(),
+        SourceLocation.function_name(),
+        static_cast<uint32>(SourceLocation.column())
+      );
+    }                                
 
+    void MDebugger::LogAssertMessage( IN const ANSICHAR* Expression, 
+                                              IN const ANSICHAR* FileName  ,
+                                              IN const ANSICHAR* FuncName  ,
+                                              IN const uint32 Line,
+                                              OUT TCHAR* OutFormattedLog,
+                                              IN const SIZE_T FormattedCount)
+    {
+      LogAssertMessageStatic(ASSERT_MSG_HEADER, Expression, FileName, FuncName, Line, OutFormattedLog, FormattedCount);
+    }
   }
 }
 
@@ -150,16 +173,22 @@ namespace
     IN const ANSICHAR*  Expression,
     IN const ANSICHAR*  FileName,
     IN const ANSICHAR*  FuncName,
-    IN const uint32     Line)
+    IN const uint32     Line,
+    OUT TCHAR* FormattedLog,
+    IN const SIZE_T FormattedLogCount)
   {
 
-    MAssertBufferWriter<4096> writer;
+    MAssertBufferWriter<ASSERT_BUFFER_SIZE> writer;
     writer.Append(ErrorHeader);
     writer.Append(Expression);
     writer.Append(FileName);
     writer.Append(FuncName);
+    writer.EndLine();
     writer.FinishWrite();
 
     MPlatformLowLevelAccessPort::OutputDebugString(writer.GetBuffer());
+
+    const SIZE_T formattedCount = MMath::Min(static_cast<SIZE_T>(ASSERT_BUFFER_SIZE), FormattedLogCount);
+    MPlatformStringUtility::Strcpy(FormattedLog, writer.GetBuffer(), formattedCount);
   }
 }

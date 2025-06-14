@@ -1,8 +1,8 @@
 ﻿#include "Generic/GenericPlatformStringUtility.h"
 
-// TODO
-#include <cstring>
+#include "Math/MEngineMathUtility.h"
 
+#include <cstring>
 
 namespace MEngine
 {
@@ -14,13 +14,20 @@ namespace MEngine
     }
   
     void* MGenericPlatformStringUtility::PrivateInner::MemoryCopy(
-      IN void* Dest,
+      OUT void* Dest,
       IN const void* Src,
       IN SIZE_T Size
     )
     {
-      // TODO
       return ::memcpy(Dest, Src, static_cast<size_t>(Size));
     }  
+
+    SIZE_T MGenericPlatformStringUtility::PrivateInner::Min(
+      IN const SIZE_T A,
+      IN const SIZE_T B
+    )
+    {
+      return MMath::Min(A, B);
+    }
   }
 }

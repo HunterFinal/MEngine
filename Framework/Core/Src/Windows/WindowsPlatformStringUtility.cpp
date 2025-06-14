@@ -21,5 +21,19 @@ namespace MEngine
     {
       return Strlen(reinterpret_cast<const ANSICHAR*>(Str));
     }
+
+    WIDECHAR* MWindowsPlatformStringUtility::Strcpy(
+      OUT WIDECHAR* Dest, 
+      IN const WIDECHAR* Src, 
+      IN const SIZE_T DestCount
+    )
+    {
+      if ((Dest == nullptr) || (Src == nullptr))
+      {
+        return nullptr;
+      }
+
+      return static_cast<WIDECHAR*>(wcsncpy(Dest, Src, DestCount));
+    }
   }
 }
