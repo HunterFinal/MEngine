@@ -12,6 +12,8 @@
 #include <spdlog/fmt/bundled/format.h>
 #include <cstring>
 
+#define _CRT_SECURE_NO_WARNINGS
+
 class TestCase1 final : public OTGT::ITestCaseInterface
 {
   public:
@@ -53,7 +55,7 @@ class TestCase1 final : public OTGT::ITestCaseInterface
       me_assert(MMath::Sign(2) == 1);
       me_assert(MMath::Sign(0) == 0);
 
-      me_assert(1 == 2);
+      me_assert(1 == MMath::Abs(2));
       me_assert(false);
       me_assert(MMath::Sign(0) == 1);
       
@@ -177,6 +179,7 @@ int main(int argc, char** argv)
 int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTANCE hPrevInstance, IN MAYBE_UNUSED /**LPSTR */ char* lpCmdLine, IN MAYBE_UNUSED int32 nShowCmd)
 #endif
 {
+
   MEngine::Core::IOutputInterface* logger = new MEngine::Core::ConsoleLogger();
   logger->Startup();
   logger->Serialize("Test log 1");
@@ -227,7 +230,7 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
 
   MEngine::Core::MDebugger::ReleaseCurrentDebugger();
 
-  MEngine::Application::MWindowsPlatformApplication::CreateWindowsApplication(hInstance, );
+  //MEngine::Application::MWindowsPlatformApplication::CreateWindowsApplication(hInstance, );
   return 0;
 }
 

@@ -3,7 +3,6 @@
 #ifndef _ME_APP_WINDOWS_PLATFORM_APPLICATION_
 #define _ME_APP_WINDOWS_PLATFORM_APPLICATION_
 
-#include "ApplicationAPI.h"
 #include "APP_Generic/AbstractApplication.h"
 #include "Windows/WindowsPlatformApplicationInstance.h"
 
@@ -33,6 +32,7 @@ namespace MEngine
         APP_API virtual void InitializeWindow(IN const std::shared_ptr<MAbstractApplicationWindow>& Window,
                                               IN const MWindowDefinition& WindowDefinition,
                                               IN const std::shared_ptr<MAbstractApplicationWindow>& ParentWindow) override;
+        APP_API virtual void TerminateApplication() override;
       #pragma endregion MAbstractApplication interface
       /**End of MAbstractApplication interface */
 

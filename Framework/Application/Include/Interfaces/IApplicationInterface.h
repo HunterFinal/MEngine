@@ -3,7 +3,8 @@
 #ifndef _ME_APP_APPLICATION_INTERFACE_
 #define _ME_APP_APPLICATION_INTERFACE_
 
-#include "Macro/ApplicationDefines.h" 
+#include "Macro/ApplicationDefines.h"
+#include "Macro/FunctionSymbolHelpers.h" 
 
 struct APP_API IApplicationInterface
 {

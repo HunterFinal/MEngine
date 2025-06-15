@@ -24,7 +24,10 @@
   #define me_assert(expr) me_assert_impl(expr)
 #endif
 
-// TODO use std::source_location
+// Ignore constant expression warning in MSVC
+#pragma warning(push)
+#pragma warning(disable:4127)
+
 #if HAS_CPP_20
   #include <source_location>
   #define me_assert_impl(expr) \
@@ -55,5 +58,7 @@
       } \
     } while(0);
 #endif
+
+#pragma warning(pop) // #pragma warning(disable:4127)
 
 #endif // _ME_ASSERTION_MACROS_

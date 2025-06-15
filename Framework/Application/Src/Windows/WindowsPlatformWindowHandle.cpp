@@ -1,6 +1,8 @@
 ﻿#include "Windows/WindowsPlatformWindowHandle.h"
 #include "Windows/WindowsHeaderSet.h"
 
+#include <utility>
+
 namespace MEngine
 {
   namespace Application

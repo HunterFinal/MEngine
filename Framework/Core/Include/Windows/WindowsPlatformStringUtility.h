@@ -19,6 +19,18 @@ namespace MEngine
         OUT WIDECHAR* Dest, 
         IN const WIDECHAR* Src, 
         IN const SIZE_T DestCount);
+
+      CORE_API static int32 PrintBufferV(
+        IN WIDECHAR* BufferAddress,
+        IN const SIZE_T BufferSize,
+        IN const WIDECHAR* Format,
+        IN va_list Args);
+      CORE_API static int32 PrintBufferV(
+        IN ANSICHAR* BufferAddress,
+        IN const SIZE_T BufferSize,
+        IN const ANSICHAR* Format,
+        IN va_list Args);
+      
     };
   }
 }

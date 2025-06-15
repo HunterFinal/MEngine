@@ -54,7 +54,7 @@ namespace MEngine
           else if constexpr (IsCharFixedWidth_V<SourceEncoding> && sizeof(SourceEncoding) <= sizeof(DestinationEncoding))
           {
             const SIZE_T ConvertSize = PrivateInner::Min(DestSize, SrcSize);
-            for (int i = 0; i < ConvertSize; ++i)
+            for (SIZE_T i = 0; i < ConvertSize; ++i)
             {
               SourceEncoding SrcChar = SrcAddress[i];
               DestAddress[i] = static_cast<DestinationEncoding>(SrcChar);

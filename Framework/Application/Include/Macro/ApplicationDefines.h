@@ -3,8 +3,6 @@
 #ifndef _ME_APP_APPLICATION_DEFINES_
 #define _ME_APP_APPLICATION_DEFINES_
 
-#include "FunctionSymbolHelpers.h"
-
 #ifdef APP_DLL_BUILD
 #define APP_API __declspec(dllexport)
 #else

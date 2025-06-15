@@ -29,6 +29,7 @@ namespace MEngine
         APP_API virtual void InitializeWindow(IN const std::shared_ptr<MAbstractApplicationWindow>& Window,
                                               IN const MWindowDefinition& WindowDefinition,
                                               IN const std::shared_ptr<MAbstractApplicationWindow>& ParentWindow) = 0;
+        APP_API virtual void TerminateApplication() = 0;
 
         APP_API void SetEventHandler(IN const std::shared_ptr<MApplicationEventHandler>& EventHandler);
         APP_API std::shared_ptr<MApplicationEventHandler> GetEventHandler() const;

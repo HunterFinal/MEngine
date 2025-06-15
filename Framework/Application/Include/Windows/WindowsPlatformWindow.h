@@ -64,7 +64,7 @@ namespace MEngine
         APP_API explicit MWindowsPlatformWindow();
 
       private:
-        std::shared_ptr<MWindowsPlatformApplication> m_owningApplication;
+        std::weak_ptr<MWindowsPlatformApplication> m_owningApplication;
         std::shared_ptr<WindowHandle> m_hwnd;
     };
 

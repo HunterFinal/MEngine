@@ -7,6 +7,7 @@
 
 #include <source_location>
 #include <string>
+#include <cstdarg>
 
 namespace
 {
@@ -65,6 +66,20 @@ namespace
         MPlatformStringUtility::ConvertToDest(m_assertBuffer + m_index, requiredLength, Str, strLength);
         m_index += requiredLength;
       }
+    }
+
+    void AppendFormatted(IN const TCHAR* Format, ...)
+    {
+      va_list args;
+      va_start(args, Format);
+      AppendVaList(Format, args);
+      va_end(args);
+    }
+
+    void AppendVaList(IN const TCHAR* Format, IN va_list Args)
+    {
+      const int32 writtenBufferCnt = MPlatformStringUtility::PrintBufferV(m_assertBuffer + m_index, BufferSize - m_index, Format, Args);
+      m_index = MMath::Clamp(m_index, writtenBufferCnt+ m_index, BufferSize - 1);
     }
 
     void EndLine()
@@ -150,7 +165,7 @@ namespace MEngine
         Expression, 
         SourceLocation.file_name(),
         SourceLocation.function_name(),
-        static_cast<uint32>(SourceLocation.column())
+        static_cast<uint32>(SourceLocation.line())
       );
     }                                
 
@@ -183,6 +198,7 @@ namespace
     writer.Append(Expression);
     writer.Append(FileName);
     writer.Append(FuncName);
+    writer.AppendFormatted(MTEXT("[Line:%d]"),Line);
     writer.EndLine();
     writer.FinishWrite();
 

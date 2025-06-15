@@ -1,6 +1,9 @@
 {
   "C_Cpp.default.cppStandard": "c++20",
   "C_Cpp.default.cStandard": "c23",
+  "C_Cpp.default.compileCommands": [
+    "${workspaceFolder}/Imtermediate/compile_commands.json"
+  ],
   "files.encoding": "utf8bom",
   "cmake.generator": "Ninja",
   "cmake.buildDirectory": "${workspaceFolder}/Intermediate",

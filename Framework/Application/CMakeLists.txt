@@ -44,7 +44,7 @@ target_include_directories(
 target_include_directories(
   Application
   PRIVATE
-  &{CMAKE_CURRENT_SOURCE_DIR}/Internal
+  ${CMAKE_CURRENT_SOURCE_DIR}/Internal
 )
 
 if(MSVC)

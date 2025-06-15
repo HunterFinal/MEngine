@@ -1,6 +1,7 @@
 ﻿#include "Windows/WindowsHeaderSet.h"
 #include "Windows/WindowsPlatformWindow.h"
 #include "Math/MEngineMathUtility.h"
+#include "Macro/AssertionMacros.h"
 
 #include <cassert>
 
@@ -57,7 +58,8 @@ namespace MEngine
 
       WindowHandle parentHandle = (ParentWindow != nullptr) ? ParentWindow->GetWindowHandle() : WindowHandle{NULL};
       HMENU menuHandle = NULL;
-      LPVOID lpParam = static_cast<void*>(m_owningApplication.get());
+      // TODO Pass application ptr to lpParam for calling ProcessWindowsMessage
+      LPVOID lpParam = static_cast<void*>(Application.get());
 
       // Create window
       HWND hWnd = ::CreateWindowEx(
@@ -80,8 +82,7 @@ namespace MEngine
         // Capture error context immediatelly after CreateWindowEx
         const uint32 errorCtx = ::GetLastError(); 
 
-        assert(false);
-        PLATFORM_BREAK();
+        me_assert(false);
 
         return;
       }

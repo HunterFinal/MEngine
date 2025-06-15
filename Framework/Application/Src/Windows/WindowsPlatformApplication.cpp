@@ -7,9 +7,6 @@
 
 namespace
 {
-  // Real MWindowsPlatformApplication instance pointer
-  std::shared_ptr<MEngine::Application::MWindowsPlatformApplication> gWindowsApplication{nullptr};
-
   // WARN Temp value before self-defines cursor finish
   constexpr bool bUseWin32Cursor = true;
 }
@@ -21,8 +18,7 @@ namespace MEngine
     std::shared_ptr<MWindowsPlatformApplication> MWindowsPlatformApplication::CreateWindowsApplication(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
     {
       // TODO Non thread-safe
-      gWindowsApplication = std::shared_ptr<MWindowsPlatformApplication>(new MWindowsPlatformApplication(InstanceHandle, IconHandle));
-      return gWindowsApplication;
+      return std::shared_ptr<MWindowsPlatformApplication>(new MWindowsPlatformApplication(InstanceHandle, IconHandle));
     }
 
     void MWindowsPlatformApplication::PeekMessages()
@@ -38,7 +34,7 @@ namespace MEngine
 
     void MWindowsPlatformApplication::ProcessDeferredMessages()
     {
-
+      // TODO need implementation
     }
 
     std::shared_ptr<MAbstractApplicationWindow> MWindowsPlatformApplication::CreateApplicationWindow()
@@ -65,37 +61,41 @@ namespace MEngine
       m_windows.emplace_back(windowsWindow);
     }
 
-    
-  bool MWindowsPlatformApplication::WindowsApplicationRegisterClass(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
-  {
-    // TODO Replace it with self-define cursor
-    auto cursor = bUseWin32Cursor ? LoadCursor(InstanceHandle, IDC_ARROW) : NULL;
-    const uint32 wndClassStyle = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-
-    WNDCLASSEX wc{
-      .cbSize = sizeof(WNDCLASSEX),
-      .style = wndClassStyle,
-      .lpfnWndProc = ApplicationMessageRouter,
-      .cbClsExtra = 0,
-      .cbWndExtra = 0,
-      .hInstance = InstanceHandle,
-      .hIcon = IconHandle,
-      .hCursor = cursor,
-      .hbrBackground = NULL,
-      .lpszMenuName = NULL,
-      .lpszClassName = ApplicationClassName,    // TODO need change to self-define string
-      .hIconSm = NULL,
-    };
-
-    if (!::RegisterClassEx(&wc))
+    void MWindowsPlatformApplication::TerminateApplication()
     {
-      // WARN temp use for debug
-      PLATFORM_BREAK();
-      return false;
+      // TODO need implementation
     }
+    
+    bool MWindowsPlatformApplication::WindowsApplicationRegisterClass(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
+    {
+      // TODO Replace it with self-define cursor
+      auto cursor = bUseWin32Cursor ? LoadCursor(InstanceHandle, IDC_ARROW) : NULL;
+      const uint32 wndClassStyle = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 
-    return true;
-  }
+      WNDCLASSEX wc{
+        .cbSize = sizeof(WNDCLASSEX),
+        .style = wndClassStyle,
+        .lpfnWndProc = ApplicationMessageRouter,
+        .cbClsExtra = 0,
+        .cbWndExtra = 0,
+        .hInstance = InstanceHandle,
+        .hIcon = IconHandle,
+        .hCursor = cursor,
+        .hbrBackground = NULL,
+        .lpszMenuName = NULL,
+        .lpszClassName = ApplicationClassName,    // TODO need change to self-define string
+        .hIconSm = NULL,
+      };
+
+      if (!::RegisterClassEx(&wc))
+      {
+        // WARN temp use for debug
+        PLATFORM_BREAK();
+        return false;
+      }
+
+      return true;
+    }
 
     LRESULT MWindowsPlatformApplication::ApplicationMessageRouter(IN HWND Hwnd, IN uint32 Msg, IN WPARAM WParam, IN LPARAM LParam)
     {

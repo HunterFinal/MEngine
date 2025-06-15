@@ -36,8 +36,9 @@ namespace MEngine
         MApplicationInstanceInternal* m_instance;
     };
 
-    TYPEDEF(MWindowsPlatformApplicationInstance, ApplicationInstance);
   }
 }
+
+TYPEDEF(MEngine::Application::MWindowsPlatformApplicationInstance, ApplicationInstance);
 
 #endif // _ME_APP_WINDOWS_PLATFORM_APPLICATION_INSTANCE_

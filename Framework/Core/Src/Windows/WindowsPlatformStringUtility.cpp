@@ -1,7 +1,18 @@
 ﻿#include "Windows/WindowsPlatformStringUtility.h"
 
-// strlen useage
+#include <cstdarg>
+#include <cstdio>
+// strlen usage
 #include <cstring>
+#include <cwchar>
+
+namespace
+{
+  /**
+   * Convert result of vsnprintf and vswprintf to -1 if overflow occurs
+   */
+  int32 ValidateSPrintfResult(IN const int32 Result, IN const int32 BufferSize);
+}
 
 namespace MEngine
 {
@@ -35,5 +46,36 @@ namespace MEngine
 
       return static_cast<WIDECHAR*>(wcsncpy(Dest, Src, DestCount));
     }
+
+    int32 MWindowsPlatformStringUtility::PrintBufferV(
+      IN WIDECHAR* BufferAddress,
+      IN const SIZE_T BufferSize,
+      IN const WIDECHAR* Format,
+      IN va_list Args)
+    {
+      const int32 writtenResultCnt = vswprintf(BufferAddress, BufferSize, Format, Args);
+      return ValidateSPrintfResult(writtenResultCnt, static_cast<int32>(BufferSize));
+    }
+
+    int32 MWindowsPlatformStringUtility::PrintBufferV(
+      IN ANSICHAR* BufferAddress,
+      IN const SIZE_T BufferSize,
+      IN const ANSICHAR* Format,
+      IN va_list Args)
+    {
+      const int32 writtenResultCnt = vsnprintf(BufferAddress, BufferSize, Format, Args);
+      return ValidateSPrintfResult(writtenResultCnt, static_cast<int32>(BufferSize));
+    }
+  }
+}
+
+namespace
+{
+  int32 ValidateSPrintfResult(
+    IN const int32 Result, 
+    IN const int32 BufferSize
+  )
+  {
+    return ((Result != -1) && (Result < BufferSize)) ? Result : -1;
   }
 }
