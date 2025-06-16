@@ -30,6 +30,12 @@ namespace MEngine
       int32 Bottom;
     };
 
+    struct MCursorHandle
+    {
+      ECursorType Type;
+      TCHAR CursorName[256]; 
+    };
+
     class MAbstractCursor
     {
       public:
