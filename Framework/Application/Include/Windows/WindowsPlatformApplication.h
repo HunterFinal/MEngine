@@ -26,6 +26,7 @@ namespace MEngine
       #pragma region MAbstractApplication interface
       public:
         APP_API virtual void PeekMessages() override;
+        APP_API virtual void UpdateApplication(IN const float DeltaTime) override;
         APP_API virtual void ProcessDeferredMessages() override;
 
         APP_API virtual std::shared_ptr<MAbstractApplicationWindow> CreateApplicationWindow() override;

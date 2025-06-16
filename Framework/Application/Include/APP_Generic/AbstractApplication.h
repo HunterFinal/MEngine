@@ -23,6 +23,7 @@ namespace MEngine
         APP_API virtual ~MAbstractApplication() = default;
 
         APP_API virtual void PeekMessages() = 0;
+        APP_API virtual void UpdateApplication(IN const float DeltaTime) = 0;
         APP_API virtual void ProcessDeferredMessages() = 0;
 
         APP_API virtual std::shared_ptr<MAbstractApplicationWindow> CreateApplicationWindow() = 0;

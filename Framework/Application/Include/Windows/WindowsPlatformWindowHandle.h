@@ -36,9 +36,13 @@ namespace MEngine
       private:
         MWindowHandleInternal* m_handle;
     };
-
-    TYPEDEF(MWindowsPlatformWindowHandle, WindowHandle);
   }
 }
+
+TYPEDEF(MEngine::Application::MWindowsPlatformWindowHandle, WindowHandle);
+
+// Equality comparation
+APP_API bool operator==(const WindowHandle& Lhs, const WindowHandle& Rhs);
+APP_API bool operator!=(const WindowHandle& Lhs, const WindowHandle& Rhs);
 
 #endif // _ME_APP_WINDOWS_PLATFORM_WINDOW_HANDLE_

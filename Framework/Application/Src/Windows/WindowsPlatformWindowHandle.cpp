@@ -61,3 +61,14 @@ namespace MEngine
     }
   }
 }
+
+// Window handle equality comparation
+bool operator==(const WindowHandle& Lhs, const WindowHandle& Rhs)
+{
+  return Lhs.GetHandle() == Rhs.GetHandle();
+}
+
+bool operator!=(const WindowHandle& Lhs, const WindowHandle& Rhs)
+{
+  return !(Lhs == Rhs);
+}

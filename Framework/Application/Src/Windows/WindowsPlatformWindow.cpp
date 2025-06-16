@@ -114,7 +114,15 @@ namespace MEngine
 
     void MWindowsPlatformWindow::MoveTo(IN int32 X, IN int32 Y)
     {
-      // TODO need implementation
+      if (m_hwnd == nullptr)
+      {
+        return;
+      }
+
+      const uint32 setWndPosFlag = SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER;
+
+      // ウインドウを動かす
+      ::SetWindowPos(m_hwnd->GetHandle(), nullptr, X, Y, 0, 0, setWndPosFlag);
     }
 
     void MWindowsPlatformWindow::Show()

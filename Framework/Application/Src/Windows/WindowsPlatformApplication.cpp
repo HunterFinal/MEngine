@@ -9,6 +9,14 @@ namespace
 {
   // WARN Temp value before self-defines cursor finish
   constexpr bool bUseWin32Cursor = true;
+
+  /**
+   * Find current window by HWND
+   */
+  std::shared_ptr<MEngine::Application::MWindowsPlatformWindow> FindWindowByHWND(
+    IN const std::vector<std::shared_ptr<MEngine::Application::MWindowsPlatformWindow>>& WindowsToFind, 
+    IN const WindowHandle& Handle
+  );
 }
 
 namespace MEngine
@@ -30,6 +38,13 @@ namespace MEngine
         ::TranslateMessage(&Message);
         ::DispatchMessage(&Message);
       }
+    }
+
+    void MWindowsPlatformApplication::UpdateApplication(IN const float DeltaTime)
+    {
+      // Disable unreferenced warning
+      (void)DeltaTime;
+      // Empty implementation
     }
 
     void MWindowsPlatformApplication::ProcessDeferredMessages()
@@ -100,6 +115,7 @@ namespace MEngine
     LRESULT MWindowsPlatformApplication::ApplicationMessageRouter(IN HWND Hwnd, IN uint32 Msg, IN WPARAM WParam, IN LPARAM LParam)
     {
       MWindowsPlatformApplication* curtAppPtr = nullptr;
+
       if (Msg == WM_CREATE)
       {
         LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(LParam);
@@ -123,6 +139,21 @@ namespace MEngine
 
     LRESULT MWindowsPlatformApplication::ProcessWindowsMessage(IN HWND Hwnd, IN uint32 Msg, IN WPARAM WParam, IN LPARAM LParam)
     {
+      std::shared_ptr<MWindowsPlatformWindow> currentActiveNativeWindowPtr = FindWindowByHWND(m_windows, MEngine::Application::MWindowsPlatformWindowHandle{Hwnd});
+      // stop process message while no windows are registered or found window is invalid
+      // ウインドウが登録されていないもしくは無効だった場合止める
+      if ((m_windows.size() == 0) || (currentActiveNativeWindowPtr == nullptr)) UNLIKELY
+      {
+        return DefWindowProc(Hwnd, Msg, WParam, LParam);
+      }
+
+      // 
+      std::shared_ptr<MApplicationEventHandler> eventHandler = GetEventHandler();
+      me_assert(eventHandler != nullptr);
+      if (eventHandler == nullptr)
+      {
+        return DefWindowProc(Hwnd, Msg, WParam, LParam);
+      }
 
       switch (Msg)
       {
@@ -138,11 +169,23 @@ namespace MEngine
           }
         }
         break;
+
+        // Mouse move
+        case WM_NCMOUSEMOVE:
         case WM_MOUSEMOVE:
         {
+          bool mouseMoveResult = eventHandler->OnMouseMove();
           std::cout << "Moving mouse" << std::endl;
+          
+          return mouseMoveResult ? 0 : 1; 
         }
         break;
+        case WM_MOVE:
+        {
+
+        } 
+        break;
+
         case WM_CLOSE:
         {
           ::DestroyWindow(Hwnd);
@@ -170,5 +213,27 @@ namespace MEngine
       const bool bRegisterClassSucceeded = WindowsApplicationRegisterClass(InstanceHandle, IconHandle);
       me_assert(bRegisterClassSucceeded);
     }
+  }
+}
+
+namespace
+{
+  std::shared_ptr<MEngine::Application::MWindowsPlatformWindow> FindWindowByHWND(
+    IN const std::vector<std::shared_ptr<MEngine::Application::MWindowsPlatformWindow>>& WindowsToFind, 
+    IN const WindowHandle& Handle
+  )
+  {
+    using namespace MEngine::Application;
+
+    for (size_t i = 0 ; i < WindowsToFind.size(); ++i)
+    {
+      const std::shared_ptr<MWindowsPlatformWindow>& windowPtr = WindowsToFind[i];
+      if ((windowPtr != nullptr) && (windowPtr->GetWindowHandle() == Handle))
+      {
+        return windowPtr;
+      }
+    }
+
+    return std::shared_ptr<MWindowsPlatformWindow>{nullptr};
   }
 }
