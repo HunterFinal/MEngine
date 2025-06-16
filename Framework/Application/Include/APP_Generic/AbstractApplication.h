@@ -3,7 +3,7 @@
 #ifndef _ME_APP_ABSTRACT_APPLICATION_
 #define _ME_APP_ABSTRACT_APPLICATION_
 
-#include "ApplicationAPI.h"
+#include "Macro/ApplicationDefines.h"
 #include "APP_Generic/ApplicationEventHandler.h"
 #include "Misc/NonCopyable.h"
 

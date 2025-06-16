@@ -66,6 +66,8 @@ namespace MEngine
       private:
         std::weak_ptr<MWindowsPlatformApplication> m_owningApplication;
         std::shared_ptr<WindowHandle> m_hwnd;
+
+        bool m_bIsVisible : 1;
     };
 
     // TODO Create cross-platform string immediately

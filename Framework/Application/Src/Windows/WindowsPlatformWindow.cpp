@@ -3,8 +3,6 @@
 #include "Math/MEngineMathUtility.h"
 #include "Macro/AssertionMacros.h"
 
-#include <cassert>
-
 namespace
 {
   constexpr ANSICHAR APP_WINDOW_CLASS_NAME_A[] = "MEngineWindow";
@@ -106,57 +104,69 @@ namespace MEngine
 
     void MWindowsPlatformWindow::Destroy()
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::ResizeWindow(IN int32 NewX, IN int32 NewY, IN uint32 NewWidth, IN uint32 NewHeight)
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::MoveTo(IN int32 X, IN int32 Y)
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::Show()
     {
+      // TODO need implementation
+      if (!m_bIsVisible)
+      {
+        m_bIsVisible = true;
 
+        ::ShowWindow(*m_hwnd, SW_SHOW);
+      }
     }
 
     void MWindowsPlatformWindow::Hide()
     {
+      // TODO need implementation
+      if (m_bIsVisible)
+      {
+        m_bIsVisible = false;
 
+        ::ShowWindow(*m_hwnd, SW_HIDE);
+      }
     }
 
     void MWindowsPlatformWindow::Maximize()
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::Minimize()
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::Enable()
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::Disable()
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::SetTitle(IN const ANSICHAR* Text)
     {
-
+      // TODO need implementation
     }
 
     void MWindowsPlatformWindow::SetWindowMode(IN EWindowMode NewWindowMode)
     {
-
+      // TODO need implementation
     }
 
     bool MWindowsPlatformWindow::IsMaximized() const
@@ -172,6 +182,7 @@ namespace MEngine
     MWindowsPlatformWindow::MWindowsPlatformWindow(IN MWindowsPlatformWindow&& Other) noexcept
       : Super(std::move(Other))
       , m_hwnd(std::move(Other.m_hwnd))
+      , m_bIsVisible(Other.m_bIsVisible)
     {
       Other.m_hwnd.reset();
     }
@@ -182,7 +193,7 @@ namespace MEngine
       {
         m_hwnd.reset();
         m_hwnd = std::move(Other.m_hwnd);
-
+        m_bIsVisible = Other.m_bIsVisible;
         Other.m_hwnd.reset();
       }
 
@@ -191,7 +202,8 @@ namespace MEngine
 
     MWindowsPlatformWindow::MWindowsPlatformWindow()
       : Super()
-      , m_hwnd{std::make_shared<WindowHandle>(nullptr)}
+      , m_hwnd{nullptr}
+      , m_bIsVisible(false)
     { }
 
     const ANSICHAR* MWindowsPlatformWindow::GetAppWindowClassA()

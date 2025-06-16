@@ -99,5 +99,7 @@ add_custom_command(TARGET MEngine POST_BUILD
           $<TARGET_FILE:Core>
           $<TARGET_FILE:OTGT>
           $<TARGET_FILE:Game>
+          $<TARGET_FILE:Application>
+          $<TARGET_FILE:Runtime>
           $<TARGET_FILE_DIR:MEngine>
 )

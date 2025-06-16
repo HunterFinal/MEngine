@@ -1,8 +1,8 @@
 ﻿#include "Windows/WindowsPlatformApplication.h"
 #include "Windows/WindowsPlatformWindow.h"
 #include "Windows/WindowsHeaderSet.h"
+#include "Macro/AssertionMacros.h"
 
-#include <cassert>
 #include <iostream>
 
 namespace
@@ -25,7 +25,7 @@ namespace MEngine
     {
       MSG Message{};
 
-      while (::PeekMessage(&Message, NULL, 0, 0, PM_REMOVE))
+      if (::PeekMessage(&Message, NULL, 0, 0, PM_REMOVE))
       {
         ::TranslateMessage(&Message);
         ::DispatchMessage(&Message);
@@ -46,12 +46,12 @@ namespace MEngine
                                                         IN const MWindowDefinition& WindowDefinition,
                                                         IN const std::shared_ptr<MAbstractApplicationWindow>& ParentWindow)
     {
-      assert(m_applicationInstance != nullptr);
+      me_assert(m_applicationInstance != nullptr);
 
       std::shared_ptr<MWindowsPlatformWindow> windowsWindow = std::dynamic_pointer_cast<MWindowsPlatformWindow>(Window);
       std::shared_ptr<MWindowsPlatformWindow> parentWindow = std::dynamic_pointer_cast<MWindowsPlatformWindow>(ParentWindow);
 
-      assert(windowsWindow != nullptr);
+      me_assert(windowsWindow != nullptr);
       if (windowsWindow != nullptr)
       {
         // HACK shared_ptrで管理するしか使わないので。使い方を慎重に
@@ -168,6 +168,7 @@ namespace MEngine
       ::DisableProcessWindowsGhosting();
 
       const bool bRegisterClassSucceeded = WindowsApplicationRegisterClass(InstanceHandle, IconHandle);
+      me_assert(bRegisterClassSucceeded);
     }
   }
 }

@@ -5,6 +5,9 @@
 
 #include "Misc/CoreDefines.h"
 
+#include "APP_Generic/WindowDefinition.h"
+#include "APP_Generic/AbstractApplication.h"
+#include "APP_Generic/AbstractApplicationWindow.h"
 #include "Macro/ApplicationDefines.h"
 #include "Interfaces/IApplicationInterface.h"
 #include "HAL/PlatformApplicationAccessPort.h"
