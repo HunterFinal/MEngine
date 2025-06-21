@@ -8,7 +8,7 @@ namespace MEngine
 {
   namespace Core
   {
-    void MWindowsPlatformLowLevelAccessPort::OutputToLocalDevice(const TCHAR* Str)
+    void MWindowsPlatformLowLevelAccessPort::PlatformPrintToLocalDevice(const TCHAR* Str)
     {
       #if ME_DEBUG_LOGGING
         OutputDebugString(Str);

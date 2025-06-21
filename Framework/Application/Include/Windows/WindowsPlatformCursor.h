@@ -19,22 +19,22 @@ namespace MEngine
       public:
         MWindowsPlatformCursor();
           
-        /**Start of MAbstractCursor interface */
-        #pragma region MAbstractCursor interface
-        public:
-          virtual ~MWindowsPlatformCursor();
-          virtual Vector2 GetPosition() const override;
-          virtual void SetPosition(IN const int32 X, IN const int32 Y) override;
-          virtual void Show() override;
-          virtual void Hide() override;
-          virtual void LockInRect(IN const MCursorRect& Rect) override;
-          virtual void Unlock() override;
-        #pragma endregion MAbstractCursor interface
-        /**End of MAbstractCursor interface */
+      /**Start of MAbstractCursor interface */
+      #pragma region MAbstractCursor interface
+      public:
+        virtual ~MWindowsPlatformCursor();
+        virtual Vector2 GetPosition() const override;
+        virtual void SetPosition(IN const int32 X, IN const int32 Y) override;
+        virtual void Show() override;
+        virtual void Hide() override;
+        virtual void LockInRect(IN const MCursorRect& Rect) override;
+        virtual void Unlock() override;
+      #pragma endregion MAbstractCursor interface
+      /**End of MAbstractCursor interface */
 
-        // MAbstractCursor NVI
-        private:
-          virtual void SetTypeImpl(IN const ECursorType Type) override;
+      // MAbstractCursor NVI
+      private:
+        virtual void SetTypeImpl(IN const ECursorType Type) override;
 
       private:
         std::vector<HCURSOR> m_customCursor;

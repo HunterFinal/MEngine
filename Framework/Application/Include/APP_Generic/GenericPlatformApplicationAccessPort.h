@@ -17,6 +17,7 @@ namespace MEngine
   namespace Application
   {
     class MAbstractApplication;
+    struct MKeyCharContainer;
 
     struct MGenericPlatformApplicationAccessPort
     {

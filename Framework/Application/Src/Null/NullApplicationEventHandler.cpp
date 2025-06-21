@@ -1,4 +1,7 @@
 ﻿#include "Null/NullApplicationEventHandler.h"
+#include "Containers/KeyCharContainer.h"
+
+#include <memory>
 
 namespace MEngine
 {
@@ -17,6 +20,12 @@ namespace MEngine
       return false;
     }
 
+    bool MNullApplicationEventHandler::OnKeyChar(IN const MKeyCharContainer& Container)
+    {
+      (void)Container;
+      return false;
+    }
+
     bool MNullApplicationEventHandler::OnMouseDown()
     {
       return false;
@@ -30,6 +39,20 @@ namespace MEngine
     bool MNullApplicationEventHandler::OnMouseMove()
     {
       return false;
+    }
+
+    void MNullApplicationEventHandler::OnWindowCreate(
+      IN const std::shared_ptr<MAbstractApplicationWindow>& Window, 
+      IN const bool bIsSetFocus)
+    {
+      // Ignore unuse warning
+      (void)Window;
+      (void)bIsSetFocus;
+    }
+    void MNullApplicationEventHandler::OnWindowClose(IN const std::shared_ptr<MAbstractApplicationWindow>& Window)
+    {
+      // Ignore unuse warning
+      (void)Window;
     }
   }
 }

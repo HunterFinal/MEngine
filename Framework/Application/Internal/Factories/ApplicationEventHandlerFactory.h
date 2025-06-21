@@ -3,7 +3,7 @@
 #ifndef _ME_APPLICATION_EVENT_HANDLER_FACTORY_
 #define _ME_APPLICATION_EVENT_HANDLER_FACTORY_
 
-#include "ApplicationAPI.h"
+#include "Macro/ApplicationDefines.h"
 #include "APP_Generic/ApplicationEventHandlerFwd.h"
 
 namespace std

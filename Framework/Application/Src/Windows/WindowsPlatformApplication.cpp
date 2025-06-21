@@ -1,14 +1,23 @@
 ﻿#include "Windows/WindowsPlatformApplication.h"
-#include "Windows/WindowsPlatformWindow.h"
-#include "Windows/WindowsHeaderSet.h"
+
+#include "APP_Generic/ApplicationEventHandler.h"
+#include "Containers/KeyCharContainer.h"
+#include "HAL/PlatformLowLevelAccessPort.h"
 #include "Macro/AssertionMacros.h"
+#include "Windows/WindowsPlatformWindow.h"
+
+#include "Globals/CoreGlobals.h"
+
+// Internal
+#include "Internal/EventBuilders/KeyCharContainerBuilder.h"
+
 
 #include <iostream>
 
 namespace
 {
   // WARN Temp value before self-defines cursor finish
-  constexpr bool bUseWin32Cursor = true;
+  constexpr bool g_bUseWin32Cursor = true;
 
   /**
    * Find current window by HWND
@@ -17,6 +26,11 @@ namespace
     IN const std::vector<std::shared_ptr<MEngine::Application::MWindowsPlatformWindow>>& WindowsToFind, 
     IN const WindowHandle& Handle
   );
+
+  /**
+   * Create OnKeyChar variable on Windows platform
+   */
+  const MEngine::Application::MKeyCharContainer ConvertToKeyCharContainer(IN WPARAM WParam, IN LPARAM LParam);
 }
 
 namespace MEngine
@@ -79,12 +93,13 @@ namespace MEngine
     void MWindowsPlatformApplication::TerminateApplication()
     {
       // TODO need implementation
+      OnExitEventHandler.Unbind();
     }
     
     bool MWindowsPlatformApplication::WindowsApplicationRegisterClass(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
     {
       // TODO Replace it with self-define cursor
-      auto cursor = bUseWin32Cursor ? LoadCursor(InstanceHandle, IDC_ARROW) : NULL;
+      auto cursor = g_bUseWin32Cursor ? LoadCursor(InstanceHandle, IDC_ARROW) : NULL;
       const uint32 wndClassStyle = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 
       WNDCLASSEX wc{
@@ -147,16 +162,33 @@ namespace MEngine
         return DefWindowProc(Hwnd, Msg, WParam, LParam);
       }
 
-      // 
       std::shared_ptr<MApplicationEventHandler> eventHandler = GetEventHandler();
       me_assert(eventHandler != nullptr);
-      if (eventHandler == nullptr)
+      if (eventHandler == nullptr) UNLIKELY
       {
         return DefWindowProc(Hwnd, Msg, WParam, LParam);
       }
 
       switch (Msg)
       {
+        case WM_CHAR:
+        {
+          const MKeyCharContainer msgKeyCharContainer = ConvertToKeyCharContainer(WParam, LParam);
+          // TODO
+          eventHandler->OnKeyChar(msgKeyCharContainer);
+
+          TCHAR test[3];
+          test[0] = msgKeyCharContainer.Character;
+          test[1] = static_cast<TCHAR>('\n');
+          test[2] = static_cast<TCHAR>('\0');
+
+          MPlatformLowLevelAccessPort::PlatformPrintDebugString(test);
+
+          // NOTE:Should always handle WM_CHAR, Win32 beeps if WM_CHAR is not handled
+          return 0;
+        }
+        break;
+
         case WM_KEYDOWN:
         {
           switch (WParam)
@@ -169,7 +201,6 @@ namespace MEngine
           }
         }
         break;
-
         // Mouse move
         case WM_NCMOUSEMOVE:
         case WM_MOUSEMOVE:
@@ -180,15 +211,34 @@ namespace MEngine
           return mouseMoveResult ? 0 : 1; 
         }
         break;
+
+        case WM_WINDOWPOSCHANGING:
+        {
+          std::cout << "Changing Window Pos" << std::endl;
+          return 0;
+        }
+        break;
+
         case WM_MOVE:
         {
-
-        } 
+          std::cout << "Moving window" << std::endl;
+        }  
         break;
 
         case WM_CLOSE:
         {
-          ::DestroyWindow(Hwnd);
+          // TODO
+          currentActiveNativeWindowPtr->Destroy();
+          auto result = std::remove(m_windows.begin(), m_windows.end(), currentActiveNativeWindowPtr);
+          m_windows.erase(result, m_windows.end());
+          
+          if (m_windows.size() < 1)
+          {
+            if (OnExitEventHandler.IsBound())
+            {
+              OnExitEventHandler.Invoke();
+            }
+          }
         }
         break;
         case WM_DESTROY:
@@ -199,6 +249,7 @@ namespace MEngine
         break;
       }
 
+      std::cout << "Default" << std::endl;
       return DefWindowProc(Hwnd, Msg, WParam, LParam);
     }
 
@@ -212,6 +263,10 @@ namespace MEngine
 
       const bool bRegisterClassSucceeded = WindowsApplicationRegisterClass(InstanceHandle, IconHandle);
       me_assert(bRegisterClassSucceeded);
+
+      // FIXME For template test use.Remove this as fast as possible
+      OnExitEventHandler = MDelegate<void()>::CreateStatic(&Globals::RequestApplicationExit);
+
     }
   }
 }
@@ -235,5 +290,42 @@ namespace
     }
 
     return std::shared_ptr<MWindowsPlatformWindow>{nullptr};
+  }
+
+  const MEngine::Application::MKeyCharContainer ConvertToKeyCharContainer(IN WPARAM WParam, IN LPARAM LParam)
+  {
+    using namespace MEngine::Application;
+
+    const TCHAR character = static_cast<TCHAR>(WParam);
+    const uint64 characterCode = static_cast<uint64>(WParam);
+
+    /**
+     * LParam bit meanings
+     * bit 0~15 indicates current message repeat count
+     * bit 29 indicates context code flag(ALT key)
+     * 0 for ALT was up, 1 for ALT was down
+     * bit 30 indicates previous key state flag
+     * 0 for new presses, 1 for repeat
+     * bit 31 indicates key transition state flag
+     * 0 for key pressed, 1 for key released
+     */
+    // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/wm-char
+    // URL: https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input
+    const uint16 keyRepeatCount = static_cast<uint16>(LOWORD(LParam));
+    
+    // high-order word of LParam(16~31)
+    const WORD keyFlags = HIWORD(LParam);
+    const bool bIsAltDown = (keyFlags & KF_ALTDOWN) != 0;
+    const bool bIsRepeat = (keyFlags & KF_REPEAT) != 0;
+    const bool bIsKeyUp = (keyFlags & KF_UP) != 0;
+
+    return MKeyCharContainerBuilder::GetInstance()
+            .Character(character)
+            .RepeatCount(keyRepeatCount)
+            .CharacterCode(characterCode)
+            .AltDownFlag(bIsAltDown)
+            .KeyRepeatFlag(bIsRepeat)
+            .KeyUpFlag(bIsKeyUp)
+            .Build();
   }
 }

@@ -3,9 +3,9 @@
 #ifndef _ME_CORE_ALLOCATOR_
 #define _ME_CORE_ALLOCATOR_
 
+#include "Macro/AssertionMacros.h"
 #include "Misc/CoreDefines.h"
 
-#include <cassert>
 #include <limits>
 #include <type_traits>
 
@@ -71,7 +71,7 @@ namespace MEngine
       {
         // overflow check
         bool bInvalidAlloc = (ByteSizePerElement < static_cast<SIZE_T>(1)) || (ByteSizePerElement > static_cast<SIZE_T>(std::numeric_limits<int32>::max()));
-        assert(!bInvalidAlloc);
+        me_assert(!bInvalidAlloc);
 
         // TODO m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
         // TODO (ElementNum * ByteSizePerElement == 0) || (m_data != nullptr): free(m_data) first and return nullptr; 

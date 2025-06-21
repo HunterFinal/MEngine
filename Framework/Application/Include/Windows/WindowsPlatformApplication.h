@@ -5,9 +5,9 @@
 
 #include "APP_Generic/AbstractApplication.h"
 #include "Windows/WindowsPlatformApplicationInstance.h"
-
-// TODO Try not include this here
 #include "Windows/WindowsHeaderSet.h"
+#include "Delegates/Delegate.h"
+
 #include <vector> 
 
 namespace MEngine
@@ -50,6 +50,8 @@ namespace MEngine
       private:
         std::shared_ptr<ApplicationInstance> m_applicationInstance;
         std::vector<std::shared_ptr<MWindowsPlatformWindow>> m_windows;
+
+        MDelegate<void()> OnExitEventHandler;
     };
   }
 }

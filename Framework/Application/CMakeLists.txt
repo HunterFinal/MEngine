@@ -1,6 +1,13 @@
 ﻿cmake_minimum_required(VERSION 3.29.0)
 
-file(GLOB_RECURSE APP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+file(GLOB_RECURSE PRIVATE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+file(GLOB_RECURSE INTERNAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Internal/*.cpp)
+
+set(
+  APP_SOURCES 
+  ${PRIVATE_SOURCES}
+  ${INTERNAL_SOURCES}
+)
 
 add_library(
   Application 

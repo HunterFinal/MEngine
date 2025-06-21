@@ -21,6 +21,7 @@ namespace MEngine
 
         APP_API ~MNullApplication() = default;
         APP_API void PeekMessages() override final;
+        APP_API void UpdateApplication(IN const float DeltaTime) override final;
         APP_API void ProcessDeferredMessages() override final;
 
         APP_API std::shared_ptr<MAbstractApplicationWindow> CreateApplicationWindow() override final;

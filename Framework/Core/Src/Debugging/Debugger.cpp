@@ -202,7 +202,7 @@ namespace
     writer.EndLine();
     writer.FinishWrite();
 
-    MPlatformLowLevelAccessPort::OutputDebugString(writer.GetBuffer());
+    MPlatformLowLevelAccessPort::PlatformPrintToLocalDevice(writer.GetBuffer());
 
     const SIZE_T formattedCount = MMath::Min(static_cast<SIZE_T>(ASSERT_BUFFER_SIZE), FormattedLogCount);
     MPlatformStringUtility::Strcpy(FormattedLog, writer.GetBuffer(), formattedCount);

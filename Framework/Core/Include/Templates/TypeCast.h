@@ -5,12 +5,15 @@
 
 #include "Misc/CoreDefines.h"
 
+#include "Misc/ConceptsStoragePlace.h"
 #include <type_traits>
 
-template<typename EnumType>
+template<ENUM_TYPE_CONCEPT EnumType>
 FORCEINLINE constexpr auto EnumCast(EnumType Enum)
 {
-  static_assert(std::is_integral<typename std::underlying_type<EnumType>::type>::value, "Can not use non-enum type");
+  #if !CAN_USE_CONCEPT
+  static_assert(std::is_enum<EnumType>::value, "Can not use non-enum type");
+  #endif
   return static_cast<std::underlying_type<EnumType>::type>(Enum);
 }
 

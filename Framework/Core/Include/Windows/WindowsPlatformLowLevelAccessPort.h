@@ -12,7 +12,7 @@ namespace MEngine
   {
     struct MWindowsPlatformLowLevelAccessPort : public MGenericPlatformLowLevelAccessPort
     {
-      CORE_API static void OutputToLocalDevice(const TCHAR* Str);
+      CORE_API static void PlatformPrintToLocalDevice(const TCHAR* Str);
     };
   }
 }

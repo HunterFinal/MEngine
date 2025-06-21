@@ -12,8 +12,8 @@ namespace MEngine
     struct MGenericPlatformLowLevelAccessPort
     {
       CORE_API static bool IsDebuggerPresent();
-      CORE_API static void OutputDebugString(const TCHAR* Str);
-      CORE_API static void OutputToLocalDevice(const TCHAR* Str);
+      CORE_API static void PlatformPrintDebugString(const TCHAR* Str);
+      CORE_API static void PlatformPrintToLocalDevice(const TCHAR* Str);
     };
   }
 }

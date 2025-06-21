@@ -23,6 +23,12 @@ namespace MEngine
       requires MEngine::TypeTraits::IsCharType_V<CharType>;
     };
 
+    template<typename EnumType>
+    concept EnumTypeConcept = requires
+    {
+      requires std::is_enum_v<EnumType>;
+    };
+
     template<typename MoveAssignment>
     concept MoveAssignableConcept = requires(MoveAssignment Lhs, MoveAssignment&& Rhs)
     {
@@ -33,6 +39,7 @@ namespace MEngine
 
 // 
 #define CHAR_TYPE_CONCEPT CONCEPT_ADAPTER(MEngine::Concepts::CharTypeConcept)
+#define ENUM_TYPE_CONCEPT CONCEPT_ADAPTER(MEngine::Concepts::EnumTypeConcept)
 
 #endif // CAN_USE_CONCEPT
 

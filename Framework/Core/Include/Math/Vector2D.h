@@ -4,12 +4,15 @@
 #ifndef MENGINE_MATH_VECTOR2D
 #define MENGINE_MATH_VECTOR2D
 
-#include <cassert>
-#include <type_traits>
-
 #include "Math/MathForward.h"
 #include "Math/Axis.h"
+#include "Math/MEngineMathUtility.h"
 #include "Macro/AssertionMacros.h"
+#include "Macro/ClassMacroHelpers.h"
+#include "Templates/METypeTraits.h"
+
+#include <cassert>
+#include <type_traits>
 
 #ifdef _MSC_VER
 #pragma warning (push)

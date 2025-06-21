@@ -46,7 +46,7 @@ namespace MEngine
 
     void MFutureFlexApplication::Update()
     {
-
+      // Empty implementation
     }
 
     bool MFutureFlexApplication::OnKeyDown()
@@ -57,17 +57,39 @@ namespace MEngine
     {
       return false;
     }
+    bool MFutureFlexApplication::OnKeyChar(IN const MKeyCharContainer& Container)
+    {
+      (void)Container;
+      return false;
+    }
+
     bool MFutureFlexApplication::OnMouseDown()
     {
       return false;
     }
+
     bool MFutureFlexApplication::OnMouseUp()
     {
       return false;
     }
+
     bool MFutureFlexApplication::OnMouseMove()
     {
       return false;
+    }
+
+    void MFutureFlexApplication::OnWindowCreate(
+      IN const std::shared_ptr<MEngine::Application::MAbstractApplicationWindow>& Window, 
+      IN const bool bIsSetFocus
+    )
+    {
+      (void)Window;
+      (void)bIsSetFocus;
+    }
+
+    void MFutureFlexApplication::OnWindowClose(IN const std::shared_ptr<MEngine::Application::MAbstractApplicationWindow>& Window)
+    {
+      
     }
 
     MFutureFlexApplication::MFutureFlexApplication()  
@@ -75,7 +97,7 @@ namespace MEngine
 
     void MFutureFlexApplication::OnTerminateFFApp()
     {
-      
+      // TODO need implementation
     }
 
   }

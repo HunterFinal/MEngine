@@ -8,6 +8,7 @@
 #include "Macro/DeprecationMacro.h"
 
 // 低レイヤーヘッダ
+#include "Globals/CoreGlobals.h"
 #include "HAL/Platform.h"
 #include "Misc/CoreDefines.h"
 
@@ -16,6 +17,7 @@
 #include "Macro/AssertionMacros.h"
 #include "Templates/METypeTraits.h"
 #include "Math/MEngineMathUtility.h"
+#include "Delegates/Delegate.h"
 
 #include "Math/Vector.h"
 #include "Math/Vector2D.h"

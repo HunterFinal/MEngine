@@ -3,10 +3,10 @@
 #ifndef _ME_RUNTIME_FUTURE_FLEX_CORE_APPLICATION_
 #define _ME_RUNTIME_FUTURE_FLEX_CORE_APPLICATION_
 
+#include "APP_Generic/ApplicationEventHandler.h"
 #include "FutureFlexCore/FutureFlexCoreAPI.h"
 #include "Misc/CoreDefines.h"
 #include "Misc/NonCopyable.h"
-#include "APP_Generic/ApplicationEventHandler.h"
 
 #include <memory>
 
@@ -24,6 +24,7 @@ namespace MEngine
   {
     using MEngine::Application::MApplicationEventHandler;
     using MEngine::Application::MAbstractApplication;
+    using MEngine::Application::MKeyCharContainer;
     /**
      * MEngine Future Flex UI Application
      */
@@ -45,9 +46,13 @@ namespace MEngine
         #pragma region MApplicationEventHandler interface
         RUNTIME_API virtual bool OnKeyDown() override;
         RUNTIME_API virtual bool OnKeyUp() override;
+        RUNTIME_API virtual bool OnKeyChar(IN const MKeyCharContainer& Container) override;
         RUNTIME_API virtual bool OnMouseDown() override;
         RUNTIME_API virtual bool OnMouseUp() override;
         RUNTIME_API virtual bool OnMouseMove() override;
+        RUNTIME_API virtual void OnWindowCreate(IN const std::shared_ptr<MEngine::Application::MAbstractApplicationWindow>& Window, IN const bool bIsSetFocus) override;
+        RUNTIME_API virtual void OnWindowClose(IN const std::shared_ptr<MEngine::Application::MAbstractApplicationWindow>& Window) override;
+
         #pragma endregion MApplicationEventHandler interface
         /**End of MApplicationEventHandler interface */
 

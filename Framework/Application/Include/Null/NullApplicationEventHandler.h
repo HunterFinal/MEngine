@@ -12,16 +12,19 @@ namespace MEngine
     struct MNullApplicationEventHandler final : public MApplicationEventHandler
     {
       public:
-        ~MNullApplicationEventHandler();
+        APP_API ~MNullApplicationEventHandler();
 
         /**Start of MApplicationEventHandler interface */
         #pragma region MApplicationEventHandler interface
 
-        bool OnKeyDown() override final;
-        bool OnKeyUp() override final;
-        bool OnMouseDown() override final;
-        bool OnMouseUp() override final;
-        bool OnMouseMove() override final;
+        APP_API bool OnKeyDown() override final;
+        APP_API bool OnKeyUp() override final;
+        APP_API bool OnKeyChar(IN const MKeyCharContainer& Container) override final;
+        APP_API bool OnMouseDown() override final;
+        APP_API bool OnMouseUp() override final;
+        APP_API bool OnMouseMove() override final;
+        APP_API void OnWindowCreate(IN const std::shared_ptr<MAbstractApplicationWindow>& Window, IN const bool bIsSetFocus) override final;
+        APP_API void OnWindowClose(IN const std::shared_ptr<MAbstractApplicationWindow>& Window) override;
         
         #pragma endregion MApplicationEventHandler interface
         /**End of MApplicationEventHandler interface */

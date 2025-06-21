@@ -1,13 +1,12 @@
 ﻿// MEngine entry point
 
 #include <iostream>
+#include "CoreAPI.h"
 #include "OTGTAPI.h"
 #include "ApplicationAPI.h"
-#include "Delegates/Delegate.h"
 #include "Event/WindowEventInstances.h"
 #include "HAL/PlatformLowLevelAccessPort.h"
 #include "Windows/WindowsHeaderSet.h"
-
 
 // TODO
 #include <spdlog/fmt/bundled/format.h>
@@ -223,27 +222,28 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   p->InvokeEvent(100u, 200u);
   p->InvokeEvent(200u, 300u);
 
-  // MEngine::Core::MWindowMoveEventInstance aaa;
-
   delete p;
 
   auto windowsApp = MPlatformApplicationAccessPort::CreateApplication();
   MEngine::Application::MWindowDefinition def;
-  def.DesiredPositionOnScreenX = 0.0f;
-  def.DesiredPositionOnScreenY = 0.0f;
-  def.DesiredHeightOnScreen = 480;
-  def.DesiredWidthOnScreen = 640;
+  def.DesiredPositionOnScreenX = 10.0f;
+  def.DesiredPositionOnScreenY = 10.0f;
+  def.DesiredHeightOnScreen = 768;
+  def.DesiredWidthOnScreen = 1024;
   def.Title = MTEXT("test");
 
-  // TODO
+  // TODO 一時的にネイティブアプリケーションで操作する
   auto window = windowsApp->CreateApplicationWindow();
   windowsApp->InitializeWindow(window, def, nullptr);
   window->Show();
 
-  while(true)
+  while(!Globals::IsApplicationExitRequested())
   {
     windowsApp->PeekMessages();
   }
+
+  // TODO
+  windowsApp->TerminateApplication();
 
   int a;
   std::cin >> a;

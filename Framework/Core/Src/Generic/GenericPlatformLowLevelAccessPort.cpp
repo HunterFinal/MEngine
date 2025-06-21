@@ -19,12 +19,12 @@ namespace MEngine
       #endif
     }
 
-    void MGenericPlatformLowLevelAccessPort::OutputDebugString(const TCHAR* Str)
+    void MGenericPlatformLowLevelAccessPort::PlatformPrintDebugString(const TCHAR* Str)
     {
-      MPlatformLowLevelAccessPort::OutputToLocalDevice(Str);
+      MPlatformLowLevelAccessPort::PlatformPrintToLocalDevice(Str);
     }
 
-    void MGenericPlatformLowLevelAccessPort::OutputToLocalDevice(const TCHAR* Str)
+    void MGenericPlatformLowLevelAccessPort::PlatformPrintToLocalDevice(const TCHAR* Str)
     {
       #if ((defined(UNICODE) && UNICODE) || (defined(_UNICODE) && _UNICODE))
         std::wcout << Str;

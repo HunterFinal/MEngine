@@ -105,6 +105,10 @@ namespace MEngine
     void MWindowsPlatformWindow::Destroy()
     {
       // TODO need implementation
+      if (m_hwnd != nullptr && m_hwnd->IsValid())
+      {
+        ::DestroyWindow(m_hwnd->GetHandle());
+      }
     }
 
     void MWindowsPlatformWindow::ResizeWindow(IN int32 NewX, IN int32 NewY, IN uint32 NewWidth, IN uint32 NewHeight)
