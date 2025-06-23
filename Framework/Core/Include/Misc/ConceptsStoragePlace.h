@@ -29,26 +29,38 @@ namespace MEngine
       requires std::is_enum_v<EnumType>;
     };
 
-    template<typename MoveAssignment>
-    concept MoveAssignableConcept = requires(MoveAssignment Lhs, MoveAssignment&& Rhs)
+    template<typename FloatingType>
+    concept FloatingTypeConcept = requires
     {
-      requires true;
+      requires std::is_floating_point_v<FloatingType>;
+    };
+
+    template<typename ArithmeticType>
+    concept ArithmeticTypeConcept = requires
+    {
+      requires std::is_arithmetic_v<ArithmeticType>;
     };
   }
 }
 
-// 
-#define CHAR_TYPE_CONCEPT CONCEPT_ADAPTER(MEngine::Concepts::CharTypeConcept)
-#define ENUM_TYPE_CONCEPT CONCEPT_ADAPTER(MEngine::Concepts::EnumTypeConcept)
-
 #endif // CAN_USE_CONCEPT
+
+// Concept type define macro
+#define CHAR_TYPE_CONCEPT       CONCEPT_ADAPTER(MEngine::Concepts::CharTypeConcept)
+#define ENUM_TYPE_CONCEPT       CONCEPT_ADAPTER(MEngine::Concepts::EnumTypeConcept)
+#define FLOATING_TYPE_CONCEPT   CONCEPT_ADAPTER(MEngine::Concepts::FloatingTypeConcept)
+#define ARITHMETIC_TYPE_CONCEPT CONCEPT_ADAPTER(MEngine::Concepts::ArithmeticTypeConcept)
 
 // define this if use c++20 or higher version
 // downgrade to typename if version is lower c++20
 #if CAN_USE_CONCEPT
   #define CONCEPT_ADAPTER(ConceptType) ConceptType 
+  #define TEMPLATE_REQUIRES_DECLARATION(TemplateArgument, RequirementExpr) template < TemplateArgument > requires RequirementExpr
+  #define TEMPLATE_REQUIRES_DEFINITION(TemplateArgument, RequirementExpr) TEMPLATE_REQUIRES_DECLARATION(TemplateArgument, RequirementExpr)
 #else
   #define CONCEPT_ADAPTER(...) typename
+  #define TEMPLATE_REQUIRES_DECLARATION(TemplateArgument, RequirementExpr) template < TemplateArgument, TEMPLATE_CONDITION_DECLARATION(RequirementExpr) >
+  #define TEMPLATE_REQUIRES_DEFINITION(TemplateArgument, RequirementExpr) template < TemplateArgument, TEMPLATE_CONDITION_DEFINITION(RequirementExpr) >
 #endif
 
 

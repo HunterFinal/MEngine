@@ -11,7 +11,6 @@
 #include "Macro/ClassMacroHelpers.h"
 #include "Templates/METypeTraits.h"
 
-#include <cassert>
 #include <type_traits>
 
 #ifdef _MSC_VER

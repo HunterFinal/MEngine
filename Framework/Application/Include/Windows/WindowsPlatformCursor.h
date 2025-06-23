@@ -23,7 +23,7 @@ namespace MEngine
       #pragma region MAbstractCursor interface
       public:
         virtual ~MWindowsPlatformCursor();
-        virtual Vector2 GetPosition() const override;
+        virtual Vector2D GetPosition() const override;
         virtual void SetPosition(IN const int32 X, IN const int32 Y) override;
         virtual void Show() override;
         virtual void Hide() override;

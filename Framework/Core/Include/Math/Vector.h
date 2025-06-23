@@ -4,8 +4,6 @@
 #ifndef MENGINE_MATH_VECTOR
 #define MENGINE_MATH_VECTOR
 
-#include <cassert>
-#include <type_traits>
 
 #include "HAL/Platform.h"
 #include "Macro/ClassMacroHelpers.h"
@@ -16,6 +14,8 @@
 #include "Misc/CoreDefines.h"
 #include "Templates/METypeAmbiguityResolve.h"
 #include "Templates/METypeTraits.h"
+
+#include <type_traits>
 
 #ifdef _MSC_VER
 #pragma warning (push)
@@ -495,7 +495,7 @@ namespace MEngine
 
     template<typename Type>
     template<typename DiffType, TEMPLATE_CONDITION_DEFINITION(!std::is_same_v<Type, DiffType>)>
-    MVector<Type>::MVector(const MVector<DiffType>& Other)
+    FORCEINLINE MVector<Type>::MVector(const MVector<DiffType>& Other)
       : MVector<Type>((Type)Other.X, (Type)Other.Y, (Type)Other.Z)
     {}
 

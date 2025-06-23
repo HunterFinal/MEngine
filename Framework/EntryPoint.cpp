@@ -244,7 +244,7 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
 
   // TODO
   windowsApp->TerminateApplication();
-
+  
   int a;
   std::cin >> a;
   

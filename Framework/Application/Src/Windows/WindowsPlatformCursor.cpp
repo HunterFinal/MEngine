@@ -47,12 +47,12 @@ namespace MEngine
       }
     }
 
-    Vector2 MWindowsPlatformCursor::GetPosition() const
+    Vector2D MWindowsPlatformCursor::GetPosition() const
     {
       POINT cursorPos{};
       ::GetCursorPos(&cursorPos);
 
-      return Vector2{static_cast<double>(cursorPos.x), static_cast<double>(cursorPos.y)};
+      return Vector2D{static_cast<double>(cursorPos.x), static_cast<double>(cursorPos.y)};
     }
 
     void MWindowsPlatformCursor::SetPosition(IN const int32 X, IN const int32 Y)

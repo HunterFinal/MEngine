@@ -7,6 +7,8 @@
 #include "HAL/Platform.h"
 #include "Macro/CPPVerMacro.h"
 #include "Macro/TypeAliasMacro.h"
+#include "Macro/ClassMacroHelpers.h"
+#include "Templates/METypeTraits.h"
 #include "Misc/BuildDefines.h"
 
 

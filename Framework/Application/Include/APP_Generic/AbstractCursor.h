@@ -43,7 +43,7 @@ namespace MEngine
         
         virtual ~MAbstractCursor() = default;
 
-        virtual Vector2 GetPosition() const = 0;
+        virtual Vector2D GetPosition() const = 0;
 
         virtual void SetPosition(IN const int32 X, IN const int32 Y) = 0;
 

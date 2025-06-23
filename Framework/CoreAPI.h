@@ -19,8 +19,10 @@
 #include "Math/MEngineMathUtility.h"
 #include "Delegates/Delegate.h"
 
+// Math
 #include "Math/Vector.h"
 #include "Math/Vector2D.h"
+#include "Math/Vector4.h"
 
 // アプリケーション
 #include "Application/ApplicationAPI.h"
