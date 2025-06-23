@@ -10,13 +10,15 @@ namespace MEngine
     MNullApplicationEventHandler::~MNullApplicationEventHandler()
     { }
 
-    bool MNullApplicationEventHandler::OnKeyDown()
+    bool MNullApplicationEventHandler::OnKeyDown(IN const MKeyInputInfoContainer& Container)
     {
+      (void)Container;
       return false;
     }
 
-    bool MNullApplicationEventHandler::OnKeyUp()
+    bool MNullApplicationEventHandler::OnKeyUp(IN const MKeyInputInfoContainer& Container)
     {
+      (void)Container;
       return false;
     }
 

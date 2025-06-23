@@ -17,8 +17,8 @@ namespace MEngine
         /**Start of MApplicationEventHandler interface */
         #pragma region MApplicationEventHandler interface
 
-        APP_API bool OnKeyDown() override final;
-        APP_API bool OnKeyUp() override final;
+        APP_API bool OnKeyDown(IN const MKeyInputInfoContainer& Container) override final;
+        APP_API bool OnKeyUp(IN const MKeyInputInfoContainer& Container) override final;
         APP_API bool OnKeyChar(IN const MKeyCharContainer& Container) override final;
         APP_API bool OnMouseDown() override final;
         APP_API bool OnMouseUp() override final;
