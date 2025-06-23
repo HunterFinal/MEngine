@@ -1,0 +1,12 @@
+﻿#pragma once
+
+#ifndef _ME_RUNTIME_FUTUREFLEX_CORE_DEFINITIONS_
+#define _ME_RUNTIME_FUTUREFLEX_CORE_DEFINITIONS_
+
+#ifdef FUTUREFLEX_CORE_DLL_BUILD
+#define FUTUREFLEXCORE_API __declspec(dllexport)
+#else
+#define FUTUREFLEXCORE_API __declspec(dllimport)
+#endif // FUTUREFLEX_CORE_DLL_BUILD
+
+#endif // _ME_RUNTIME_FUTUREFLEX_CORE_DEFINITIONS_

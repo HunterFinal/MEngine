@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef _ME_APPLICATION_INTERNAL_KEYCHAR_CONTAINER_
-#define _ME_APPLICATION_INTERNAL_KEYCHAR_CONTAINER_
+#ifndef _ME_APPLICATION_KEYCHAR_CONTAINER_
+#define _ME_APPLICATION_KEYCHAR_CONTAINER_
 
 #include "Misc/CoreDefines.h"
 
@@ -11,7 +11,7 @@ namespace MEngine
   {
     struct MKeyCharContainer
     {
-      uint64 CharacterCode;
+      uint32 CharacterCode;
       uint16 RepeatCount;
       TCHAR Character;
       bool bIsAltDown;
@@ -22,4 +22,4 @@ namespace MEngine
   }
 }
 
-#endif // _ME_APPLICATION_INTERNAL_KEYCHAR_CONTAINER_
+#endif // _ME_APPLICATION_KEYCHAR_CONTAINER_

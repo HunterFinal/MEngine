@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef _ME_APPLICATION_GENERIC_KEYCHAR_CONTAINER_BUILDER_
-#define _ME_APPLICATION_GENERIC_KEYCHAR_CONTAINER_BUILDER_
+#ifndef _ME_APPLICATION_INTERNAL_KEYCHAR_CONTAINER_BUILDER_
+#define _ME_APPLICATION_INTERNAL_KEYCHAR_CONTAINER_BUILDER_
 
 #include "Misc/CoreDefines.h"
 #include "Macro/ApplicationDefines.h"
@@ -12,7 +12,7 @@ namespace MEngine
   {
     struct MKeyCharContainer;
 
-    class MKeyCharContainerBuilder
+    class MKeyCharContainerBuilder final
     {
       public:
         static MKeyCharContainerBuilder& GetInstance()
@@ -34,7 +34,7 @@ namespace MEngine
           m_character = Character;
           return *this;
         }
-        MKeyCharContainerBuilder& CharacterCode(IN const uint64 CharacterCode)
+        MKeyCharContainerBuilder& CharacterCode(IN const uint32 CharacterCode)
         {
           m_characterCode = CharacterCode;
           return *this;
@@ -62,7 +62,7 @@ namespace MEngine
         }
 
       private:
-        uint64 m_characterCode;
+        uint32 m_characterCode;
         uint16 m_repeatCount;
         TCHAR m_character;
         bool m_bIsAltDown;
@@ -72,4 +72,4 @@ namespace MEngine
   }
 }
 
-#endif // _ME_APPLICATION_GENERIC_KEYCHAR_CONTAINER_BUILDER_
+#endif // _ME_APPLICATION_INTERNAL_KEYCHAR_CONTAINER_BUILDER_

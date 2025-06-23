@@ -8,7 +8,7 @@ namespace MEngine
     // TODO Fake const
     MKeyCharContainer MKeyCharContainerBuilder::Build() const
     {
-      MKeyCharContainer container =
+      MKeyCharContainer product =
                                   {
                                     .CharacterCode = m_characterCode,
                                     .RepeatCount = m_repeatCount,
@@ -19,7 +19,7 @@ namespace MEngine
                                   };
 
       const_cast<MKeyCharContainerBuilder*>(this)->ResetBuilder();
-      return container;
+      return product;
     }
 
     void MKeyCharContainerBuilder::ResetBuilder()

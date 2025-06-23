@@ -2,6 +2,7 @@
 
 #include "APP_Generic/ApplicationEventHandler.h"
 #include "Containers/KeyCharContainer.h"
+#include "Containers/KeyInputInfoContainer.h"
 #include "HAL/PlatformLowLevelAccessPort.h"
 #include "Macro/AssertionMacros.h"
 #include "Windows/WindowsPlatformWindow.h"
@@ -10,9 +11,12 @@
 
 // Internal
 #include "Internal/EventBuilders/KeyCharContainerBuilder.h"
+#include "Internal/EventBuilders/KeyInputInfoContainerBuilder.h"
 
 
 #include <iostream>
+#include <algorithm>
+#include <ranges>
 
 namespace
 {
@@ -31,6 +35,11 @@ namespace
    * Create OnKeyChar variable on Windows platform
    */
   const MEngine::Application::MKeyCharContainer ConvertToKeyCharContainer(IN WPARAM WParam, IN LPARAM LParam);
+  
+  /**
+   * Create OnKeyDown/OnKeyUp variable on Windows platform
+   */
+  const MEngine::Application::MKeyInputInfoContainer ConvertToKeyInputInfoContainer(IN WPARAM WParam, IN LPARAM LParam, OUT uint32& ActualKey);
 }
 
 namespace MEngine
@@ -171,6 +180,9 @@ namespace MEngine
 
       switch (Msg)
       {
+        // TODO
+        // Translated from virtual key message(WM_KEYDOWN)
+        // NOTE:Deffered Msg
         case WM_CHAR:
         {
           const MKeyCharContainer msgKeyCharContainer = ConvertToKeyCharContainer(WParam, LParam);
@@ -189,18 +201,29 @@ namespace MEngine
         }
         break;
 
+        // Key down
+        // TODO 
+        // NOTE:Deffered Msg
+        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/wm-syskeydown
+        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/wm-keydown
+        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/virtual-key-codes
+        case WM_SYSKEYDOWN:
         case WM_KEYDOWN:
         {
-          switch (WParam)
+
+          uint32 actualKey = 0;
+          const MEngine::Application::MKeyInputInfoContainer msgKeyInputInfoContainer = ConvertToKeyInputInfoContainer(WParam, LParam, actualKey);
+
+          const bool result = eventHandler->OnKeyDown(msgKeyInputInfoContainer);
+
+          // Always handle key down message to avoid beep sound
+          if (result || (Msg != WM_SYSKEYDOWN))
           {
-            case VK_ESCAPE:
-            {
-              PostMessage(Hwnd, WM_CLOSE, 0, 0);
-            }
-            break;
+            return 0;
           }
         }
         break;
+
         // Mouse move
         case WM_NCMOUSEMOVE:
         case WM_MOUSEMOVE:
@@ -209,6 +232,29 @@ namespace MEngine
           std::cout << "Moving mouse" << std::endl;
           
           return mouseMoveResult ? 0 : 1; 
+        }
+        break;
+
+        // Do nothing when WM_CREATE received
+        case WM_CREATE:
+        {
+          return 0;
+        }
+        break;
+
+        case WM_PAINT:
+        {
+          // TODO Add eventHandler paint implementation
+          // such as eventHandler->OnPlatformPaint(windowPtr);
+        }
+        break;
+
+        case WM_ERASEBKGND:
+        {
+          // Stop background erasing to avoid window flicker
+          // return non-zero to indicate don't erase background for us
+          // URL: https://learn.microsoft.com/ja-jp/windows/win32/winmsg/wm-erasebkgnd
+          return 1;
         }
         break;
 
@@ -227,24 +273,18 @@ namespace MEngine
 
         case WM_CLOSE:
         {
-          // TODO
-          currentActiveNativeWindowPtr->Destroy();
-          auto result = std::remove(m_windows.begin(), m_windows.end(), currentActiveNativeWindowPtr);
-          m_windows.erase(result, m_windows.end());
-          
-          if (m_windows.size() < 1)
-          {
-            if (OnExitEventHandler.IsBound())
-            {
-              OnExitEventHandler.Invoke();
-            }
-          }
+          eventHandler->OnWindowClose(currentActiveNativeWindowPtr);
+
+          return 0;
         }
         break;
         case WM_DESTROY:
         {
-          ::CloseWindow(Hwnd);
-          ::PostQuitMessage(0);
+          // TODO make this as a helper function
+          auto [removeItrBegin, removeItrEnd] = std::ranges::remove(m_windows, currentActiveNativeWindowPtr);
+          m_windows.erase(removeItrBegin, m_windows.end());
+
+          return 0;
         }
         break;
       }
@@ -294,13 +334,16 @@ namespace
 
   const MEngine::Application::MKeyCharContainer ConvertToKeyCharContainer(IN WPARAM WParam, IN LPARAM LParam)
   {
-    using namespace MEngine::Application;
+    using MEngine::Application::MKeyCharContainerBuilder;
+    using MEngine::Application::MKeyCharContainer;
 
     const TCHAR character = static_cast<TCHAR>(WParam);
-    const uint64 characterCode = static_cast<uint64>(WParam);
+    // TODO WPARAM is uint64 in 64-bit and uint32 in 32-bit
+    // TODO It seems to be safe
+    const uint32 characterCode = static_cast<uint32>(WParam);
 
     /**
-     * LParam bit meanings
+     * LParam bit meanings about message WM_CHAR
      * bit 0~15 indicates current message repeat count
      * bit 29 indicates context code flag(ALT key)
      * 0 for ALT was up, 1 for ALT was down
@@ -327,5 +370,69 @@ namespace
             .KeyRepeatFlag(bIsRepeat)
             .KeyUpFlag(bIsKeyUp)
             .Build();
+  }
+
+  const MEngine::Application::MKeyInputInfoContainer ConvertToKeyInputInfoContainer(IN WPARAM WParam, IN LPARAM LParam, OUT uint32& ActualKey)
+  {
+
+    using MEngine::Application::MKeyInputInfoContainer;
+    using MEngine::Application::MKeyInputInfoContainerBuilder;
+
+    const uint32 win32VKCode = static_cast<uint32>(WParam);
+    // Get the character code from virtuak key, If 0, no translation exists
+    // URL: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mapvirtualkeyw
+    const uint32 characterCode = ::MapVirtualKey(win32VKCode, MAPVK_VK_TO_CHAR);
+
+    const uint16 keyRepeatCount = static_cast<uint16>(LOWORD(LParam));
+
+    // high-order word of LParam(16~31)
+    const WORD keyFlags = HIWORD(LParam);
+    const bool bIsRepeat = (keyFlags & KF_REPEAT) != 0;
+
+    // FIXME Need implementation immediately
+    // low-order byte of keyFlags(16~23)
+    WORD scanCode = LOBYTE(keyFlags);
+    if ((keyFlags & KF_EXTENDED) != 0)
+    {
+      scanCode = MAKEWORD(scanCode, 0xE0);
+    }
+
+    ActualKey = win32VKCode;
+
+    switch (win32VKCode)
+    {
+      case VK_SHIFT:
+      {
+        ActualKey = LOWORD(::MapVirtualKey(scanCode, MAPVK_VSC_TO_VK_EX));
+      }
+      break;
+
+      case VK_CONTROL:
+      {
+        ActualKey = LOWORD(::MapVirtualKey(scanCode, MAPVK_VSC_TO_VK_EX));
+      }
+      break;
+
+      case VK_MENU:
+      {
+        ActualKey = LOWORD(::MapVirtualKey(scanCode, MAPVK_VSC_TO_VK_EX));
+      }
+      break;
+
+      case VK_CAPITAL:
+      {
+
+      }
+      break;
+    }
+
+    // TODO
+    return MKeyInputInfoContainerBuilder::GetInstance()
+            .ActualKeyCode(ActualKey)
+            .CharacterCode(characterCode)
+            .RepeatCount(keyRepeatCount)
+            .KeyRepeatFlag(bIsRepeat)
+            .Build();
+
   }
 }

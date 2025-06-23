@@ -18,15 +18,16 @@ namespace MEngine
   namespace Application
   {
     struct MKeyCharContainer;
+    struct MKeyInputInfoContainer;
     class MAbstractApplicationWindow;
 
     struct APP_API MApplicationEventHandler
     {
       virtual ~MApplicationEventHandler() = default;
   
-      virtual bool OnKeyDown() = 0;
+      virtual bool OnKeyDown(IN const MKeyInputInfoContainer& Container) = 0;
 
-      virtual bool OnKeyUp() = 0;
+      virtual bool OnKeyUp(IN const MKeyInputInfoContainer& Container) = 0;
 
       virtual bool OnKeyChar(IN const MKeyCharContainer& Container) = 0;
 
