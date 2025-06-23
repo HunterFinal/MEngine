@@ -541,33 +541,33 @@ namespace MEngine
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type> operator*(const MVector2D<Type>& LhsV, ScaleType Scale)
     {
-      const Type RealScale = static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(Scale);
       return MVector2D<Type>
              {
-                (LhsV.X * RealScale),
-                (LhsV.Y * RealScale)
+                (LhsV.X * realScale),
+                (LhsV.Y * realScale)
              };
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type> operator*(ScaleType Scale, const MVector2D<Type>& RhsV)
     {
-      const Type RealScale = static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(Scale);
       return MVector2D<Type>
              {
-                (RhsV.X * RealScale),
-                (RhsV.Y * RealScale)
+                (RhsV.X * realScale),
+                (RhsV.Y * realScale)
              };
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type> operator/(const MVector2D<Type>& V, ScaleType Scale)
     {
-      const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(1) / static_cast<Type>(Scale);
       return MVector2D<Type>
              {
-                (V.X * RealScale),
-                (V.Y * RealScale)
+                (V.X * realScale),
+                (V.Y * realScale)
              };
     }
 
@@ -648,10 +648,10 @@ namespace MEngine
     template<typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector2D<Type>& MVector2D<Type>::operator/=(ScaleType Scale)
     {
-      const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(1) / static_cast<Type>(Scale);
       
-      X *= RealScale;
-      Y *= RealScale;
+      X *= realScale;
+      Y *= realScale;
 
       return *this;
     }
@@ -701,7 +701,7 @@ namespace MEngine
 }
 
 #ifdef _MSC_VER
-#pragma warning (pop) // (disable : 4459) (disable : 4544)
+#pragma warning (pop) // (disable : 4459) (disable : 4544) (disable : 4201)
 #endif
 
 #endif // MENGINE_MATH_VECTOR2D

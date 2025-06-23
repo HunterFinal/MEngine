@@ -13,6 +13,18 @@ namespace MEngine
     struct MWindowsPlatformMath : public MGenericPlatformMath
     {
       // TODO Add Windows specific math method later
+
+      TEMPLATE_REQUIRES_DEFINITION(FLOATING_TYPE_CONCEPT FloatingType, std::is_floating_point_v<FloatingType>)
+      FORCEINLINE static bool IsNaN(FloatingType A)
+      {
+        return std::isnan(A);
+      }
+
+      TEMPLATE_REQUIRES_DEFINITION(FLOATING_TYPE_CONCEPT FloatingType, std::is_floating_point_v<FloatingType>)
+      FORCEINLINE static bool IsFinite(FloatingType A)
+      {
+        return std::isfinite(A);
+      }
     };
   }
 }

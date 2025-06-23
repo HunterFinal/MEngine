@@ -4,7 +4,7 @@
 #define _ME_CORE_MATH_VECTOR4_
 
 #include "Misc/CoreDefines.h"
-#include "Misc/ConceptsStoragePlace.h"  // available in C++20
+#include "Misc/ConceptsStoragePlace.h"                  // available in C++20
 #include "Templates/IsDifferentFloatingTypeTraits.h"
 
 #include "Math/Vector.h"
@@ -40,7 +40,9 @@ namespace MEngine
 
       public:
         TYPEDEF(FloatingType, Type);
-        GENERATE_CLASS_DEF(MVector4<Type>);
+        #define COMMA ,
+        GENERATE_CLASS_DEF(MVector4<Type COMMA AlignSize>);
+        #undef COMMA
 
         union
         {
@@ -179,7 +181,7 @@ namespace MEngine
          * 
          * @return true if normalized, false otherwise
          */
-        FORCEINLINE bool IsNormalizedXYZ() const;
+        FORCEINLINE bool IsNormalizedXYZ(DEFAULT_VAR Type Tolerance = (Type)MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
 
         /**
          * Normalize this vector's XYZ component if it's magnitude is larger than a tolerance and set W to 0, leaves it unchange if not
@@ -187,7 +189,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return true if normalize successfully, false otherwise
          */
-        FORCEINLINE bool NormalizeXYZ(DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL);
+        FORCEINLINE bool NormalizeXYZ(DEFAULT_VAR Type Tolerance = (Type)MMath::FLOAT_TOLERANCE_KINDA_SMALL);
         
         /**
          * Gets normalized version of this vector if it's magnitude is larger than a tolerance, return ZeroVector if not
@@ -195,7 +197,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return A normalized copy of this vector if success, ZeroVector otherwise
          */
-        FORCEINLINE MVector4<Type, AlignSize> GetNormalizedXYZCopy(DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
+        FORCEINLINE MVector4<Type, AlignSize> GetNormalizedXYZCopy(DEFAULT_VAR Type Tolerance = (Type)MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
 
         /**
          * Get the magnitude of this vector's XYZ component
@@ -231,7 +233,7 @@ namespace MEngine
          * @param Tolerance Error Tolerance
          * @return true if the vector's XYZ component is near to zero, false otherwise
          */
-        FORCEINLINE bool IsNearlyZeroXYZ(DEFAULT_VAR Type Tolerance = MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
+        FORCEINLINE bool IsNearlyZeroXYZ(DEFAULT_VAR Type Tolerance = (Type)MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
 
       public:
         /**
@@ -419,7 +421,282 @@ namespace MEngine
       , W(InW)
     {
     }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    template<FLOATING_TYPE_CONCEPT DiffType, uint32 OtherAlignSize, TEMPLATE_CONDITION_DEFINITION(MEngine::TypeTraits::IsDifferentFloatingType_V<Type, DiffType>)>
+    FORCEINLINE MVector4<Type, AlignSize>::MVector4(IN const MVector4<DiffType, OtherAlignSize>& Other)
+      : X(Other.X)
+      , Y(Other.Y)
+      , Z(Other.Z)
+      , W(Other.W)
+    {
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool MVector4<Type, AlignSize>::Equals(IN const MVector4<Type, AlignSize>& OtherV, DEFAULT_VAR Type Tolerance) const
+    {
+      return   EqualsXYZ(OtherV, Tolerance)
+            && (MMath::Abs(W - OtherV.W) <= Tolerance);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool MVector4<Type, AlignSize>::EqualsXYZ(IN const MVector4<Type, AlignSize>& OtherV, DEFAULT_VAR Type Tolerance) const
+    {
+      return   (MMath::Abs(X - OtherV.X) <= Tolerance)
+            && (MMath::Abs(Y - OtherV.Y) <= Tolerance)
+            && (MMath::Abs(Z - OtherV.Z) <= Tolerance);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool MVector4<Type, AlignSize>::Equals(IN const MVector4<Type, AlignSize>& V1, IN const MVector4<Type, AlignSize>& V2, DEFAULT_VAR Type Tolerance)
+    {
+      return V1.Equals(V2, Tolerance);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool MVector4<Type, AlignSize>::EqualsXYZ(IN const MVector4<Type, AlignSize>& V1, IN const MVector4<Type, AlignSize>& V2, DEFAULT_VAR Type Tolerance)
+    {
+      return V1.EqualsXYZ(V2, Tolerance);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool MVector4<Type, AlignSize>::IsNormalizedXYZ(DEFAULT_VAR Type Tolerance) const
+    {
+      return MMath::Abs(static_cast<Type>(1.0) - MagnitudeXYZ()) <= Tolerance;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool MVector4<Type, AlignSize>::NormalizeXYZ(DEFAULT_VAR Type Tolerance)
+    {
+      const Type squaredMagXYZ = SquaredMagnitudeXYZ();
+      if (squaredMagXYZ <= Tolerance)
+      {
+        return false;
+      }
+
+      const Type realScale = static_cast<Type>(1.0) / MMath::Sqrt(squaredMagXYZ);
+
+      X *= realScale;
+      Y *= realScale;
+      Z *= realScale;
+      return true;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MVector4<Type, AlignSize> MVector4<Type, AlignSize>::GetNormalizedXYZCopy(DEFAULT_VAR Type Tolerance) const
+    {
+      const Type squaredMagXYZ = SquaredMagnitudeXYZ();
+      if (squaredMagXYZ <= Tolerance)
+      {
+        return ZeroVector;
+      }
+
+      const Type realScale = static_cast<Type>(1.0) / MMath::Sqrt(squaredMagXYZ);
+
+      return MVector4<Type, AlignSize>
+              {
+                X * realScale, 
+                Y * realScale, 
+                Z * realScale, 
+                W * realScale
+              };
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE Type MVector4<Type, AlignSize>::MagnitudeXYZ() const
+    {
+      return MMath::Sqrt(SquaredMagnitudeXYZ());
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE Type MVector4<Type, AlignSize>::SquaredMagnitudeXYZ() const
+    {
+      return (X * X) + (Y * Y) + (Z * Z);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE Type MVector4<Type, AlignSize>::Magnitude() const
+    {
+      return MMath::Sqrt(SquaredMagnitude());
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE Type MVector4<Type, AlignSize>::SquaredMagnitude() const
+    {
+      return (X * X) + (Y * Y) + (Z * Z) + (W * W);
+    }
+    
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool MVector4<Type, AlignSize>::IsNearlyZeroXYZ(DEFAULT_VAR Type Tolerance) const
+    {
+      return   (MMath::Abs(X) <= Tolerance)
+            && (MMath::Abs(Y) <= Tolerance)
+            && (MMath::Abs(Z) <= Tolerance);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE Type& MVector4<Type, AlignSize>::operator[](IN SIZE_T Index) &
+    {
+      me_assert((Index >= 0) && (Index < 4));
+
+      return XYZW[Index];
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE const Type& MVector4<Type, AlignSize>::operator[](IN SIZE_T Index) const&
+    {
+      me_assert((Index >= 0) && (Index < 4));
+
+      return XYZW[Index];
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE Type MVector4<Type, AlignSize>::operator[](IN SIZE_T Index) const&&
+    {
+      me_assert((Index >= 0) && (Index < 4));
+
+      return XYZW[Index];
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MVector4<Type, AlignSize> MVector4<Type, AlignSize>::operator+() const
+    {
+      return *this;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MVector4<Type, AlignSize>MVector4<Type, AlignSize>::operator-() const
+    {
+      return MVector4<Type, AlignSize>{-X, -Y, -Z, -W};
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool operator==(IN const MVector4<Type, AlignSize>& V1, IN const MVector4<Type, AlignSize>& V2)
+    {
+      return   (V1.X == V2.X)
+            && (V1.Y == V2.Y)
+            && (V1.Z == V2.Z)
+            && (V1.W == V2.W);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool operator!=(IN const MVector4<Type, AlignSize>& V1, IN const MVector4<Type, AlignSize>& V2)
+    {
+      return !(V1 == V2);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MVector4<Type, AlignSize> operator+(IN const MVector4<Type, AlignSize>& V1, IN const MVector4<Type, AlignSize>& V2)
+    {
+      return MVector4<Type, AlignSize>
+              {
+                (V1.X + V2.X),
+                (V1.Y + V2.Y),
+                (V1.Z + V2.Z),
+                (V1.W + V2.W)
+              };
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MVector4<Type, AlignSize> operator-(IN const MVector4<Type, AlignSize>& V1, IN const MVector4<Type, AlignSize>& V2)
+    {
+      return MVector4<Type, AlignSize>
+              {
+                (V1.X - V2.X),
+                (V1.Y - V2.Y),
+                (V1.Z - V2.Z),
+                (V1.W - V2.W)
+              };
+    }
+
+    template <FLOATING_TYPE_CONCEPT Type, uint32 AlignSize, MEngine::Concepts::ArithmeticTypeConcept ScaleType> 
+      requires std::is_arithmetic_v<ScaleType>
+    FORCEINLINE MVector4<Type, AlignSize> operator*(IN const MVector4<Type, AlignSize>& LhsV, IN ScaleType Scale)
+    {
+      const Type realScale = static_cast<Type>(Scale);
+      return MVector4<Type, AlignSize>
+        {
+          X * realScale,
+          Y * realScale,
+          Z * realScale,
+          W * realScale
+        };
+    }
+
+    template <FLOATING_TYPE_CONCEPT Type, uint32 AlignSize, MEngine::Concepts::ArithmeticTypeConcept ScaleType> 
+      requires std::is_arithmetic_v<ScaleType>
+    FORCEINLINE MVector4<Type, AlignSize> operator*(IN ScaleType Scale, IN const MVector4<Type, AlignSize>& RhsV)
+    {
+      return RhsV * Scale;
+    }
+
+    template <FLOATING_TYPE_CONCEPT Type, uint32 AlignSize, MEngine::Concepts::ArithmeticTypeConcept ScaleType> 
+      requires std::is_arithmetic_v<ScaleType>
+    FORCEINLINE MVector4<Type, AlignSize> operator/(IN const MVector4<Type, AlignSize>& V, IN ScaleType Scale)
+    {
+      const Type realScale = static_cast<Type>(1.0)/ static_cast<Type>(Scale);
+
+      return MVector4<Type, AlignSize>
+              {
+                V.X * realScale,
+                V.Y * realScale,
+                V.Z * realScale,
+                V.W * realScale
+              };
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MVector4<Type, AlignSize>& MVector4<Type, AlignSize>::operator+=(IN const ThisClass& OtherV)
+    {
+      X += OtherV.X;
+      Y += OtherV.Y;
+      Z += OtherV.Z;
+      W += OtherV.W;
+
+      return *this;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MVector4<Type, AlignSize>& MVector4<Type, AlignSize>::operator-=(IN const ThisClass& OtherV)
+    {
+      X -= OtherV.X;
+      Y -= OtherV.Y;
+      Z -= OtherV.Z;
+      W -= OtherV.W;
+
+      return *this;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    TEMPLATE_REQUIRES_DECLARATION(ARITHMETIC_TYPE_CONCEPT ScaleType, std::is_arithmetic_v<ScaleType>)
+    FORCEINLINE MVector4<Type, AlignSize>& MVector4<Type, AlignSize>::operator*=(IN ScaleType Scale)
+    {
+      const Type realScale = static_cast<Type>(Scale);
+
+      X *= realScale;
+      Y *= realScale;
+      Z *= realScale;
+      W *= realScale;
+
+      return *this;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    TEMPLATE_REQUIRES_DECLARATION(ARITHMETIC_TYPE_CONCEPT ScaleType, std::is_arithmetic_v<ScaleType>)
+    FORCEINLINE MVector4<Type, AlignSize>& MVector4<Type, AlignSize>::operator/=(IN ScaleType Scale)
+    {
+      const Type realScale = static_cast<Type>(1.0) / static_cast<Type>(Scale);
+
+      X *= realScale;
+      Y *= realScale;
+      Z *= realScale;
+      W *= realScale;
+
+      return *this;
+    }
   }
 }
 
+#ifdef _MSC_VER
+#pragma warning (pop) // (disable : 4459) (disable : 4544) (disable : 4201)
 #endif // _ME_CORE_MATH_VECTOR4_

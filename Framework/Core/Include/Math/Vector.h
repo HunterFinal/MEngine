@@ -495,24 +495,24 @@ namespace MEngine
 
     template<typename Type>
     template<typename DiffType, TEMPLATE_CONDITION_DEFINITION(!std::is_same_v<Type, DiffType>)>
-    FORCEINLINE MVector<Type>::MVector(const MVector<DiffType>& Other)
+    FORCEINLINE MVector<Type>::MVector(IN const MVector<DiffType>& Other)
       : MVector<Type>((Type)Other.X, (Type)Other.Y, (Type)Other.Z)
     {}
 
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::Cross(const ThisClass& OtherV) const
+    FORCEINLINE MVector<Type> MVector<Type>::Cross(IN const ThisClass& OtherV) const
     {
       return CrossInner(OtherV);
     }
 
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::CrossProduct(const ThisClass& V1, const ThisClass& V2)
+    FORCEINLINE MVector<Type> MVector<Type>::CrossProduct(IN const ThisClass& V1, IN const ThisClass& V2)
     {
       return V1.CrossInner(V2);
     } 
 
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::CrossInner(const ThisClass& OtherV) const
+    FORCEINLINE MVector<Type> MVector<Type>::CrossInner(IN const ThisClass& OtherV) const
     {
       return MVector<Type>
              {
@@ -523,31 +523,31 @@ namespace MEngine
     }
 
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::Dot(const ThisClass& OtherV) const
+    FORCEINLINE Type MVector<Type>::Dot(IN const ThisClass& OtherV) const
     {
       return DotInner(OtherV);
     }
 
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::DotProduct(const ThisClass& V1, const ThisClass& V2)
+    FORCEINLINE Type MVector<Type>::DotProduct(IN const ThisClass& V1, IN const ThisClass& V2)
     {
       return V1.DotInner(V2);
     } 
 
     template<typename Type>
-    FORCEINLINE Type MVector<Type>::DotInner(const ThisClass& OtherV) const
+    FORCEINLINE Type MVector<Type>::DotInner(IN const ThisClass& OtherV) const
     {
       return (X * OtherV.X) + (Y * OtherV.Y) + (Z * OtherV.Z);
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::Equals(const ThisClass& OtherV, Type Tolerance) const
+    FORCEINLINE bool MVector<Type>::Equals(IN const ThisClass& OtherV, DEFAULT_VAR Type Tolerance) const
     {
       return (MMath::Abs(X - OtherV.X) <= Tolerance) && (MMath::Abs(Y - OtherV.Y) <= Tolerance) && (MMath::Abs(Z - OtherV.Z) <= Tolerance);
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::Equals(const ThisClass& V1, const ThisClass& V2, Type Tolerance)
+    FORCEINLINE bool MVector<Type>::Equals(IN const ThisClass& V1, IN const ThisClass& V2, DEFAULT_VAR Type Tolerance)
     {
       return (MMath::Abs(V1.X - V2.X) <= Tolerance) && (MMath::Abs(V1.Y - V2.Y) <= Tolerance) && (MMath::Abs(V1.Z - V2.Z) <= Tolerance);
     }
@@ -559,7 +559,7 @@ namespace MEngine
     }
 
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::IsNearlyZero(Type Tolerance) const
+    FORCEINLINE bool MVector<Type>::IsNearlyZero(DEFAULT_VAR Type Tolerance) const
     {
       return (MMath::Abs(X) <= Tolerance) &&
              (MMath::Abs(Y) <= Tolerance) &&
@@ -591,7 +591,7 @@ namespace MEngine
      * @return true if normalize successfully, false otherwise
      */
     template<typename Type>
-    FORCEINLINE bool MVector<Type>::Normalize(Type Tolerance)
+    FORCEINLINE bool MVector<Type>::Normalize(DEFAULT_VAR Type Tolerance)
     {
       const Type squaredMag = SquaredMagnitude();
       if (squaredMag <= Tolerance)
@@ -608,7 +608,7 @@ namespace MEngine
     }
     
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::GetNormalizedCopy(Type Tolerance) const
+    FORCEINLINE MVector<Type> MVector<Type>::GetNormalizedCopy(DEFAULT_VAR Type Tolerance) const
     {
       const Type squaredMag = SquaredMagnitude();
       if (squaredMag <= Tolerance)
@@ -626,13 +626,13 @@ namespace MEngine
     }
 
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::ProjectOnTo(const ThisClass& V) const
+    FORCEINLINE MVector<Type> MVector<Type>::ProjectOnTo(IN const ThisClass& V) const
     {
       return (Dot(V) / V.SquaredMagnitude()) * V;
     }
     
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::ProjectOnToAxis(EAxis Axis) const
+    FORCEINLINE MVector<Type> MVector<Type>::ProjectOnToAxis(IN EAxis Axis) const
     {
       using enum EAxis;
       switch (Axis)
@@ -655,7 +655,7 @@ namespace MEngine
     }
     
     template<typename Type>
-    FORCEINLINE MVector<Type> MVector<Type>::Projection(const ThisClass& TargetV, const ThisClass& OnToV)
+    FORCEINLINE MVector<Type> MVector<Type>::Projection(IN const ThisClass& TargetV, IN const ThisClass& OnToV)
     {
       return TargetV.ProjectOnTo(OnToV);
     }
@@ -665,7 +665,7 @@ namespace MEngine
     // -------------------------------------------------------
 
     template<typename Type>
-    FORCEINLINE MVector<Type> operator+(const MVector<Type>& V1, const MVector<Type>& V2)
+    FORCEINLINE MVector<Type> operator+(IN const MVector<Type>& V1, IN const MVector<Type>& V2)
     {
       return MVector<Type>
              {
@@ -676,7 +676,7 @@ namespace MEngine
     }
 
     template<typename Type>
-    FORCEINLINE MVector<Type> operator-(const MVector<Type>& V1, const MVector<Type>& V2)
+    FORCEINLINE MVector<Type> operator-(IN const MVector<Type>& V1, IN const MVector<Type>& V2)
     {
       return MVector<Type>
              {
@@ -687,38 +687,38 @@ namespace MEngine
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
-    FORCEINLINE MVector<Type> operator*(const MVector<Type>& LhsV, ScaleType Scale)
+    FORCEINLINE MVector<Type> operator*(IN const MVector<Type>& LhsV, IN ScaleType Scale)
     {
-      const Type RealScale = static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(Scale);
       return MVector<Type>
              {
-                (LhsV.X * RealScale),
-                (LhsV.Y * RealScale),
-                (LhsV.Z * RealScale)
+                (LhsV.X * realScale),
+                (LhsV.Y * realScale),
+                (LhsV.Z * realScale)
              };
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
-    FORCEINLINE MVector<Type> operator*(ScaleType Scale, const MVector<Type>& RhsV)
+    FORCEINLINE MVector<Type> operator*(IN ScaleType Scale, IN const MVector<Type>& RhsV)
     {
-      const Type RealScale = static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(Scale);
       return MVector<Type>
              {
-                (RhsV.X * RealScale),
-                (RhsV.Y * RealScale),
-                (RhsV.Z * RealScale)
+                (RhsV.X * realScale),
+                (RhsV.Y * realScale),
+                (RhsV.Z * realScale)
              };
     }
 
     template<typename Type, typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
-    FORCEINLINE MVector<Type> operator/(const MVector<Type>& V, ScaleType Scale)
+    FORCEINLINE MVector<Type> operator/(IN const MVector<Type>& V, IN ScaleType Scale)
     {
-      const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(1) / static_cast<Type>(Scale);
       return MVector<Type>
              {
-                (V.X * RealScale),
-                (V.Y * RealScale),
-                (V.Z * RealScale)
+                (V.X * realScale),
+                (V.Y * realScale),
+                (V.Z * realScale)
              };
     }
 
@@ -782,7 +782,7 @@ namespace MEngine
      */
     template<typename Type>
     template<typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
-    FORCEINLINE MVector<Type>& MVector<Type>::operator*=(ScaleType Scale)
+    FORCEINLINE MVector<Type>& MVector<Type>::operator*=(IN ScaleType Scale)
     {
       X *= Scale;
       Y *= Scale;
@@ -802,11 +802,11 @@ namespace MEngine
     template<typename ScaleType, TEMPLATE_CONDITION_DEFINITION(std::is_arithmetic_v<ScaleType>)>
     FORCEINLINE MVector<Type>& MVector<Type>::operator/=(ScaleType Scale)
     {
-      const Type RealScale = static_cast<Type>(1) / static_cast<Type>(Scale);
+      const Type realScale = static_cast<Type>(1) / static_cast<Type>(Scale);
       
-      X *= RealScale;
-      Y *= RealScale;
-      Z *= RealScale;
+      X *= realScale;
+      Y *= realScale;
+      Z *= realScale;
 
       return *this;
     }
@@ -821,6 +821,7 @@ namespace MEngine
     FORCEINLINE Type& MVector<Type>::operator[](SIZE_T Index) &
     {
       me_assert((Index >= 0) && (Index < 3));
+
       return XYZ[Index];
     }
 
@@ -855,7 +856,7 @@ namespace MEngine
 }
 
 #ifdef _MSC_VER
-#pragma warning (pop) // (disable : 4459) (disable : 4544)
+#pragma warning (pop) // (disable : 4459) (disable : 4544) (disable : 4201)
 #endif
 
 #endif // MENGINE_MATH_VECTOR

@@ -5,6 +5,8 @@
 #define MENGINE_GENERIC_MATH
 
 #include "Misc/CoreDefines.h"
+
+#include "Misc/ConceptsStoragePlace.h"
 #include "Templates/METypeAmbiguityResolve.h"
 #include "Templates/METypeTraits.h"
 
