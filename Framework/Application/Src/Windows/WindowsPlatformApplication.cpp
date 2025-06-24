@@ -102,7 +102,6 @@ namespace MEngine
     void MWindowsPlatformApplication::TerminateApplication()
     {
       // TODO need implementation
-      OnExitEventHandler.Unbind();
     }
     
     bool MWindowsPlatformApplication::WindowsApplicationRegisterClass(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
@@ -303,9 +302,6 @@ namespace MEngine
 
       const bool bRegisterClassSucceeded = WindowsApplicationRegisterClass(InstanceHandle, IconHandle);
       me_assert(bRegisterClassSucceeded);
-
-      // FIXME For template test use.Remove this as fast as possible
-      OnExitEventHandler = MDelegate<void()>::CreateStatic(&Globals::RequestApplicationExit);
 
     }
   }

@@ -72,6 +72,7 @@ target_link_libraries(
   OTGT
   Game
   Application
+  FutureFlexCore
 )
 
 # Modules
@@ -84,6 +85,8 @@ target_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/OTGT/Include
   ${CMAKE_CURRENT_SOURCE_DIR}/Application
   ${CMAKE_CURRENT_SOURCE_DIR}/Application/Include
+  ${CMAKE_CURRENT_SOURCE_DIR}/Runtime
+  ${CMAKE_CURRENT_SOURCE_DIR}/Runtime/Include
 )
 
 # Libraries include

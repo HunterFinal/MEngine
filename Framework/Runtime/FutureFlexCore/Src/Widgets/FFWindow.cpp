@@ -53,6 +53,12 @@ namespace MEngine
       }
     }
 
+    void FFWindow::SetNativeWindow(IN const std::shared_ptr<MAbstractApplicationWindow>& NativeWindow)
+    {
+      me_assert(NativeWindow != nullptr);
+      m_nativeWindowPtr = NativeWindow;
+    }
+
     std::shared_ptr<MAbstractApplicationWindow> FFWindow::GetNativeWindow()
     {
       return std::const_pointer_cast<MAbstractApplicationWindow>(static_cast<const FFWindow*>(this)->GetNativeWindow());

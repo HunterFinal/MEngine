@@ -15,6 +15,7 @@
 #include <spdlog/fmt/bundled/format.h>
 #include <cstring>
 #include <utility>
+#include <conio.h>
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -230,12 +231,14 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
 
   auto testFFWindow = std::make_shared<MEngine::FutureFlex::FFWindow>();
 
-  MEngine::FutureFlex::MFutureFlexApplication::GetInstance().Initialize();
-  MEngine::FutureFlex::MFutureFlexApplication::GetInstance().AddWindow(testFFWindow);
+  MEngine::FutureFlex::MFutureFlexApplication::Initialize();
+  MEngine::FutureFlex::MFutureFlexApplication& FFApp = MEngine::FutureFlex::MFutureFlexApplication::GetInstance();
+  FFApp.AssignExitRequestedDelegate(MEngine::Core::MDelegate<void()>::CreateStatic(&Globals::RequestApplicationExit));
+  FFApp.AddWindow(testFFWindow);
 
   while(!Globals::IsApplicationExitRequested())
   {
-    MEngine::FutureFlex::MFutureFlexApplication::GetInstance().Update();
+    FFApp.Update();
   }
 
   logger->Terminate();
@@ -250,7 +253,6 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   int a;
   std::cin >> a;
 
-  delete 
   return 0;
 }
 

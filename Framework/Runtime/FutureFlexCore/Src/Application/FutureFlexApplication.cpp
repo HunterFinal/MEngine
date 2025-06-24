@@ -38,7 +38,7 @@ namespace MEngine
     {
       me_assert(IsInitialized());
 
-      return *s_curtAppInstance.get();
+      return *s_curtAppInstance;
     }
 
     void MFutureFlexApplication::Initialize()
@@ -69,6 +69,15 @@ namespace MEngine
 
     void MFutureFlexApplication::AddWindow(std::shared_ptr<FFWindow> FutureFlexWindow)
     {
+      if (FutureFlexWindow == nullptr)
+      {
+        return;
+      }
+
+      m_relatedWindows.emplace_back(FutureFlexWindow);
+      MakeNativeWindow(FutureFlexWindow);
+
+      FutureFlexWindow->ShowWindow();
 
     }
 
@@ -92,11 +101,13 @@ namespace MEngine
 
     bool MFutureFlexApplication::OnKeyDown(IN const MKeyInputInfoContainer& Container)
     {
+      (void)Container;
       return false;
     }
 
     bool MFutureFlexApplication::OnKeyUp(IN const MKeyInputInfoContainer& Container)
     {
+      (void)Container;
       return false;
     }
 
@@ -134,7 +145,16 @@ namespace MEngine
       IN const std::shared_ptr<MAbstractApplicationWindow>& PlatformWindow
     ) 
     {
-      (void)PlatformWindow;
+      // TODO Adding implementation
+      std::shared_ptr<FFWindow> window = FindWindowByPlatformWindow(m_relatedWindows, PlatformWindow);
+
+      if (window == nullptr)
+      {
+        return;
+      }
+
+      window->RequestDestroyWindow();
+
     }
 
     MFutureFlexApplication::MFutureFlexApplication()
@@ -143,6 +163,8 @@ namespace MEngine
 
     void MFutureFlexApplication::MakeNativeWindow(IN std::shared_ptr<FFWindow> FutureFlexWindow)
     {
+      me_assert(FutureFlexWindow != nullptr);
+
       // TODO Change magic number
       // create definition
       MEngine::Application::MWindowDefinition def;
@@ -155,6 +177,21 @@ namespace MEngine
       // Create native window and initialize window to application
       std::shared_ptr<MEngine::Application::MAbstractApplicationWindow> nativeWindow = s_platformApp->CreateApplicationWindow();
       s_platformApp->InitializeWindow(nativeWindow, def, nullptr);
+
+      FutureFlexWindow->SetNativeWindow(nativeWindow);
+
+    }
+
+    void MFutureFlexApplication::UpdatePlatform()
+    {
+      if (s_platformApp != nullptr)
+      {
+        s_platformApp->PeekMessages();
+
+        // FIXME Need timer to calculate delta time
+        s_platformApp->UpdateApplication(0.0f);
+        s_platformApp->ProcessDeferredMessages();
+      }
 
     }
 
@@ -172,7 +209,7 @@ namespace MEngine
         DestroyWindowImpl(currentWindowToDestroy);
       }
 
-      m_relatedWindowDestroyQueue.empty();
+      m_relatedWindowDestroyQueue.clear();
     }
 
     void MFutureFlexApplication::DestroyWindowImpl(IN const std::shared_ptr<FFWindow>& DestroyedWindow)

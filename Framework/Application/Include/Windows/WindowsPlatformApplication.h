@@ -50,8 +50,6 @@ namespace MEngine
       private:
         std::shared_ptr<ApplicationInstance> m_applicationInstance;
         std::vector<std::shared_ptr<MWindowsPlatformWindow>> m_windows;
-
-        MDelegate<void()> OnExitEventHandler;
     };
   }
 }
