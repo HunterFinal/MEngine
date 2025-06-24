@@ -29,12 +29,14 @@ TYPEDEF(MEngine::Math::MVector2D<float>, Vector2);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2F);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2f);
 
+// 16-alignment Vector4
 #define COMMA ,
-TYPEDEF(MEngine::Math::MVector4<double COMMA 32>, Vector4D);
-TYPEDEF(MEngine::Math::MVector4<double COMMA 32>, Vector4d);
+TYPEDEF(MEngine::Math::MVector4<double COMMA 16>, Vector4D);
+TYPEDEF(MEngine::Math::MVector4<double COMMA 16>, Vector4d);
 TYPEDEF(MEngine::Math::MVector4<float COMMA 16>, Vector4);
 TYPEDEF(MEngine::Math::MVector4<float COMMA 16>, Vector4F);
 TYPEDEF(MEngine::Math::MVector4<float COMMA 16>, Vector4f);
 #undef COMMA
+
 
 #endif // MENGINE_MATH_FWD
