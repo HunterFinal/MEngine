@@ -23,6 +23,7 @@
 #include "Math/Vector.h"
 #include "Math/Vector2D.h"
 #include "Math/Vector4.h"
+#include "Math/Matrix4x4.h"
 
 // アプリケーション
 #include "Application/ApplicationAPI.h"

@@ -34,6 +34,13 @@ namespace MEngine
     MFutureFlexApplication::~MFutureFlexApplication()
     { }
 
+    MFutureFlexApplication& MFutureFlexApplication::GetInstance()
+    {
+      me_assert(IsInitialized());
+
+      return *s_curtAppInstance.get();
+    }
+
     void MFutureFlexApplication::Initialize()
     {
       Initialize(MPlatformApplicationAccessPort::CreateApplication());
@@ -55,16 +62,20 @@ namespace MEngine
       return s_curtAppInstance != nullptr;
     }
 
-    MFutureFlexApplication& MFutureFlexApplication::GetInstance()
+    void MFutureFlexApplication::Terminate()
     {
-      me_assert(IsInitialized());
 
-      return *s_curtAppInstance.get();
+    }
+
+    void MFutureFlexApplication::AddWindow(std::shared_ptr<FFWindow> FutureFlexWindow)
+    {
+
     }
 
     void MFutureFlexApplication::Update()
     {
-      // Empty implementation
+      // TODO
+      UpdatePlatform();
     }
 
     void MFutureFlexApplication::RequestDestroyWindow(IN std::shared_ptr<FFWindow> WindowToDestroy)
@@ -79,12 +90,12 @@ namespace MEngine
       m_onExitRequested = OnExitRequestedDelegate;
     }
 
-    bool MFutureFlexApplication::OnKeyDown()
+    bool MFutureFlexApplication::OnKeyDown(IN const MKeyInputInfoContainer& Container)
     {
       return false;
     }
 
-    bool MFutureFlexApplication::OnKeyUp()
+    bool MFutureFlexApplication::OnKeyUp(IN const MKeyInputInfoContainer& Container)
     {
       return false;
     }
@@ -129,6 +140,23 @@ namespace MEngine
     MFutureFlexApplication::MFutureFlexApplication()
       : m_onExitRequested{}  
     {}
+
+    void MFutureFlexApplication::MakeNativeWindow(IN std::shared_ptr<FFWindow> FutureFlexWindow)
+    {
+      // TODO Change magic number
+      // create definition
+      MEngine::Application::MWindowDefinition def;
+      def.DesiredPositionOnScreenX = 10.0f;
+      def.DesiredPositionOnScreenY = 10.0f;
+      def.DesiredHeightOnScreen = 768;
+      def.DesiredWidthOnScreen = 1024;
+      def.Title = MTEXT("test");
+
+      // Create native window and initialize window to application
+      std::shared_ptr<MEngine::Application::MAbstractApplicationWindow> nativeWindow = s_platformApp->CreateApplicationWindow();
+      s_platformApp->InitializeWindow(nativeWindow, def, nullptr);
+
+    }
 
     void MFutureFlexApplication::OnTerminateFFApp()
     {

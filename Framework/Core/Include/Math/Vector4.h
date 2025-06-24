@@ -616,10 +616,10 @@ namespace MEngine
       const Type realScale = static_cast<Type>(Scale);
       return MVector4<Type, AlignSize>
         {
-          X * realScale,
-          Y * realScale,
-          Z * realScale,
-          W * realScale
+          LhsV.X * realScale,
+          LhsV.Y * realScale,
+          LhsV.Z * realScale,
+          LhsV.W * realScale
         };
     }
 
@@ -699,4 +699,6 @@ namespace MEngine
 
 #ifdef _MSC_VER
 #pragma warning (pop) // (disable : 4459) (disable : 4544) (disable : 4201)
+#endif // _MSC_VER
+
 #endif // _ME_CORE_MATH_VECTOR4_

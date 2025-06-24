@@ -8,6 +8,37 @@ namespace MEngine
 {
   namespace FutureFlex 
   {
+    FFWindow::FFWindow()
+      : m_nativeWindowPtr{nullptr}
+      , m_bIsShown(false)
+    {}
+
+    FFWindow::~FFWindow()
+    {
+    }
+
+    void FFWindow::ShowWindow()
+    {
+      if (!m_bIsShown)
+      {
+        if (m_nativeWindowPtr != nullptr)
+        {
+          m_nativeWindowPtr->Show();
+        }
+      }
+    }
+
+    void FFWindow::HideWindow()
+    {
+      if (m_bIsShown)
+      {
+        if (m_nativeWindowPtr != nullptr)
+        {
+          m_nativeWindowPtr->Hide();
+        }
+      }
+    }
+
     void FFWindow::RequestDestroyWindow()
     {
       // TODO

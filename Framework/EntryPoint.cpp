@@ -8,9 +8,13 @@
 #include "HAL/PlatformLowLevelAccessPort.h"
 #include "Windows/WindowsHeaderSet.h"
 
+#include "Application/FutureFlexApplication.h"
+#include "Widgets/FFWindow.h"
+
 // TODO
 #include <spdlog/fmt/bundled/format.h>
 #include <cstring>
+#include <utility>
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -224,35 +228,29 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
 
   delete p;
 
-  auto windowsApp = MPlatformApplicationAccessPort::CreateApplication();
-  MEngine::Application::MWindowDefinition def;
-  def.DesiredPositionOnScreenX = 10.0f;
-  def.DesiredPositionOnScreenY = 10.0f;
-  def.DesiredHeightOnScreen = 768;
-  def.DesiredWidthOnScreen = 1024;
-  def.Title = MTEXT("test");
+  auto testFFWindow = std::make_shared<MEngine::FutureFlex::FFWindow>();
 
-  // TODO 一時的にネイティブアプリケーションで操作する
-  auto window = windowsApp->CreateApplicationWindow();
-  windowsApp->InitializeWindow(window, def, nullptr);
-  window->Show();
+  MEngine::FutureFlex::MFutureFlexApplication::GetInstance().Initialize();
+  MEngine::FutureFlex::MFutureFlexApplication::GetInstance().AddWindow(testFFWindow);
 
   while(!Globals::IsApplicationExitRequested())
   {
-    windowsApp->PeekMessages();
+    MEngine::FutureFlex::MFutureFlexApplication::GetInstance().Update();
   }
 
-  // TODO
-  windowsApp->TerminateApplication();
+  logger->Terminate();
+  delete logger;
+  
+  MEngine::Core::MDebugger::ReleaseCurrentDebugger();
+  
+  Matrix44 testM(Vector4(1.f, 1.f, 1.f, 1.f), Vector4(2.f, 5.f, 6.f, 8.f), Vector4(9.f, 3.f, 66.f, 12.f), Vector4(13.f, 15.f, 25.f, 20.f));
+  
+  std::cout << testM.GetDeterminant() << std::endl;
   
   int a;
   std::cin >> a;
-  
-  logger->Terminate();
-  delete logger;
 
-  MEngine::Core::MDebugger::ReleaseCurrentDebugger();
-
+  delete 
   return 0;
 }
 

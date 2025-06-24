@@ -6,6 +6,7 @@
 
 #include "Misc/CoreDefines.h"
 
+#include "Math/MathForward.h"
 #include "Misc/ConceptsStoragePlace.h"
 #include "Templates/METypeAmbiguityResolve.h"
 #include "Templates/METypeTraits.h"

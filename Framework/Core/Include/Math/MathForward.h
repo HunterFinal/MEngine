@@ -14,6 +14,7 @@ namespace MEngine::Math
   template<typename T> struct MVector;
   template<typename T> struct MVector2D;
   template<FLOATING_TYPE_CONCEPT T, uint32 AlignSize> struct alignas(AlignSize) MVector4;
+  template<FLOATING_TYPE_CONCEPT T, uint32 AlignSize> struct alignas(AlignSize) MMatrix4x4;
 }
 
 // Concrete types forward declarations
@@ -29,13 +30,23 @@ TYPEDEF(MEngine::Math::MVector2D<float>, Vector2);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2F);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2f);
 
-// 16-alignment Vector4
+
 #define COMMA ,
+
+// 16-alignment Vector4
 TYPEDEF(MEngine::Math::MVector4<double COMMA 16>, Vector4D);
 TYPEDEF(MEngine::Math::MVector4<double COMMA 16>, Vector4d);
 TYPEDEF(MEngine::Math::MVector4<float COMMA 16>, Vector4);
 TYPEDEF(MEngine::Math::MVector4<float COMMA 16>, Vector4F);
 TYPEDEF(MEngine::Math::MVector4<float COMMA 16>, Vector4f);
+
+// 16-alignment Matrix
+TYPEDEF(MEngine::Math::MMatrix4x4<double COMMA 16>, Matrix44d);
+TYPEDEF(MEngine::Math::MMatrix4x4<double COMMA 16>, Matrix44D);
+TYPEDEF(MEngine::Math::MMatrix4x4<float COMMA 16>, Matrix44);
+TYPEDEF(MEngine::Math::MMatrix4x4<float COMMA 16>, Matrix44f);
+TYPEDEF(MEngine::Math::MMatrix4x4<float COMMA 16>, Matrix44F);
+
 #undef COMMA
 
 

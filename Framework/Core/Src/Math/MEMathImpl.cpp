@@ -1,8 +1,10 @@
-﻿// MEngine Vector static variables definitions
+﻿// MEngine Math static variables definitions
 
 #include "Math/Vector.h"
 #include "Math/Vector2D.h"
 #include "Math/Vector4.h"
+#include "Math/Matrix4x4.h"
+
 
 // MVector<Type>
 template<> const Vector3D Vector3D::ZeroVector(0.0, 0.0, 0.0);
@@ -48,9 +50,20 @@ template<> const Vector2 Vector2::DownVector(0.0f, -1.0f);
 template<> const Vector2 Vector2::XAxisVector(1.0f, 0.0f);
 template<> const Vector2 Vector2::YAxisVector(0.0f, 1.0f);
 
-// MVector4<Type>
+// MVector4<Type, AlignSize>
 template<> const Vector4D Vector4D::ZeroVector(0.0, 0.0, 0.0, 0.0);
 template<> const Vector4D Vector4D::OneVector(1.0, 1.0, 1.0, 1.0);
 
 template<> const Vector4 Vector4::ZeroVector(0.0f, 0.0f, 0.0f, 0.0f);
 template<> const Vector4 Vector4::OneVector(1.0f, 1.0f, 1.0f, 1.0f);
+
+// MMatrix4x4<Type, AlignSize>
+template<> const Matrix44D Matrix44D::Identity( Vector4D{1.0, 0.0, 0.0, 0.0},
+                                                Vector4D{0.0, 1.0, 0.0, 0.0},
+                                                Vector4D{0.0, 0.0, 1.0, 0.0},
+                                                Vector4D{0.0, 0.0, 0.0, 1.0});
+
+template<> const Matrix44 Matrix44::Identity( Vector4{1.0f, 0.0f, 0.0f, 0.0f},
+                                              Vector4{0.0f, 1.0f, 0.0f, 0.0f},
+                                              Vector4{0.0f, 0.0f, 1.0f, 0.0f},
+                                              Vector4{0.0f, 0.0f, 0.0f, 1.0f});

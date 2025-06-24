@@ -25,6 +25,11 @@ namespace MEngine
     {
       public:
 
+        FUTUREFLEXCORE_API FFWindow();
+        FUTUREFLEXCORE_API ~FFWindow();
+
+        FUTUREFLEXCORE_API void ShowWindow();
+        FUTUREFLEXCORE_API void HideWindow();
         FUTUREFLEXCORE_API void RequestDestroyWindow();
         FUTUREFLEXCORE_API void ForceDestroyWindow();
         FUTUREFLEXCORE_API std::shared_ptr<MAbstractApplicationWindow> GetNativeWindow();
@@ -32,6 +37,7 @@ namespace MEngine
         
       private:
         std::shared_ptr<MAbstractApplicationWindow> m_nativeWindowPtr;
+        bool m_bIsShown;
     };
   }
 }
