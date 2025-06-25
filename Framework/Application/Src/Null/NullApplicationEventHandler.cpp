@@ -43,6 +43,11 @@ namespace MEngine
       return false;
     }
 
+    bool MNullApplicationEventHandler::OnCursorSet()
+    {
+      return false;
+    }
+
     void MNullApplicationEventHandler::OnWindowCreate(
       IN const std::shared_ptr<MAbstractApplicationWindow>& Window, 
       IN const bool bIsSetFocus)

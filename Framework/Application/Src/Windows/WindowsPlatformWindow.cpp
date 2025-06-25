@@ -80,6 +80,9 @@ namespace MEngine
         // Capture error context immediatelly after CreateWindowEx
         const uint32 errorCtx = ::GetLastError(); 
 
+        // TODO
+        (void)errorCtx;
+
         me_assert(false);
 
         return;

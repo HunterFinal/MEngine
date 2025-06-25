@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <ranges>
 
+
 namespace
 {
   // WARN Temp value before self-defines cursor finish
@@ -40,6 +41,22 @@ namespace
    * Create OnKeyDown/OnKeyUp variable on Windows platform
    */
   const MEngine::Application::MKeyInputInfoContainer ConvertToKeyInputInfoContainer(IN WPARAM WParam, IN LPARAM LParam, OUT uint32& ActualKey);
+
+  const MEngine::Application::MWindowsDeferredMessage MakeDeferredMessage(
+    IN const std::shared_ptr<MEngine::Application::MWindowsPlatformWindow> Window,
+    IN HWND HWnd,
+    IN uint32 Message,
+    IN WPARAM WParam,
+    IN LPARAM LParam,
+    DEFAULT_VAR int32 MouseX = 0,
+    DEFAULT_VAR int32 MouseY = 0,
+    DEFAULT_VAR int32 MouseIndicatorFlags = 0
+  );
+
+  /**
+   * Check if current input is Alt+Space
+   */
+  bool IsAltSpacePressed(IN uint32 Message, IN WPARAM WParam, IN LPARAM LParam);
 }
 
 namespace MEngine
@@ -72,7 +89,22 @@ namespace MEngine
 
     void MWindowsPlatformApplication::ProcessDeferredMessages()
     {
-      // TODO need implementation
+      // TODO Why copy
+
+      // NOTE: Comment from UE
+      // This function can be reentered when entering a modal tick loop.
+		  // We need to make a copy of the events that need to be processed or we may end up processing the same messages twice 
+      // NOTE: End comment from UE
+      std::vector<MWindowsDeferredMessage> messagesToProcess(m_deferredMsgQueue);
+
+      m_deferredMsgQueue.clear();
+      m_deferredMsgQueue.shrink_to_fit();
+
+      for (const auto& message : messagesToProcess)
+      {
+        ProcessDeferredMessageImpl(message);
+      }
+
     }
 
     std::shared_ptr<MAbstractApplicationWindow> MWindowsPlatformApplication::CreateApplicationWindow()
@@ -200,26 +232,66 @@ namespace MEngine
         }
         break;
 
-        // Key down
-        // TODO 
-        // NOTE:Deffered Msg
-        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/wm-syskeydown
-        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/wm-keydown
-        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/virtual-key-codes
-        case WM_SYSKEYDOWN:
-        case WM_KEYDOWN:
+        case WM_SYSCHAR:
         {
-
-          uint32 actualKey = 0;
-          const MEngine::Application::MKeyInputInfoContainer msgKeyInputInfoContainer = ConvertToKeyInputInfoContainer(WParam, LParam, actualKey);
-
-          const bool result = eventHandler->OnKeyDown(msgKeyInputInfoContainer);
-
-          // Always handle key down message to avoid beep sound
-          if (result || (Msg != WM_SYSKEYDOWN))
+          if (!IsAltSpacePressed(Msg, WParam, LParam))
           {
+            // Handle this message ourselves except Alt+Space
             return 0;
           }
+
+          // Let Alt+Space pass through and open the window system menu
+        }
+        break;
+
+        case WM_SYSKEYDOWN:
+        {
+          // Alt+F4 pressed
+          if (WParam == VK_F4)
+          {
+            // Allow to close window
+            // TODO Need some message
+            // FIXME Print through output device
+            MPlatformLowLevelAccessPort::PlatformPrintDebugString(MTEXT("Alt + F4 pressed"));
+          }
+          // Alt + Space pressed
+          else if (IsAltSpacePressed(Msg, WParam, LParam))
+          {
+            // Empty implementation
+          }
+          // Handle other input
+          else
+          {
+            RegisterDeferredMessage(MakeDeferredMessage(currentActiveNativeWindowPtr, Hwnd, Msg, WParam, LParam));
+          }
+        }
+        break;
+
+        // Mouse Cursor
+        case WM_SETCURSOR:
+        {
+          // Sent to a window if the mouse causes the cursor to move within a window and mouse input is not captured.
+          // URL: https://learn.microsoft.com/ja-jp/windows/win32/menurc/wm-setcursor
+
+          return eventHandler->OnCursorSet() ? 1 : 0;
+        }
+        break;
+
+        // Raw Input(Only handle mouse move)
+        case WM_INPUT:
+        {
+          // NOTE:For high precision device use
+          // FIXME Start from here!!!!!!!!!!!!!!!!!!!!
+          #error "Start from here"
+          // Capture input data immediately, or it will expire if capture it in ProcessDeferredMessages()
+          
+        }
+        break;
+
+        // NOTE:Deffered Msg
+        case WM_KEYDOWN:
+        {
+          RegisterDeferredMessage(MakeDeferredMessage(currentActiveNativeWindowPtr, Hwnd, Msg, WParam, LParam));
         }
         break;
 
@@ -303,6 +375,61 @@ namespace MEngine
       const bool bRegisterClassSucceeded = WindowsApplicationRegisterClass(InstanceHandle, IconHandle);
       me_assert(bRegisterClassSucceeded);
 
+    }
+
+    void MWindowsPlatformApplication::RegisterDeferredMessage(IN const MWindowsDeferredMessage& DeferredMessage)
+    {
+      if (Globals::GIsPeekingMessagesOutsideOfMainLoop)
+      {
+        m_deferredMsgQueue.emplace_back(DeferredMessage);
+      }
+      else
+      {
+        // process it immediately if it isn't deferring message
+        ProcessDeferredMessageImpl(DeferredMessage);
+      }
+    }
+
+    uint32 MWindowsPlatformApplication::ProcessDeferredMessageImpl(IN const MWindowsDeferredMessage& Message)
+    {
+      // Finish process if there's no avaliable window left
+      if ((m_windows.size() == 0) || Message.NativeWindowWeakPtr.expired()) UNLIKELY
+      {
+        return 0;
+      }
+
+      std::shared_ptr<MApplicationEventHandler> eventHandler = GetEventHandler();
+      me_assert(eventHandler != nullptr);
+
+      HWND hWnd = Message.HWnd;
+      uint32 msg = Message.Message;
+      WPARAM wParam = Message.WParam;
+      LPARAM lParam = Message.LParam;
+
+      std::shared_ptr<MWindowsPlatformWindow> currentActiveNativeWindowPtr = Message.NativeWindowWeakPtr.lock();
+
+      switch(msg)
+      {
+        // Key down
+        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/wm-syskeydown
+        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/wm-keydown
+        // URL: https://learn.microsoft.com/ja-jp/windows/win32/inputdev/virtual-key-codes
+        case WM_SYSKEYDOWN:
+        case WM_KEYDOWN:
+        {
+          uint32 actualKey = 0;
+          const MEngine::Application::MKeyInputInfoContainer msgKeyInputInfoContainer = ConvertToKeyInputInfoContainer(wParam, lParam, actualKey);
+
+          const bool result = eventHandler->OnKeyDown(msgKeyInputInfoContainer);
+
+          // Always handle key down message to avoid beep sound
+          if (result || (msg != WM_SYSKEYDOWN))
+          {
+            return 0;
+          }
+        }
+        break;
+      }
     }
   }
 }
@@ -395,6 +522,7 @@ namespace
 
     ActualKey = win32VKCode;
 
+    // FIXME Need implementation
     switch (win32VKCode)
     {
       case VK_SHIFT:
@@ -430,5 +558,47 @@ namespace
             .KeyRepeatFlag(bIsRepeat)
             .Build();
 
+  }
+
+  bool IsAltSpacePressed(IN uint32 Message, IN WPARAM WParam, IN LPARAM LParam)
+  {
+    // Only accept following messages 
+    switch(Message)
+    {
+      case WM_SYSCHAR:
+      {
+        const bool bIsAltDown = (HIWORD(LParam) & KF_ALTDOWN) != 0;
+        const bool bIsSpaceDown = (WParam == VK_SPACE);
+
+        return bIsAltDown && bIsSpaceDown;
+      }
+      break;
+    }
+
+    return false;
+  }
+
+  const MEngine::Application::MWindowsDeferredMessage MakeDeferredMessage(
+    IN const std::shared_ptr<MEngine::Application::MWindowsPlatformWindow> Window,
+    IN HWND HWnd,
+    IN uint32 Message,
+    IN WPARAM WParam,
+    IN LPARAM LParam,
+    DEFAULT_VAR int32 MouseX,
+    DEFAULT_VAR int32 MouseY,
+    DEFAULT_VAR int32 MouseIndicatorFlags
+  )
+  {
+    return MEngine::Application::MWindowsDeferredMessage
+    {
+      .NativeWindowWeakPtr = Window,
+      .HWnd = HWnd,
+      .Message = Message,
+      .WParam = WParam,
+      .LParam = LParam,
+      .MouseX = MouseX,
+      .MouseY = MouseY,
+      .MouseIndicatorFlags = MouseIndicatorFlags
+    };
   }
 }

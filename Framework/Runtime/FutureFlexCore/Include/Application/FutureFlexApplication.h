@@ -68,6 +68,7 @@ namespace MEngine
         FUTUREFLEXCORE_API virtual bool OnMouseDown() override;
         FUTUREFLEXCORE_API virtual bool OnMouseUp() override;
         FUTUREFLEXCORE_API virtual bool OnMouseMove() override;
+        FUTUREFLEXCORE_API virtual bool OnCursorSet() override;
         FUTUREFLEXCORE_API virtual void OnWindowCreate(IN const std::shared_ptr<MAbstractApplicationWindow>& PlatformWindow, IN const bool bIsSetFocus) override;
         FUTUREFLEXCORE_API virtual void OnWindowClose(IN const std::shared_ptr<MAbstractApplicationWindow>& PlatformWindow) override;
         

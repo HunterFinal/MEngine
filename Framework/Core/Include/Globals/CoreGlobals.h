@@ -12,6 +12,7 @@ namespace MEngine
     namespace Globals
     {
       extern CORE_API bool GIsRequestApplicationExit;
+      extern CORE_API bool GIsPeekingMessagesOutsideOfMainLoop;
 
       FORCEINLINE bool IsApplicationExitRequested()
       {

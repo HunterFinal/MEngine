@@ -37,6 +37,8 @@ namespace MEngine
 
       virtual bool OnMouseMove() = 0;
 
+      virtual bool OnCursorSet() = 0;
+
       virtual void OnWindowCreate(IN const std::shared_ptr<MAbstractApplicationWindow>& Window, IN const bool bIsSetFocus) = 0;
       
       virtual void OnWindowClose(IN const std::shared_ptr<MAbstractApplicationWindow>& Window) = 0;

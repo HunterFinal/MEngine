@@ -1,9 +1,13 @@
 ﻿// MEngine Math static variables definitions
 
+#include "Math/MathForward.h"
+
 #include "Math/Vector.h"
 #include "Math/Vector2D.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
+
+#include <iostream>
 
 
 // MVector<Type>
@@ -67,3 +71,4 @@ template<> const Matrix44 Matrix44::Identity( Vector4{1.0f, 0.0f, 0.0f, 0.0f},
                                               Vector4{0.0f, 1.0f, 0.0f, 0.0f},
                                               Vector4{0.0f, 0.0f, 1.0f, 0.0f},
                                               Vector4{0.0f, 0.0f, 0.0f, 1.0f});
+

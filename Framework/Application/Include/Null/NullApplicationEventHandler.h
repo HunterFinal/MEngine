@@ -23,6 +23,7 @@ namespace MEngine
         APP_API bool OnMouseDown() override final;
         APP_API bool OnMouseUp() override final;
         APP_API bool OnMouseMove() override final;
+        APP_API bool OnCursorSet() override final;
         APP_API void OnWindowCreate(IN const std::shared_ptr<MAbstractApplicationWindow>& Window, IN const bool bIsSetFocus) override final;
         APP_API void OnWindowClose(IN const std::shared_ptr<MAbstractApplicationWindow>& Window) override;
         

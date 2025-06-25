@@ -32,10 +32,16 @@ namespace MEngine
     void MNullApplicationWindow::ResizeWindow(IN int32 NewX, IN int32 NewY, IN uint32 NewWidth, IN uint32 NewHeight)
     {
       // Empty implementation
+      (void)NewX;
+      (void)NewY;
+      (void)NewWidth;
+      (void)NewHeight;
     }
     void MNullApplicationWindow::MoveTo(IN int32 X, IN int32 Y)
     {
       // Empty implementation
+      (void)X;
+      (void)Y;
     }
     void MNullApplicationWindow::Show()
     {
@@ -64,10 +70,12 @@ namespace MEngine
     void MNullApplicationWindow::SetTitle(IN const ANSICHAR* Text)
     {
       // Empty implementation
+      (void)Text;
     }
     void MNullApplicationWindow::SetWindowMode(IN EWindowMode NewWindowMode)
     {
       // Empty implementation
+      (void)NewWindowMode;
     }
     bool MNullApplicationWindow::IsMaximized() const
     {

@@ -5,6 +5,7 @@
 #define _ME_HAL_PLATFORM_
 
 // TODO Should not include this here;
+// TODO Make this as a force include to any dlls
 #include "HAL/PlatformHeader.h"
 
 #include "HAL/PreprocessorHelpers.h"

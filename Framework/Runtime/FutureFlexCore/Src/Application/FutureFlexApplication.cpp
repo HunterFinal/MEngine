@@ -132,6 +132,13 @@ namespace MEngine
       return false;
     }
 
+    bool MFutureFlexApplication::OnCursorSet()
+    {
+      
+      // Handled
+      return true;
+    }
+
     void MFutureFlexApplication::OnWindowCreate(
       IN const std::shared_ptr<MAbstractApplicationWindow>& PlatformWindow, 
       IN const bool bIsSetFocus

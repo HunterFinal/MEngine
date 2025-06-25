@@ -19,6 +19,7 @@ namespace MEngine
     void MNullApplication::UpdateApplication(IN const float DeltaTime)
     {
       // Empty implementation
+      (void)DeltaTime;
     }
     
     void MNullApplication::ProcessDeferredMessages()

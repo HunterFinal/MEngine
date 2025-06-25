@@ -16,6 +16,19 @@ namespace MEngine
   { 
     class MWindowsPlatformWindow;
 
+    // Windows deferred message structure
+    struct MWindowsDeferredMessage
+    {
+      std::weak_ptr<MWindowsPlatformWindow> NativeWindowWeakPtr;
+      HWND HWnd;
+      uint32 Message;
+      WPARAM WParam;
+      LPARAM LParam;
+      int32 MouseX;
+      int32 MouseY;
+      int32 MouseIndicatorFlags;
+    };
+
     class MWindowsPlatformApplication : public MAbstractApplication
                                       , public std::enable_shared_from_this<MWindowsPlatformApplication>
     {
@@ -46,10 +59,13 @@ namespace MEngine
 
       private:
         APP_API MWindowsPlatformApplication(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle);
-
+        APP_API void RegisterDeferredMessage(IN const MWindowsDeferredMessage& DeferredMessage);
+        APP_API uint32 ProcessDeferredMessageImpl(IN const MWindowsDeferredMessage& DeferredMessage);
       private:
         std::shared_ptr<ApplicationInstance> m_applicationInstance;
         std::vector<std::shared_ptr<MWindowsPlatformWindow>> m_windows;
+
+        std::vector<MWindowsDeferredMessage> m_deferredMsgQueue;
     };
   }
 }

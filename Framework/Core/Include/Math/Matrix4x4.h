@@ -9,6 +9,9 @@
 #include "Misc/CoreDefines.h"
 #include "Misc/ConceptsStoragePlace.h"
 
+// FIXME For test propuse
+#include <iosfwd>
+
 #ifdef _MSC_VER
 #pragma warning (push)
 // テンプレート関数がグローバル変数に対してShadowing　warningsを生成することを防ぐ
@@ -20,6 +23,7 @@
 // MSVCの仕様により、無名共用体と無名構造体に対する警告メッセージを無視
 #pragma warning (disable : 4201)
 #endif
+
 
 namespace MEngine
 {
@@ -48,12 +52,12 @@ namespace MEngine
          */
 
         /**
-         * Default constructor
+         * @brief Default constructor
          */
         FORCEINLINE explicit MMatrix4x4();
 
         /**
-         * Construct matrix with Vector4
+         * @brief Construct matrix with Vector4
          * 
          * @param V1 X Vector
          * @param V2 Y Vector
@@ -63,7 +67,7 @@ namespace MEngine
         FORCEINLINE MMatrix4x4(IN const MVector4<Type, AlignSize>& V1, IN const MVector4<Type, AlignSize>& V2, IN const MVector4<Type, AlignSize>& V3, IN const MVector4<Type, AlignSize>& V4);
 
         /**
-         * Construct matrix with Vector3
+         * @brief Construct matrix with Vector3
          * 
          * @param V1 X Vector
          * @param V2 Y Vector
@@ -80,7 +84,7 @@ namespace MEngine
         FORCEINLINE void SetIdentity();
 
         /**
-         * Check against another matrix for equality, with tolerance
+         * @brief Check against another matrix for equality, with tolerance
          * 
          * @param M The another matrix
          * @param Tolerance Error tolerance
@@ -89,7 +93,7 @@ namespace MEngine
         FORCEINLINE bool Equals(IN const MMatrix4x4<Type, AlignSize>& M, Type Tolerance = (Type)MMath::FLOAT_TOLERANCE_KINDA_SMALL) const;
 
         /**
-         * Check two matrix for equality, with tolerance
+         * @brief Check two matrix for equality, with tolerance
          * 
          * @param M1 The first matrix
          * @param M2 The second matrix
@@ -119,7 +123,89 @@ namespace MEngine
          */
         FORCEINLINE Type GetDeterminant() const;
 
-      public:
+        /**
+         * Operator overload
+         */
+
+        /**
+         * @brief Gets the result of adding two matrix
+         * 
+         * @param M1 The first matrix
+         * @param M2 The second matrix
+         * @return Result of two matrix's addition
+         */
+        friend FORCEINLINE MMatrix4x4<Type, AlignSize> operator+(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2);
+
+        /**
+         * @brief Gets the result of multiplying two matrix
+         * 
+         * @param M1 The first matrix
+         * @param M2 The second matrix
+         * @return Result of two matrix's multiplication
+         */
+        friend FORCEINLINE MMatrix4x4<Type, AlignSize> operator*(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2);
+
+        /**
+         * @brief Gets the result of scaling a matrix by a weight
+         * 
+         * @param LhsM Matrix to multiply
+         * @param Weight Scalar weight to apply
+         * @return Matrix scaled by the given weight
+         */
+        friend FORCEINLINE MMatrix4x4<Type, AlignSize> operator*(IN const MMatrix4x4<Type, AlignSize>& LhsM, IN Type Weight);
+
+        /**
+         * @brief Gets the result of scaling a matrix by a weight
+         * 
+         * @param Weight Scalar weight to apply
+         * @param RhsM Matrix to multiply
+         * @return Matrix scaled by the given weight
+         */
+        friend FORCEINLINE MMatrix4x4<Type, AlignSize> operator*(IN Type Weight, IN const MMatrix4x4<Type, AlignSize>& RhsM);
+
+        /**
+         * @brief Checks two matrix for equality
+         * 
+         * @param M1 The first matrix
+         * @param M2 The second matrix
+         * @return true if two matrixs are component equal, otherwise false
+         */
+        friend FORCEINLINE bool operator==(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2);
+
+        /**
+         * @brief Checks two matrix for inequality
+         * 
+         * @param M1 The first matrix
+         * @param M2 The second matrix
+         * @return true if two matrixs are not component equal, otherwise false
+         */
+        friend FORCEINLINE bool operator!=(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2);
+
+        /**
+         * @brief Adds another matrix to this matrix
+         * 
+         * @param OtherM The other matrix to add to this
+         * @return Reference to this after addition
+         */
+        FORCEINLINE MMatrix4x4<Type, AlignSize>& operator+=(IN const MMatrix4x4<Type, AlignSize>& OtherM);
+
+        /**
+         * @brief Multiply another matrix to this matrix
+         * 
+         * @param OtherM The other matrix to multiply to this
+         * @return Reference to this after multiplication 
+         */
+        FORCEINLINE MMatrix4x4<Type, AlignSize>& operator*=(IN const MMatrix4x4<Type, AlignSize>& OtherM);
+
+        /**
+         * @brief Multiply a weight to this matrix
+         * 
+         * @param Weight The weight
+         * @return Reference to this after weighting
+         */
+        FORCEINLINE MMatrix4x4<Type, AlignSize>& operator*=(IN Type Weight);
+
+      private:
         // Matrix( 4 * 4 ) array
         alignas(AlignSize) Type Matrix[4][4];
     };
@@ -264,8 +350,122 @@ namespace MEngine
               );
     }
 
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MMatrix4x4<Type, AlignSize> operator+(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2)
+    {
+      MMatrix4x4<Type, AlignSize> result{};
+
+      for (int32 x = 0; x < 4; ++x)
+      {
+        result.Matrix[x][0] = M1.Matrix[x][0] + M2.Matrix[x][0];
+        result.Matrix[x][1] = M1.Matrix[x][1] + M2.Matrix[x][1];
+        result.Matrix[x][2] = M1.Matrix[x][2] + M2.Matrix[x][2];
+        result.Matrix[x][3] = M1.Matrix[x][3] + M2.Matrix[x][3];
+      }
+
+      return result;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MMatrix4x4<Type, AlignSize> operator*(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2)
+    {
+      MMatrix4x4<Type, AlignSize> resultMatrix{};
+
+      for (int32 x = 0; x < 4; ++x)
+      {
+        for (int32 y = 0; y < 4; ++y)
+        {
+          resultMatrix.Matrix[x][y] =   (M1.Matrix[x][0] * M2.Matrix[0][y])
+                                      + (M1.Matrix[x][1] * M2.Matrix[1][y])
+                                      + (M1.Matrix[x][2] * M2.Matrix[2][y])
+                                      + (M1.Matrix[x][3] * M2.Matrix[3][y]);
+        }
+      }
+
+      return resultMatrix;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MMatrix4x4<Type, AlignSize> operator*(IN const MMatrix4x4<Type, AlignSize>& LhsM, IN Type Weight)
+    {
+      MMatrix4x4<Type, AlignSize> result{};
+
+      for (int32 x = 0; x < 4; ++x)
+      {
+        result.Matrix[x][0] = LhsM.Matrix[x][0] * Weight;
+        result.Matrix[x][1] = LhsM.Matrix[x][1] * Weight;
+        result.Matrix[x][2] = LhsM.Matrix[x][2] * Weight;
+        result.Matrix[x][3] = LhsM.Matrix[x][3] * Weight;
+      }
+
+      return result;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MMatrix4x4<Type, AlignSize> operator*(IN Type Weight, IN const MMatrix4x4<Type, AlignSize>& RhsM)
+    {
+      return RhsM * Weight;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool operator==(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2)
+    {
+      for (int32 x = 0; x < 4; ++x)
+      {
+        for (int32 y = 0; y < 4; ++y)
+        {
+          if (M1[x][y] != M2[x][y])
+          {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE bool operator!=(IN const MMatrix4x4<Type, AlignSize>& M1, IN const MMatrix4x4<Type, AlignSize>& M2)
+    {
+      return !(M1 == M2);
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MMatrix4x4<Type, AlignSize>& MMatrix4x4<Type, AlignSize>::operator+=(IN const MMatrix4x4<Type, AlignSize>& OtherM)
+    {
+      for (int32 x = 0; x < 4; ++x)
+      {
+        Matrix[x][0] += OtherM.Matrix[x][0];
+        Matrix[x][1] += OtherM.Matrix[x][1];
+        Matrix[x][2] += OtherM.Matrix[x][2];
+        Matrix[x][3] += OtherM.Matrix[x][3];
+      }
+
+      return *this;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MMatrix4x4<Type, AlignSize>& MMatrix4x4<Type, AlignSize>::operator*=(IN const MMatrix4x4<Type, AlignSize>& OtherM)
+    {
+      // TODO Change to SIMD later
+
+      // Matrix to store multiplication result 
+      MMatrix4x4<Type, AlignSize> tempMatrix = *this * OtherM;
+      *this = tempMatrix;
+
+      return *this;
+    }
+
+    template<FLOATING_TYPE_CONCEPT Type, uint32 AlignSize>
+    FORCEINLINE MMatrix4x4<Type, AlignSize>& MMatrix4x4<Type, AlignSize>::operator*=(IN Type Weight)
+    {
+      *this = *this * Weight;
+
+      return *this;
+    }
   }
 }
+
 
 #ifdef _MSC_VER
 #pragma warning (pop) // (disable : 4459) (disable : 4544) (disable : 4201)

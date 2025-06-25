@@ -241,17 +241,17 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
     FFApp.Update();
   }
 
-  logger->Terminate();
-  delete logger;
+  FFApp.Terminate();
   
   MEngine::Core::MDebugger::ReleaseCurrentDebugger();
   
   Matrix44 testM(Vector4(1.f, 1.f, 1.f, 1.f), Vector4(2.f, 5.f, 6.f, 8.f), Vector4(9.f, 3.f, 66.f, 12.f), Vector4(13.f, 15.f, 25.f, 20.f));
-  
-  std::cout << testM.GetDeterminant() << std::endl;
-  
+
   int a;
   std::cin >> a;
+
+  logger->Terminate();
+  delete logger;
 
   return 0;
 }
