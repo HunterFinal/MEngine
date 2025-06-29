@@ -219,15 +219,17 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
     delete pTest;
   }
 
-  MEngine::Core::MWindowResizeEventInstance* p;
-  p = new MEngine::Core::MWindowResizeEventInstance{};
-
-  p->ResizeEvent.AddStatic(&func_out);
-
-  p->InvokeEvent(100u, 200u);
-  p->InvokeEvent(200u, 300u);
-
-  delete p;
+  {
+    MEngine::Core::MWindowResizeEventInstance* p;
+    p = new MEngine::Core::MWindowResizeEventInstance{};
+  
+    p->ResizeEvent.AddStatic(&func_out);
+  
+    p->InvokeEvent(100u, 200u);
+    p->InvokeEvent(200u, 300u);
+  
+    delete p;
+  }
 
   auto testFFWindow = std::make_shared<MEngine::FutureFlex::FFWindow>();
 
@@ -247,7 +249,7 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   
   Matrix44 testM(Vector4(1.f, 1.f, 1.f, 1.f), Vector4(2.f, 5.f, 6.f, 8.f), Vector4(9.f, 3.f, 66.f, 12.f), Vector4(13.f, 15.f, 25.f, 20.f));
 
-  int a;
+  int32 a;
   std::cin >> a;
 
   logger->Terminate();
