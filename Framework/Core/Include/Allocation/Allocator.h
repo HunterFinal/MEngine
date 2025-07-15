@@ -4,111 +4,177 @@
 #define _ME_CORE_ALLOCATOR_
 
 #include "Macro/AssertionMacros.h"
+#include "Misc/ConceptsStoragePlace.h"
 #include "Misc/CoreDefines.h"
 
 #include <limits>
-#include <type_traits>
-
-#if CAN_USE_CONCEPT
-  template<typename ElementType>
-  concept AllocatorConcept = requires
-  {
-    requires !std::is_void_v<typename std::remove_pointer_t<ElementType>>;
-  };
-#endif
 
 namespace MEngine
 {
-  namespace Core
+namespace Core
+{
+  // TODO use this as Allocator element header ptr instead of void*
+  struct AllocatorElement
+  {};
+
+  template<ALLOCATOR_TYPE_CONCEPT ElementType>
+  struct DefaultAllocator final
   {
-    // TODO Need more research
-    // TODO use this as Allocator element header ptr instead of void*
-    struct AllocatorElement
-    {};
-
-    #if CAN_USE_CONCEPT
-      template<AllocatorConcept ElementType>
-    #else
-      template<typename ElementType>
+    #if !CAN_USE_CONCEPT
+      static_assert(sizeof(ElementType) > 0, "Can't use incomplete type or void as element of Allocator");
     #endif
-    struct DefaultAllocator final
-    {
-      #if !CAN_USE_CONCEPT
-        static_assert(!std::is_void<std::remove_pointer<ElementType>::type>::value, "Can't use void or void* as element type of Allocator");
-      #endif
-      explicit DefaultAllocator()
-        : m_data(nullptr)
-      { }
 
-      ~DefaultAllocator()
-      {
-        Deallocate();
-      }
+    /**
+     * Constructors, destructor and assignment
+     */
+    DefaultAllocator();
+    ~DefaultAllocator();
+    DefaultAllocator(IN DefaultAllocator&& Other) noexcept;
+    DefaultAllocator& operator=(IN DefaultAllocator&& Other) noexcept;
 
-      DefaultAllocator(IN DefaultAllocator&& Other) noexcept
-        : m_data(Other.m_data)
-      {
-        Other.m_data = nullptr;
-      }
+    /**
+     * @brief Allocate desire memory
+     * 
+     *        ほしい分のメモリを確保する
+     * 
+     * @param ElementNum Num of required element
+     * 
+     * 確保する要素の数
+     * 
+     * @param ByteSizePerElement Memory size(unit : byte) that each element need
+     * 
+     * 各要素のほしいメモリサイズ（バイト単位）
+     * 
+     */
+    void Allocate(IN SIZE_T ElementNum, IN SIZE_T ByteSizePerElement);
 
-      DefaultAllocator& operator=(IN DefaultAllocator&& Other) noexcept
-      {
-        if (this != &Other)
-        {
-          if (m_data != nullptr)
-          {
-            ::free(m_data);
-          }
+    /**
+     * @brief Deallocate element/elements
+     * 
+     * 確保した要素を解放する
+     */
+    void Deallocate();
 
-          m_data = Other.m_data;
-          Other.m_data = nullptr;
-        }
+    /**
+     * @brief Get allocated memory address
+     * 
+     * 要素を取得
+     * 
+     * @return Pointer of allocated memory, nullptr if this is not allocated
+     * 
+     * 確保した領域の先頭アドレスを返す、確保していないとnullptrを返す 
+     */
+    ElementType* GetAllocation() const;
 
-        return *this;
-      }
+    /**
+     * @brief Check if memory is allocated
+     * 
+     * 要素を確保したかを確認
+     * 
+     * @return True if memory is allocated, false otherwise
+     * 
+     * 確保したらtrueを返す、それ以外はfalseを返す
+     */
+    bool HasAllocation() const;
 
-      void Allocate(IN SIZE_T ElementNum, IN SIZE_T ByteSizePerElement)
-      {
-        // overflow check
-        bool bInvalidAlloc = (ByteSizePerElement < static_cast<SIZE_T>(1)) || (ByteSizePerElement > static_cast<SIZE_T>(std::numeric_limits<int32>::max()));
-        me_assert(!bInvalidAlloc);
+    private:
+      AllocatorElement* m_data;
 
-        // TODO m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
-        // TODO (ElementNum * ByteSizePerElement == 0) || (m_data != nullptr): free(m_data) first and return nullptr; 
-        m_data = reinterpret_cast<AllocatorElement*>(::realloc(m_data, ElementNum * ByteSizePerElement));
-      }
+    /**
+     * Uncopyable
+     */
+    public:
+      DefaultAllocator(IN const DefaultAllocator& Other) = delete;
+      DefaultAllocator& operator=(IN const DefaultAllocator& Other) = delete;
+  };
 
-      void Deallocate()
-      {
-        if (m_data != nullptr)
-        {
-          // can not use delete because size is different
-          ::free(m_data);
-          m_data = nullptr;
-        }
-      }
+  /**
+   * Default allocator definition scope 
+   */
 
-      ElementType* GetAllocation() const
-      {
-        return reinterpret_cast<ElementType*>(m_data);
-      }
+  // Start of definition
+  #pragma region Default allocator def
+  #define TEMPLATE_HEADER(Typename) template<ALLOCATOR_TYPE_CONCEPT Typename> 
 
-      bool HasAllocation() const
-      {
-        return !!m_data;
-      }
+  TEMPLATE_HEADER(ElementType)
+  DefaultAllocator<ElementType>::DefaultAllocator()
+    : m_data{nullptr}
+  {}
 
-      private:
-        AllocatorElement* m_data;
-
-      /**
-       * Uncopyable
-       */
-      public:
-        DefaultAllocator(IN const DefaultAllocator& Other) = delete;
-        DefaultAllocator& operator=(IN const DefaultAllocator& Other) = delete;
-    };
+  TEMPLATE_HEADER(ElementType)
+  DefaultAllocator<ElementType>::~DefaultAllocator()
+  {
+    Deallocate();
   }
-}
+
+  TEMPLATE_HEADER(ElementType)
+  DefaultAllocator<ElementType>::DefaultAllocator(IN DefaultAllocator&& Other) noexcept
+    : m_data(Other.m_data)
+  {
+    Other.m_data = nullptr;
+  }
+
+  TEMPLATE_HEADER(ElementType)
+  DefaultAllocator<ElementType>& DefaultAllocator<ElementType>::operator=(IN DefaultAllocator<ElementType>&& Other) noexcept
+  {
+    if (this != &Other)
+    {
+      if (m_data != nullptr)
+      {
+        ::free(m_data);
+      }
+
+      m_data = Other.m_data;
+      Other.m_data = nullptr;
+    }
+
+    return *this;
+  }
+
+  TEMPLATE_HEADER(ElementType)
+  void DefaultAllocator<ElementType>::Allocate(IN SIZE_T ElementNum, IN SIZE_T ByteSizePerElement)
+  {
+    // overflow check
+    const bool bInvalidAlloc = (ByteSizePerElement < static_cast<SIZE_T>(1)) || (ByteSizePerElement > static_cast<SIZE_T>(std::numeric_limits<int32>::max()));
+    me_assert(!bInvalidAlloc);
+
+    // TODO m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
+    // TODO (ElementNum * ByteSizePerElement == 0) || (m_data != nullptr): free(m_data) first and return nullptr; 
+    m_data = reinterpret_cast<AllocatorElement*>(::realloc(m_data, ElementNum * ByteSizePerElement));
+  }
+
+  TEMPLATE_HEADER(ElementType)
+  void DefaultAllocator<ElementType>::Deallocate()
+  {
+    if (m_data != nullptr)
+    {
+      // can not use delete because size is different
+      ::free(m_data);
+      m_data = nullptr;
+    }
+  }
+
+  TEMPLATE_HEADER(ElementType)
+  ElementType* DefaultAllocator<ElementType>::GetAllocation() const
+  {
+    return reinterpret_cast<ElementType*>(m_data);
+  }
+
+  TEMPLATE_HEADER(ElementType)
+  bool DefaultAllocator<ElementType>::HasAllocation() const
+  {
+    return !!m_data;
+  }
+
+  #undef TEMPLATE_HEADER
+  #pragma endregion Default allocator def
+  // End of definition
+
+  /**
+   * Default allocator definition scope 
+   */
+
+} // namespace MEngine::Core
+} // namespace MEngine
 
 #endif // _ME_CORE_ALLOCATOR_
