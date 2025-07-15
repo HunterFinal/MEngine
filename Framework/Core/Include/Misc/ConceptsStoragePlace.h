@@ -40,6 +40,17 @@ namespace MEngine
     {
       requires std::is_arithmetic_v<ArithmeticType>;
     };
+
+    /**
+     * Allocator concept
+     * Avoid types: void  
+     *              incompleted type
+     */
+    template<typename ElementType>
+    concept AllocatorConcept = requires
+    {
+      requires sizeof(ElementType) > 0;
+    };
   }
 }
 
@@ -50,6 +61,7 @@ namespace MEngine
 #define ENUM_TYPE_CONCEPT       CONCEPT_ADAPTER(MEngine::Concepts::EnumTypeConcept)
 #define FLOATING_TYPE_CONCEPT   CONCEPT_ADAPTER(MEngine::Concepts::FloatingTypeConcept)
 #define ARITHMETIC_TYPE_CONCEPT CONCEPT_ADAPTER(MEngine::Concepts::ArithmeticTypeConcept)
+#define ALLOCATOR_TYPE_CONCEPT  CONCEPT_ADAPTER(MEngine::Concepts::AllocatorConcept)
 
 // define this if use c++20 or higher version
 // downgrade to typename if version is lower c++20
