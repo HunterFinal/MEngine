@@ -29,6 +29,9 @@
   #define DEFAULT_VAR
 #endif // DEFAULT_VAR
 
+// MEngine specific macro
+#define _MENGINE_VER 0
+
 namespace MEngine
 {
   // Forward declaration
