@@ -4,6 +4,7 @@
 #define _ME_APP_ABSTRACT_APPLICATION_WINDOW_
 
 #include "Misc/CoreDefines.h"
+
 #include "APP_Generic/WindowDefinition.h"
 #include "Macro/ApplicationDefines.h"
 #include "Misc/NonCopyable.h"
@@ -24,8 +25,8 @@ namespace MEngine
     class MAbstractApplicationWindow : public MNonCopyable
     {
       public:
-        APP_API explicit MAbstractApplicationWindow() = default;
-        APP_API virtual ~MAbstractApplicationWindow() = default;
+        APP_API MAbstractApplicationWindow();
+        APP_API virtual ~MAbstractApplicationWindow();
         APP_API virtual void Destroy() = 0;
         APP_API virtual void ResizeWindow(IN int32 NewX, IN int32 NewY, IN uint32 NewWidth, IN uint32 NewHeight) = 0;
         APP_API virtual void MoveTo(IN int32 X, IN int32 Y) = 0;
@@ -37,12 +38,11 @@ namespace MEngine
         APP_API virtual void Disable() = 0;
         APP_API virtual void SetTitle(IN const char* Text) = 0;
         APP_API virtual void SetWindowMode(IN EWindowMode NewWindowMode) = 0; 
-
         APP_API virtual bool IsMaximized() const = 0;
         APP_API virtual bool IsMinimized() const = 0;
 
-        APP_API MAbstractApplicationWindow(IN MAbstractApplicationWindow&& Other) noexcept = default;
-        APP_API MAbstractApplicationWindow& operator=(IN MAbstractApplicationWindow&& Other) noexcept = default;
+        APP_API MAbstractApplicationWindow(IN MAbstractApplicationWindow&& Other) noexcept;
+        APP_API MAbstractApplicationWindow& operator=(IN MAbstractApplicationWindow&& Other) noexcept;
 
       protected:
         MWindowDefinition m_definition;

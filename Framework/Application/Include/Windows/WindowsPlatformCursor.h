@@ -29,14 +29,11 @@ namespace MEngine
         virtual void Hide() override;
         virtual void LockInRect(IN const MCursorRect& Rect) override;
         virtual void Unlock() override;
+        virtual void SetType(IN const ECursorType Type) override;
       #pragma endregion MAbstractCursor interface
       /**End of MAbstractCursor interface */
 
-      // MAbstractCursor NVI
-      private:
-        virtual void SetTypeImpl(IN const ECursorType Type) override;
-
-      private:
+      private:   
         std::vector<HCURSOR> m_customCursor;
     };
   }

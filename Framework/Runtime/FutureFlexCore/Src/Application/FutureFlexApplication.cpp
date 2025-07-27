@@ -31,6 +31,15 @@ namespace MEngine
     std::shared_ptr<MFutureFlexApplication> MFutureFlexApplication::s_curtAppInstance = nullptr;
     std::shared_ptr<MAbstractApplication> MFutureFlexApplication::s_platformApp = nullptr;
 
+    namespace Private
+    {
+      constexpr float TEMP_DesiredPositionOnScreenX = 10.0f;
+      constexpr float TEMP_DesiredPositionOnScreenY = 10.0f;
+      constexpr float TEMP_DesiredHeightOnScreen = 768.0f;
+      constexpr float TEMP_DesiredWidthOnScreen = 1024.0f;
+      constexpr const TCHAR* TEMP_WindowTitle = MTEXT("test");
+    }
+
     MFutureFlexApplication::~MFutureFlexApplication()
     { }
 
@@ -175,11 +184,11 @@ namespace MEngine
       // TODO Change magic number
       // create definition
       MEngine::Application::MWindowDefinition def;
-      def.DesiredPositionOnScreenX = 10.0f;
-      def.DesiredPositionOnScreenY = 10.0f;
-      def.DesiredHeightOnScreen = 768;
-      def.DesiredWidthOnScreen = 1024;
-      def.Title = MTEXT("test");
+      def.DesiredPositionOnScreenX = Private::TEMP_DesiredPositionOnScreenX;
+      def.DesiredPositionOnScreenY = Private::TEMP_DesiredPositionOnScreenY;
+      def.DesiredHeightOnScreen = Private::TEMP_DesiredHeightOnScreen;
+      def.DesiredWidthOnScreen = Private::TEMP_DesiredWidthOnScreen;
+      def.Title = Private::TEMP_WindowTitle;
 
       // Create native window and initialize window to application
       std::shared_ptr<MEngine::Application::MAbstractApplicationWindow> nativeWindow = s_platformApp->CreateApplicationWindow();
@@ -209,10 +218,10 @@ namespace MEngine
 
     void MFutureFlexApplication::DestroyAllRequestedWindow()
     {
-      for (auto destroyQueueItr = m_relatedWindowDestroyQueue.begin(); destroyQueueItr != m_relatedWindowDestroyQueue.end(); ++destroyQueueItr)
+      using Iterator =  decltype(m_relatedWindowDestroyQueue)::iterator;
+      for (Iterator destroyQueueItr = m_relatedWindowDestroyQueue.begin(); destroyQueueItr != m_relatedWindowDestroyQueue.end(); ++destroyQueueItr)
       {
         std::shared_ptr<FFWindow> currentWindowToDestroy = (*destroyQueueItr);
-
         DestroyWindowImpl(currentWindowToDestroy);
       }
 
@@ -227,27 +236,28 @@ namespace MEngine
 
       // TODO Add remove implementation
       {
-        bool bHasAnyMainlyUseWindows = false;
 
-        for (const auto& window : m_relatedWindows)
+      }
+
+      bool bHasAnyMainlyUseWindows = false;
+
+      for (const auto& window : m_relatedWindows)
+      {
+        if (window != nullptr)
         {
-          if (window != nullptr)
-          {
-            bHasAnyMainlyUseWindows = true;
-            break;
-          }
+          bHasAnyMainlyUseWindows = true;
+          break;
         }
+      }
 
-        if (!bHasAnyMainlyUseWindows)
+      if (!bHasAnyMainlyUseWindows)
+      {
+        if (m_onExitRequested.IsBound())
         {
-          if (m_onExitRequested.IsBound())
-          {
-            m_onExitRequested.Invoke();
-          }
+          m_onExitRequested.Invoke();
         }
       }
     }
-
   }
 }
 

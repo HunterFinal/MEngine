@@ -9,6 +9,9 @@ namespace MEngine
 {
   namespace Core
   {
+    /**
+     * @brief Non-copyable base class
+     */
     struct MNonCopyableImpl
     {
       MNonCopyableImpl() = default;

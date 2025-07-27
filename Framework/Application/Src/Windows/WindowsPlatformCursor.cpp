@@ -25,9 +25,7 @@ namespace MEngine
         gNativeCursorHandles[nativeCursorIndex] = NULL;
 
         ECursorType curtCursorIndexType = static_cast<ECursorType>(nativeCursorIndex);
-        
         HCURSOR curtCursorHandle = GetNativeCursorHandle(curtCursorIndexType);
-        
         gNativeCursorHandles[nativeCursorIndex] = curtCursorHandle;
       }
 
@@ -92,11 +90,12 @@ namespace MEngine
       ::ClipCursor(nullptr);
     }
 
-    void MWindowsPlatformCursor::SetTypeImpl(IN const ECursorType Type)
+    void MWindowsPlatformCursor::SetType(IN const ECursorType Type)
     {
       // Assert if Type is greater than MEngine::Application::ECursorType::CursorCount
       me_assert((EnumCast(Type) < gNativeCursorCount));
 
+      CurtCursorType = Type;
       ::SetCursor(gNativeCursorHandles[EnumCast(Type)]);
     }
   }

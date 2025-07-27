@@ -6,6 +6,7 @@
 #include "HAL/PlatformLowLevelAccessPort.h"
 #include "Macro/AssertionMacros.h"
 #include "Windows/WindowsPlatformWindow.h"
+#include "Windows/WindowsPlatformCursor.h"
 
 #include "Globals/CoreGlobals.h"
 
@@ -282,7 +283,7 @@ namespace MEngine
         {
           // NOTE:For high precision device use
           // FIXME Start from here!!!!!!!!!!!!!!!!!!!!
-          #error "Start from here"
+          //#error "Start from here"
           // Capture input data immediately, or it will expire if capture it in ProcessDeferredMessages()
           
         }
@@ -365,7 +366,7 @@ namespace MEngine
     }
 
     MWindowsPlatformApplication::MWindowsPlatformApplication(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
-      : MAbstractApplication()
+      : MAbstractApplication(std::make_shared<MWindowsPlatformCursor>())
       , m_applicationInstance{std::make_shared<MWindowsPlatformApplicationInstance>(InstanceHandle)}
       , m_windows{}
     {

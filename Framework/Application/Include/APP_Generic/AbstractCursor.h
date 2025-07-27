@@ -40,30 +40,19 @@ namespace MEngine
     {
       public:
         MAbstractCursor();
-        
-        virtual ~MAbstractCursor() = default;
-
+        virtual ~MAbstractCursor();
         virtual Vector2D GetPosition() const = 0;
-
         virtual void SetPosition(IN const int32 X, IN const int32 Y) = 0;
-
         virtual void Show() = 0;
-
         virtual void Hide() = 0;
-
         virtual void LockInRect(IN const MCursorRect& Rect) = 0;
-        
         virtual void Unlock() = 0;
+        virtual void SetType(IN const ECursorType Type) = 0;
 
-        void SetType(IN const ECursorType Type);
+        ECursorType GetType() const { return CurtCursorType; }
 
-        ECursorType GetType() const;
-
-      private:
-        virtual void SetTypeImpl(IN const ECursorType Type) = 0;
-
-      private:
-        ECursorType m_curtCursorType;
+      protected:
+        ECursorType CurtCursorType;
     };
   };
 }
