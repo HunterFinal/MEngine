@@ -139,7 +139,7 @@ namespace Core
     me_assert(!bInvalidAlloc);
 
     // TODO m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
-    // TODO (ElementNum * ByteSizePerElement == 0) || (m_data != nullptr): free(m_data) first and return nullptr; 
+    // TODO (ElementNum * ByteSizePerElement == 0) && (m_data != nullptr): free(m_data) first and return nullptr; 
     m_data = reinterpret_cast<AllocatorElement*>(::realloc(m_data, ElementNum * ByteSizePerElement));
   }
 
