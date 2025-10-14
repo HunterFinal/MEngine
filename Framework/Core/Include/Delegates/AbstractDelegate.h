@@ -204,6 +204,7 @@ namespace MEngine
          *        確保するメモリのサイズ（バイト単位）
          * 
          * @return Pointer of allocated delegate instance
+         * 
          *         確保したメモリの先頭アドレス
          */
         FORCEINLINE void* AllocateInternal(IN SIZE_T AllocSize);
