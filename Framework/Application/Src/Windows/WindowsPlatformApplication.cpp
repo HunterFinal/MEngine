@@ -285,7 +285,8 @@ namespace MEngine
           // FIXME Start from here!!!!!!!!!!!!!!!!!!!!
           //#error "Start from here"
           // Capture input data immediately, or it will expire if capture it in ProcessDeferredMessages()
-          
+          uint32 Size = 0;
+          (void)::GetRawInputData(reinterpret_cast<HRAWINPUT>(LParam), RID_INPUT, nullptr, &Size, sizeof(RAWINPUTHEADER));
         }
         break;
 
@@ -345,7 +346,10 @@ namespace MEngine
 
         case WM_CLOSE:
         {
-          eventHandler->OnWindowClose(currentActiveNativeWindowPtr);
+          if (currentActiveNativeWindowPtr != nullptr)
+          {
+            eventHandler->OnWindowClose(currentActiveNativeWindowPtr);
+          }
 
           return 0;
         }

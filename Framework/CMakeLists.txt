@@ -57,6 +57,7 @@ else()
 endif()
 
 add_subdirectory(Core)
+add_subdirectory(CoreObject)
 add_subdirectory(Extensions)
 add_subdirectory(Runtime)
 add_subdirectory(Utilities)
@@ -69,6 +70,7 @@ target_link_libraries(
   MEngine
   PRIVATE
   Core
+  CoreObject
   OTGT
   Game
   Application
@@ -81,6 +83,8 @@ target_include_directories(
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Core
   ${CMAKE_CURRENT_SOURCE_DIR}/Core/Include
+  ${CMAKE_CURRENT_SOURCE_DIR}/CoreObject
+  ${CMAKE_CURRENT_SOURCE_DIR}/CoreObject/Include
   ${CMAKE_CURRENT_SOURCE_DIR}/OTGT
   ${CMAKE_CURRENT_SOURCE_DIR}/OTGT/Include
   ${CMAKE_CURRENT_SOURCE_DIR}/Application
@@ -100,6 +104,7 @@ target_include_directories(
 add_custom_command(TARGET MEngine POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
           $<TARGET_FILE:Core>
+          $<TARGET_FILE:CoreObject>
           $<TARGET_FILE:OTGT>
           $<TARGET_FILE:Game>
           $<TARGET_FILE:Application>

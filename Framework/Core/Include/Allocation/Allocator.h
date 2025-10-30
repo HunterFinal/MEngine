@@ -1,4 +1,14 @@
-﻿#pragma once
+﻿/**
+ * @file Allocator.h
+ * @author MAI ZHICONG
+ * @brief Default allocator for heap memory management
+ * @version 0.1
+ * @date 2025-10-14
+ * 
+ * @copyright Copyright (c) 2025~2025 MAI ZHICONG
+ */
+
+#pragma once
 
 #ifndef _ME_CORE_ALLOCATOR_
 #define _ME_CORE_ALLOCATOR_
@@ -11,6 +21,7 @@
 
 namespace MEngine
 {
+  
 namespace Core
 {
   // TODO use this as Allocator element header ptr instead of void*
@@ -119,10 +130,7 @@ namespace Core
   {
     if (this != &Other)
     {
-      if (m_data != nullptr)
-      {
-        ::free(m_data);
-      }
+      Deallocate();
 
       m_data = Other.m_data;
       Other.m_data = nullptr;
@@ -175,6 +183,7 @@ namespace Core
    */
 
 } // namespace MEngine::Core
+
 } // namespace MEngine
 
 #endif // _ME_CORE_ALLOCATOR_

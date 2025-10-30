@@ -163,7 +163,6 @@ namespace MEngine
     {
       // TODO Adding implementation
       std::shared_ptr<FFWindow> window = FindWindowByPlatformWindow(m_relatedWindows, PlatformWindow);
-
       if (window == nullptr)
       {
         return;

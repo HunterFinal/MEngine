@@ -1,8 +1,8 @@
 ﻿// MEngine math forward declaration header
 #pragma once
 
-#ifndef MENGINE_MATH_FWD 
-#define MENGINE_MATH_FWD
+#ifndef _ME_CORE_MATH_FWD_ 
+#define _ME_CORE_MATH_FWD_
 
 #include "HAL/Platform.h"
 #include "Macro/TypeAliasMacro.h"
@@ -18,7 +18,6 @@ namespace MEngine::Math
 }
 
 // Concrete types forward declarations
-
 TYPEDEF(MEngine::Math::MVector<double>, Vector3D);
 TYPEDEF(MEngine::Math::MVector<double>, Vector3d);     
 TYPEDEF(MEngine::Math::MVector<float>, Vector3);                             
@@ -29,7 +28,6 @@ TYPEDEF(MEngine::Math::MVector2D<double>, Vector2d);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2F);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2f);
-
 
 #define COMMA ,
 
@@ -49,5 +47,4 @@ TYPEDEF(MEngine::Math::MMatrix4x4<float COMMA 16>, Matrix44F);
 
 #undef COMMA
 
-
-#endif // MENGINE_MATH_FWD
+#endif // _ME_CORE_MATH_FWD_

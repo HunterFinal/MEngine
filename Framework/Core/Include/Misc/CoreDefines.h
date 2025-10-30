@@ -11,7 +11,6 @@
 #include "Templates/METypeTraits.h"
 #include "Misc/BuildDefines.h"
 
-
 #ifdef CORE_EXPORT
 #define CORE_API DLLEXPORT
 #else

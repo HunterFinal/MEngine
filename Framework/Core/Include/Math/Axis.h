@@ -1,8 +1,8 @@
 ﻿// MEngine coordinate axis enum definition
 #pragma once
 
-#ifndef MENGINE_MATH_AXIS
-#define MENGINE_MATH_AXIS
+#ifndef _ME_CORE_MATH_AXIS_
+#define _ME_CORE_MATH_AXIS_
 
 namespace MEngine
 {
@@ -20,7 +20,7 @@ namespace MEngine
       YNegative,  // Negative y-axis
       ZNegative,  // Negative z-axis
     };
-  }
-}
+  } // namespace MEngine::Math
+} // namespace MEngine
 
-#endif // MENGINE_MATH_AXIS
+#endif // _ME_CORE_MATH_AXIS_

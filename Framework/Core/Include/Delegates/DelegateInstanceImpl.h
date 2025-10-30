@@ -147,13 +147,13 @@ namespace MEngine
     {
       assert(m_staticFuncPtr != nullptr);
 
-      return m_staticFuncPtr(std::forward<ArgTypes>(Args)...);
+      return m_staticFuncPtr(Args...);
     }
 
     template<typename ReturnType, typename... ArgTypes>
     ReturnType MStaticFunctionDelegateInstance<ReturnType(ArgTypes...)>::operator()(IN ArgTypes... Args) const
     {
-      return this->Invoke(std::forward<ArgTypes>(Args)...);
+      return this->Invoke(Args...);
     }
     #pragma endregion Regular C/C++ functions delegate
     /**End of regular C/C++ functions delegate instance */

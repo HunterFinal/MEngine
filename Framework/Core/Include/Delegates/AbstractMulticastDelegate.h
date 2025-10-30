@@ -1,4 +1,15 @@
-﻿#pragma once
+﻿/**
+ * @file AbstractMulticastDelegate.h
+ * @author MAI ZHICONG
+ * @brief Base class of multicast delegate
+ * @version 0.1
+ * @date 2025-10-14
+ * 
+ * @copyright Copyright (c) 2025~2025 MAI ZHICONG
+ * 
+ */
+
+#pragma once
 
 #ifndef ME_ABSTRACT_MULTICAST_DELEGATE
 #define ME_ABSTRACT_MULTICAST_DELEGATE
@@ -23,12 +34,14 @@ namespace MEngine
      */
     class MAbstractMulticastDelegate
     {
+      TYPEDEF(std::unique_ptr<MAbstractDelegate>, DelegateInst);
+      TYPEDEF(std::vector<DelegateInst>, DelegateList);
       /**
        * Default constructor
        * Access only in derived class
        */
       protected:
-        explicit MAbstractMulticastDelegate() = default;
+        MAbstractMulticastDelegate() = default;
 
       /**
        * Destructor
@@ -98,7 +111,7 @@ namespace MEngine
          * @param Args Arguments to send to delegate instance
          */
         template<typename DelegateInstanceInterfaceType, typename... ArgTypes>
-        void InvokeInternal(ArgTypes... Args) const;
+        FORCEINLINE void InvokeInternal(ArgTypes... Args) const;
     
     private:
       /**
@@ -119,8 +132,10 @@ namespace MEngine
        */
       FORCEINLINE size_t EraseDelegate(const std::unique_ptr<MAbstractDelegate>& DelegatePtr);
 
+      FORCEINLINE size_t GetDelegateNumInternal() const;
+
     private:
-      std::vector<std::unique_ptr<MAbstractDelegate>> m_delegateList;
+      DelegateList m_delegateList;  // Container to keep all singlecast delegate
     };
 
     template<typename DelegateType>
@@ -128,10 +143,16 @@ namespace MEngine
     {
       MDelegateHandle ResultHandle{};
 
+      // Factory lambda
+      auto deleInstFactory = [](DelegateType&& NewDelegate)
+      {
+        return std::make_unique<DelegateType>(std::forward<DelegateType>(NewDelegate));
+      };
+
       if (NewDelegate.IsBound())
       {
         ResultHandle = NewDelegate.GetHandle();
-        m_delegateList.emplace_back(std::make_unique<DelegateType>(std::forward<DelegateType>(NewDelegate)));
+        m_delegateList.emplace_back(deleInstFactory(std::forward<DelegateType>(NewDelegate)));
       }
 
       return ResultHandle;
@@ -162,7 +183,7 @@ namespace MEngine
 
     void MAbstractMulticastDelegate::CompactDelegateContainer()
     {
-      if (m_delegateList.size() == 0ull)
+      if (GetDelegateNumInternal() == 0ull)
       {
         return;
       }
@@ -170,7 +191,7 @@ namespace MEngine
       bool bNeedShrink = false;
       size_t listIndex = 0ull;
 
-      while (listIndex < m_delegateList.size())
+      while (listIndex < GetDelegateNumInternal())
       {
         std::unique_ptr<MAbstractDelegate>& delegatePtr = m_delegateList[listIndex];
 
@@ -202,6 +223,11 @@ namespace MEngine
         m_delegateList.erase(removeItemIterator, m_delegateList.end());
         return (size_t)eraseRangeSize;
       #endif
+    }
+
+    size_t MAbstractMulticastDelegate::GetDelegateNumInternal() const
+    {
+      return m_delegateList.size();
     }
 
     void MAbstractMulticastDelegate::ShrinkDelegateContainer()

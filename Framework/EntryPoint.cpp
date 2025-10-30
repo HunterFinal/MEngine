@@ -5,24 +5,21 @@
 #include "OTGTAPI.h"
 #include "ApplicationAPI.h"
 #include "Event/WindowEventInstances.h"
-#include "HAL/PlatformLowLevelAccessPort.h"
 #include "Windows/WindowsHeaderSet.h"
 
 #include "Application/FutureFlexApplication.h"
 #include "Widgets/FFWindow.h"
 
-// TODO
-#include <spdlog/fmt/bundled/format.h>
 #include <cstring>
 #include <utility>
 #include <conio.h>
 
 #define _CRT_SECURE_NO_WARNINGS
 
-class TestCase1 final : public OTGT::ITestCaseInterface
+class MMathLibTestCase final : public OTGT::ITestCaseInterface
 {
   public:
-    TestCase1() = default;
+    MMathLibTestCase() = default;
   private: 
     void StartupTest_Implementation() override
     {
@@ -61,7 +58,6 @@ class TestCase1 final : public OTGT::ITestCaseInterface
       me_assert(MMath::Sign(0) == 0);
 
       me_assert(1 == MMath::Abs(1));
-      me_assert(true);
       me_assert(MMath::Sign(0) == 0);
       
     }
@@ -208,7 +204,7 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   MEngine::Core::MDebugger::CreateDefaultDebugger();
 
   {
-    OTGT::ITestCaseInterface* pTest = new TestCase1();
+    OTGT::ITestCaseInterface* pTest = new MMathLibTestCase();
     pTest->StartupTest_Interface();
     pTest->RunTest_Interface();
     delete pTest;
@@ -220,9 +216,8 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   }
 
   {
-    MEngine::Core::MWindowResizeEventInstance* p;
-    p = new MEngine::Core::MWindowResizeEventInstance{};
-  
+    MEngine::Core::MWindowResizeEventInstance* p = new MEngine::Core::MWindowResizeEventInstance{};
+
     p->ResizeEvent.AddStatic(&func_out);
   
     p->InvokeEvent(100u, 200u);
@@ -247,8 +242,6 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   
   MEngine::Core::MDebugger::ReleaseCurrentDebugger();
   
-  Matrix44 testM(Vector4(1.f, 1.f, 1.f, 1.f), Vector4(2.f, 5.f, 6.f, 8.f), Vector4(9.f, 3.f, 66.f, 12.f), Vector4(13.f, 15.f, 25.f, 20.f));
-
   int32 a;
   std::cin >> a;
 
