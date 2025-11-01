@@ -129,6 +129,10 @@ namespace MEngine
                               IN const uint32 Line) const
     { 
       // Empty implementation, override in derived class if needed
+      (void)Expression;
+      (void)FileName;
+      (void)FuncName;
+      (void)Line;
     }
 
     void MDebugger::PostAssert(IN const TCHAR* FormattedStr) const

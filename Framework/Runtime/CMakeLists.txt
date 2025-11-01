@@ -1,4 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.10.0)
 
 add_subdirectory(FutureFlexCore)
+add_subdirectory(InputCore)
 add_subdirectory(Launch)

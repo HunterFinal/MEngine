@@ -2,9 +2,14 @@
 
 #include "Widgets/FFWindow.h"
 #include "HAL/PlatformApplicationAccessPort.h"
+#include "HAL/PlatformMath.h"
 #include "APP_Generic/AbstractApplication.h"
 #include "APP_Generic/AbstractApplicationWindow.h"
+#include "APP_Generic/AbstractCursor.h"
 #include "Macro/AssertionMacros.h"
+
+// TODO
+#include "Math/Vector2D.h"
 
 // FIXME move it to another file for version compatibility(c++20)
 #include <algorithm>
@@ -30,6 +35,12 @@ namespace MEngine
     /**Static member initialization */
     std::shared_ptr<MFutureFlexApplication> MFutureFlexApplication::s_curtAppInstance = nullptr;
     std::shared_ptr<MAbstractApplication> MFutureFlexApplication::s_platformApp = nullptr;
+
+    /**Internal data definition */
+    struct MFutureFlexApplication::InternalData
+    {
+      Vector2D PreviousPlatformCursorPosition = Vector2D::ZeroVector;
+    };
 
     namespace Private
     {
@@ -61,7 +72,6 @@ namespace MEngine
 
       s_platformApp = PlatformApplication;
       s_curtAppInstance = std::shared_ptr<MFutureFlexApplication>(new MFutureFlexApplication());
-
       s_platformApp->SetEventHandler(std::dynamic_pointer_cast<MApplicationEventHandler>(s_curtAppInstance));
 
     }
@@ -138,7 +148,33 @@ namespace MEngine
 
     bool MFutureFlexApplication::OnMouseMove()
     {
-      return false;
+      if (s_platformApp == nullptr)
+      {
+        // FIXME Add debug message
+        return false;
+      }
+
+      if (s_platformApp->GetCursor() == nullptr)
+      {
+        // FIXME Add debug message
+        return false;
+      }
+
+      // NOTE: We need handle Touch Event
+      {
+
+      }
+
+      bool result = true;
+      const Vector2D curtCursorPos = s_platformApp->GetCursor()->GetPosition();
+
+      if (!m_pImplData->PreviousPlatformCursorPosition.Equals(curtCursorPos))
+      {
+        m_pImplData->PreviousPlatformCursorPosition = curtCursorPos;
+      }
+
+      return result;
+
     }
 
     bool MFutureFlexApplication::OnCursorSet()
@@ -173,14 +209,20 @@ namespace MEngine
     }
 
     MFutureFlexApplication::MFutureFlexApplication()
-      : m_onExitRequested{}  
-    {}
+      : m_onExitRequested{}
+      , m_pImplData{std::make_unique<MFutureFlexApplication::InternalData>()}  
+    {
+      me_assert(m_pImplData != nullptr);
+    }
 
     void MFutureFlexApplication::MakeNativeWindow(IN std::shared_ptr<FFWindow> FutureFlexWindow)
     {
       me_assert(FutureFlexWindow != nullptr);
-
-      // TODO Change magic number
+      if (s_platformApp == nullptr)
+      {
+        // FIXME Add debug message
+        return;
+      }
       // create definition
       MEngine::Application::MWindowDefinition def;
       def.DesiredPositionOnScreenX = Private::TEMP_DesiredPositionOnScreenX;
@@ -194,20 +236,20 @@ namespace MEngine
       s_platformApp->InitializeWindow(nativeWindow, def, nullptr);
 
       FutureFlexWindow->SetNativeWindow(nativeWindow);
-
     }
 
     void MFutureFlexApplication::UpdatePlatform()
     {
-      if (s_platformApp != nullptr)
+      if (s_platformApp == nullptr)
       {
-        s_platformApp->PeekMessages();
-
-        // FIXME Need timer to calculate delta time
-        s_platformApp->UpdateApplication(0.0f);
-        s_platformApp->ProcessDeferredMessages();
+        // FIXME Add debug message
+        return;
       }
-
+      
+      s_platformApp->PeekMessages();
+      // FIXME Need timer to calculate delta time
+      s_platformApp->UpdateApplication(0.0f);
+      s_platformApp->ProcessDeferredMessages();
     }
 
     void MFutureFlexApplication::OnTerminateFFApp()

@@ -44,7 +44,9 @@ namespace MEngine
         return nullptr;
       }
 
-      return static_cast<WIDECHAR*>(wcsncpy(Dest, Src, DestCount));
+      (void)wcsncpy(Dest, Src, DestCount);
+      Dest[DestCount - 1] = 0;
+      return Dest;
     }
 
     int32 MWindowsPlatformStringUtility::PrintBufferV(

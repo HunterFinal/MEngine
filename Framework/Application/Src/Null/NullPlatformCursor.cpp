@@ -37,6 +37,7 @@ namespace Application
   void MNullPlatformCursor::LockInRect(IN const MCursorRect& Rect)
   {
     // Empty implementation
+    (void)Rect;
   }
 
   void MNullPlatformCursor::Unlock()
@@ -47,6 +48,7 @@ namespace Application
   void MNullPlatformCursor::SetType(IN const ECursorType Type)
   {
     // Empty implementation
+    (void)Type;
   }
 
 } // namespace MEngine::Application

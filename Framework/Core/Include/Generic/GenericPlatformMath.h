@@ -94,6 +94,19 @@ namespace MEngine
       }
       RESOLVE_FLOATS_AMBIGUITY_3ARGS(Clamp, NODISCARD_MSG("Ignoring return value of Clamp") static constexpr);
 
+      template<typename Type, TEMPLATE_CONDITION_DECLARATION(std::is_integral_v<Type>)>
+      NODISCARD_MSG("Ignoring return value of MulDivF") static CONSTEXPR FORCEINLINE Type MulDivF(IN Type Number,
+                                                                                                  IN Type Numerator,
+                                                                                                  IN Type Denominator)
+      {
+        if (Denominator == 0)
+        {
+          return static_cast<Type>(0);
+        }
+
+        return static_cast<Type>(Trunc(static_cast<float>(Number) * static_cast<float>(Numerator) / static_cast<float>(Denominator))); 
+      }
+   
       /**
        * Converts a floating-type num to an integer with truncation towards zero
        * 

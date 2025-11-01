@@ -13,12 +13,12 @@
 // Internal
 #include "Internal/EventBuilders/KeyCharContainerBuilder.h"
 #include "Internal/EventBuilders/KeyInputInfoContainerBuilder.h"
-
+#include "Internal/EventBuilders/Windows/WindowsDeferredMessageBuilder.h"
+#include "Internal/Windows/WindowsDeferredMessage.h"
 
 #include <iostream>
 #include <algorithm>
 #include <ranges>
-
 
 namespace
 {
@@ -48,10 +48,18 @@ namespace
     IN HWND HWnd,
     IN uint32 Message,
     IN WPARAM WParam,
+    IN LPARAM LParam
+  );
+
+  const MEngine::Application::MWindowsDeferredMessage MakeDeferredMessage_Mouse(
+    IN const std::shared_ptr<MEngine::Application::MWindowsPlatformWindow> Window,
+    IN HWND HWnd,
+    IN uint32 Message,
+    IN WPARAM WParam,
     IN LPARAM LParam,
-    DEFAULT_VAR int32 MouseX = 0,
-    DEFAULT_VAR int32 MouseY = 0,
-    DEFAULT_VAR int32 MouseIndicatorFlags = 0
+    IN int32 MouseX,
+    IN int32 MouseY,
+    IN int32 MouseIndicatorFlags   
   );
 
   /**
@@ -64,6 +72,13 @@ namespace MEngine
 {
   namespace Application
   {
+    struct MWindowsPlatformApplication::InternalData
+    {
+      std::vector<MWindowsDeferredMessage> DeferredMsgQueue;
+
+      POINT PreviousCursorPoint;
+    };
+
     std::shared_ptr<MWindowsPlatformApplication> MWindowsPlatformApplication::CreateWindowsApplication(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
     {
       // TODO Non thread-safe
@@ -90,16 +105,16 @@ namespace MEngine
 
     void MWindowsPlatformApplication::ProcessDeferredMessages()
     {
-      // TODO Why copy
-
+      
       // NOTE: Comment from UE
       // This function can be reentered when entering a modal tick loop.
 		  // We need to make a copy of the events that need to be processed or we may end up processing the same messages twice 
       // NOTE: End comment from UE
-      std::vector<MWindowsDeferredMessage> messagesToProcess(m_deferredMsgQueue);
-
-      m_deferredMsgQueue.clear();
-      m_deferredMsgQueue.shrink_to_fit();
+      
+      // TODO Why copy
+      std::vector<MWindowsDeferredMessage> messagesToProcess{m_pImplData->DeferredMsgQueue};
+      m_pImplData->DeferredMsgQueue.clear();
+      m_pImplData->DeferredMsgQueue.shrink_to_fit();
 
       for (const auto& message : messagesToProcess)
       {
@@ -268,6 +283,37 @@ namespace MEngine
         }
         break;
 
+        // Mouse input event
+        // Left button
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_LBUTTONDBLCLK:
+        // Right button
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+        case WM_RBUTTONDBLCLK:
+        // Middle button
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONUP:
+        case WM_MBUTTONDBLCLK:
+        // X button
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONUP:
+        case WM_XBUTTONDBLCLK:
+        // Mouse move
+        case WM_MOUSEMOVE:
+        case WM_NCMOUSEMOVE:
+        // Mouse wheel
+        case WM_MOUSEWHEEL:
+        case WM_MOUSEHWHEEL:
+        {
+          RegisterDeferredMessage(MakeDeferredMessage(currentActiveNativeWindowPtr, Hwnd, Msg, WParam, LParam));
+
+          // Handled
+          return 0;
+        }
+        break;
+
         // Mouse Cursor
         case WM_SETCURSOR:
         {
@@ -285,8 +331,62 @@ namespace MEngine
           // FIXME Start from here!!!!!!!!!!!!!!!!!!!!
           //#error "Start from here"
           // Capture input data immediately, or it will expire if capture it in ProcessDeferredMessages()
-          uint32 Size = 0;
-          (void)::GetRawInputData(reinterpret_cast<HRAWINPUT>(LParam), RID_INPUT, nullptr, &Size, sizeof(RAWINPUTHEADER));
+          // URL https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-getrawinputdata?source=recommendations
+          uint32 bufSize = 0;
+          (void)::GetRawInputData(reinterpret_cast<HRAWINPUT>(LParam), RID_INPUT, nullptr, &bufSize, sizeof(RAWINPUTHEADER));
+
+          std::vector<uint8> rawData{};
+          rawData.resize(bufSize);
+          if (::GetRawInputData(reinterpret_cast<HRAWINPUT>(LParam), RID_INPUT, rawData.data(), &bufSize, sizeof(RAWINPUTHEADER)) == bufSize)
+          {
+            const RAWINPUT* const raw = reinterpret_cast<const RAWINPUT* const>(rawData.data());
+
+            // Handle mouse raw input
+            if (raw->header.dwType == RIM_TYPEMOUSE)
+            {
+              // URL https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/ns-winuser-rawmouse
+              const bool bIsAbsoluteInput = (raw->data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE) == MOUSE_MOVE_ABSOLUTE;
+              if (bIsAbsoluteInput)
+              {
+                // Get the new cursor point
+                POINT cursorPt{};
+                
+                // Calculate cursor point
+                {
+                  const bool bIsVirtualDesktop = (raw->data.mouse.usFlags & MOUSE_VIRTUAL_DESKTOP) == MOUSE_VIRTUAL_DESKTOP;
+                  // URL https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/ns-winuser-rawmouse
+                  /**
+                   * MOUSE_MOVE_ABSOLUTE 値が指定されている場合は、lLastXとlLastY 0 から 65,535 の間の正規化された絶対座標が含まれます。
+                   * 座標(0,0)は、表示サーフェスの左上隅にマップされます。座標(65535,65535)が右下隅にマップされます。
+                   * マルチモニターシステムでは、座標はプライマリモニターにマップされます。
+                   */
+                  const int32 maxAbsoluteCoord = USHRT_MAX;
+                  
+                  const int32 left = bIsVirtualDesktop ? GetSystemMetrics(SM_XVIRTUALSCREEN) : 0;
+                  const int32 right = GetSystemMetrics(bIsVirtualDesktop ? SM_CXVIRTUALSCREEN : SM_CXSCREEN);
+                  const int32 top = bIsVirtualDesktop ? GetSystemMetrics(SM_YVIRTUALSCREEN) : 0;
+                  const int32 bottom = GetSystemMetrics(bIsVirtualDesktop ? SM_CYVIRTUALSCREEN : SM_CXSCREEN);
+
+                  cursorPt.x = static_cast<LONG>(MMath::MulDivF(static_cast<int32>(raw->data.mouse.lLastX), right, maxAbsoluteCoord) + left);
+                  cursorPt.y = static_cast<LONG>(MMath::MulDivF(static_cast<int32>(raw->data.mouse.lLastY), bottom, maxAbsoluteCoord) + top);
+
+                  // NOTE Need more information of WM_INPUT
+                }
+                
+              }
+              else
+              {
+                // Raw input is coming in as relative
+                // It is likely a traditional mouse device
+                const int32 xPosRelative = raw->data.mouse.lLastX;
+                const int32 yPosRelative = raw->data.mouse.lLastY;
+
+                RegisterDeferredMessage(MakeDeferredMessage_Mouse(currentActiveNativeWindowPtr, Hwnd, Msg, WParam, LParam, xPosRelative, yPosRelative, MOUSE_MOVE_RELATIVE));
+                // Handle ourselves
+                return 1;
+              }
+            }
+          }
         }
         break;
 
@@ -294,17 +394,6 @@ namespace MEngine
         case WM_KEYDOWN:
         {
           RegisterDeferredMessage(MakeDeferredMessage(currentActiveNativeWindowPtr, Hwnd, Msg, WParam, LParam));
-        }
-        break;
-
-        // Mouse move
-        case WM_NCMOUSEMOVE:
-        case WM_MOUSEMOVE:
-        {
-          bool mouseMoveResult = eventHandler->OnMouseMove();
-          std::cout << "Moving mouse" << std::endl;
-          
-          return mouseMoveResult ? 0 : 1; 
         }
         break;
 
@@ -373,6 +462,7 @@ namespace MEngine
       : MAbstractApplication(std::make_shared<MWindowsPlatformCursor>())
       , m_applicationInstance{std::make_shared<MWindowsPlatformApplicationInstance>(InstanceHandle)}
       , m_windows{}
+      , m_pImplData{std::make_unique<MWindowsPlatformApplication::InternalData>()}
     {
       // HACK Disable this process from being showing "Ghost UI" during slow tasks
       ::DisableProcessWindowsGhosting();
@@ -386,7 +476,7 @@ namespace MEngine
     {
       if (Globals::GIsPeekingMessagesOutsideOfMainLoop)
       {
-        m_deferredMsgQueue.emplace_back(DeferredMessage);
+        m_pImplData->DeferredMsgQueue.emplace_back(DeferredMessage);
       }
       else
       {
@@ -434,7 +524,20 @@ namespace MEngine
           }
         }
         break;
+
+        // Mouse move
+        case WM_MOUSEMOVE:
+        case WM_NCMOUSEMOVE:
+        {
+          const bool result = eventHandler->OnMouseMove();
+
+          return result ? 0 : 1;
+        }
+        break;
       }
+
+      // Handled
+      return 0;
     }
   }
 }
@@ -588,22 +691,38 @@ namespace
     IN HWND HWnd,
     IN uint32 Message,
     IN WPARAM WParam,
-    IN LPARAM LParam,
-    DEFAULT_VAR int32 MouseX,
-    DEFAULT_VAR int32 MouseY,
-    DEFAULT_VAR int32 MouseIndicatorFlags
+    IN LPARAM LParam
   )
   {
-    return MEngine::Application::MWindowsDeferredMessage
-    {
-      .NativeWindowWeakPtr = Window,
-      .HWnd = HWnd,
-      .Message = Message,
-      .WParam = WParam,
-      .LParam = LParam,
-      .MouseX = MouseX,
-      .MouseY = MouseY,
-      .MouseIndicatorFlags = MouseIndicatorFlags
-    };
+    return MEngine::Application::MWindowsDeferredMessageBuilder::Builder()
+           .NativeWindow(Window)
+           .WindowHandle(HWnd)
+           .Message(Message)
+           .WParam(WParam)
+           .LParam(LParam)
+           .Build();
+  }
+
+  const MEngine::Application::MWindowsDeferredMessage MakeDeferredMessage_Mouse(
+    IN const std::shared_ptr<MEngine::Application::MWindowsPlatformWindow> Window,
+    IN HWND HWnd,
+    IN uint32 Message,
+    IN WPARAM WParam,
+    IN LPARAM LParam,
+    IN int32 MouseX,
+    IN int32 MouseY,
+    IN int32 MouseIndicatorFlags   
+  )
+  {
+    return MEngine::Application::MWindowsDeferredMessageBuilder::Builder()
+        .NativeWindow(Window)
+        .WindowHandle(HWnd)
+        .Message(Message)
+        .WParam(WParam)
+        .LParam(LParam)
+        .MouseX(MouseX)
+        .MouseY(MouseY)
+        .MouseIndicatorFlags(MouseIndicatorFlags)
+        .Build();
   }
 }

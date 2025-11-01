@@ -94,6 +94,9 @@ namespace MEngine
 
         // Delegates that handle application exit
         MEngine::Core::MDelegate<void()> m_onExitRequested;
+
+        struct InternalData;
+        std::unique_ptr<InternalData> m_pImplData;
     };
   }
 }

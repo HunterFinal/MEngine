@@ -12,6 +12,8 @@ namespace MEngine
     {
       #if ME_DEBUG_LOGGING
         OutputDebugString(Str);
+      #else
+        (void)Str;
       #endif
     }
   }
