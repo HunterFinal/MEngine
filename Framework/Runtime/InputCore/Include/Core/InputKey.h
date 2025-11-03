@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef _ME_INPUTCORE_INPUT_KEY_
-#define _ME_INPUTCORE_INPUT_KEY_
+#ifndef _ME_RUNTIME_INPUTCORE_INPUT_KEY_
+#define _ME_RUNTIME_INPUTCORE_INPUT_KEY_
 
 #include "IInputKeyProxy.h"
 
@@ -18,13 +18,14 @@ struct MInputKeyProxy;
 
 struct MInputKey final : public IInputKeyProxy
 {
-
 public:
 
   using KeyNameType = std::basic_string<TCHAR>;
-  INPUTCORE_API MInputKey();
-  INPUTCORE_API MInputKey(IN const KeyNameType& InKeyName);
-  INPUTCORE_API MInputKey(IN const TCHAR* InKeyName);
+
+  INPUTCORE_API explicit MInputKey();
+  INPUTCORE_API explicit MInputKey(IN const KeyNameType& InKeyName);
+  INPUTCORE_API explicit MInputKey(IN const TCHAR* InKeyName);
+  INPUTCORE_API virtual ~MInputKey();
 
   /**Start IInputKeyProxy interface */
   INPUTCORE_API bool IsModifierKey() const override final;
@@ -45,6 +46,10 @@ public:
   INPUTCORE_API StringView GetLongDisplayName() const override final;
   INPUTCORE_API EPairedAxisType GetPairedAxisType() const override final;
   INPUTCORE_API MInputKey GetPairedAxisInputKey() const override final;
+  INPUTCORE_API MInputKey GetKey() const override final;
+
+  void SetPairedAxisType(IN EPairedAxisType InType) override final;
+  void SetPairedAxisInputKey(const MInputKey& InKey) override final;
   /**End IInputKeyProxy interface */
 
   INPUTCORE_API bool IsValid() const;
@@ -63,8 +68,8 @@ private:
   KeyNameType m_keyName;
 };
 
-}  
+} // namespace MEngine::InputCore
 
-}
+} // namespace MEngine
 
-#endif // _ME_INPUTCORE_INPUT_KEY_
+#endif // _ME_RUNTIME_INPUTCORE_INPUT_KEY_

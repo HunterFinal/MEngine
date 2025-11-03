@@ -1,8 +1,8 @@
 ﻿// MEngine math utility class definitions
 #pragma once
 
-#ifndef MENGINE_MATH_UTILITY
-#define MENGINE_MATH_UTILITY
+#ifndef _ME_CORE_MATH_UTILITY_
+#define _ME_CORE_MATH_UTILITY_
 
 #include "HAL/Platform.h"
 #include "HAL/PlatformMath.h"
@@ -40,27 +40,27 @@ namespace MEngine
         inline static constexpr float VECTOR_NORMALIZED_THRESHOLD  =  (0.001f);
       #else
         // Float
-        static const float PI;
-        static const float FLOAT_TOLERANCE_SMALL;
-        static const float FLOAT_TOLERANCE_KINDA_SMALL;
-        static const float BIG_NUMBER;
-        static const float EULERS_NUMBER;
-        static const float MAX_FLOAT; // same as FLT_MAX in float.h
-        static const float RAD_2_DEG;
-        static const float DEG_2_RAD;
+        static CORE_API const float PI;
+        static CORE_API const float FLOAT_TOLERANCE_SMALL;
+        static CORE_API const float FLOAT_TOLERANCE_KINDA_SMALL;
+        static CORE_API const float BIG_NUMBER;
+        static CORE_API const float EULERS_NUMBER;
+        static CORE_API const float MAX_FLOAT; // same as FLT_MAX in float.h
+        static CORE_API const float RAD_2_DEG;
+        static CORE_API const float DEG_2_RAD;
 
         // Double
-        static const double DOUBLE_PI;
-        static const double DOUBLE_TOLERANCE_SMALL;
-        static const double DOUBLE_TOLERANCE_KINDA_SMALL;
-        static const double DOUBLE_BIG_NUMBER;
-        static const double DOUBLE_EULERS_NUMBER;
-        static const double MAX_DOUBLE; // same as DBL_MAX in float.h
-        static const double DOUBLE_RAD_2_DEG;
-        static const double DOUBLE_DEG_2_RAD;
+        static CORE_API const double DOUBLE_PI;
+        static CORE_API const double DOUBLE_TOLERANCE_SMALL;
+        static CORE_API const double DOUBLE_TOLERANCE_KINDA_SMALL;
+        static CORE_API const double DOUBLE_BIG_NUMBER;
+        static CORE_API const double DOUBLE_EULERS_NUMBER;
+        static CORE_API const double MAX_DOUBLE; // same as DBL_MAX in float.h
+        static CORE_API const double DOUBLE_RAD_2_DEG;
+        static CORE_API const double DOUBLE_DEG_2_RAD;
 
         // Vector
-        static const float VECTOR_NORMALIZED_THRESHOLD;
+        static CORE_API const float VECTOR_NORMALIZED_THRESHOLD;
       #endif // HAS_CPP_17
       
       /**
@@ -105,4 +105,4 @@ namespace MEngine
 // Math class alias
 TYPEDEF(MEngine::Math::MMath, MMath);
 
-#endif // MENGINE_MATH_UTILITY
+#endif // _ME_CORE_MATH_UTILITY_

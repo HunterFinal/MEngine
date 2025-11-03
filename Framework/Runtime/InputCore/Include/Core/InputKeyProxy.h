@@ -27,7 +27,7 @@ public:
     Axis1D                   = BIT_FLAG(4),
     Axis2D                   = BIT_FLAG(5),
     Axis3D                   = BIT_FLAG(6),
-    Button                   = BIT_FLAG(7),
+    ButtonAxis               = BIT_FLAG(7),
     UpdateAxisWithoutSamples = BIT_FLAG(8),
     Gesture                  = BIT_FLAG(9),
     Deprecated               = BIT_FLAG(10),
@@ -36,31 +36,34 @@ public:
   };
 
 public:
-  INPUTCORE_API MInputKeyProxy(IN const MInputKey& InInputKey, IN StringView InLongDisplayName, IN StringView InShortDisplayName, IN StringView InKeyCategory, IN uint32 InKeyFlags = 0);
-  INPUTCORE_API virtual ~MInputKeyProxy();
+  explicit MInputKeyProxy(IN const MInputKey& InInputKey, IN StringView InLongDisplayName, IN StringView InShortDisplayName, IN StringView InKeyCategory, IN uint32 InKeyFlags = 0);
+  virtual ~MInputKeyProxy();
 
   /**Start IInputKeyProxy interface */
-  INPUTCORE_API bool IsModifierKey() const override final;
-  INPUTCORE_API bool IsGamepadKey() const override final;
-  INPUTCORE_API bool IsTouchKey() const override final;
-  INPUTCORE_API bool IsMouseButtonKey() const override final;
-  INPUTCORE_API bool IsAxis1D() const override final;
-  INPUTCORE_API bool IsAxis2D() const override final;
-  INPUTCORE_API bool IsAxis3D() const override final;
-  INPUTCORE_API bool IsButtonAxis() const override final;
-  INPUTCORE_API bool IsAnalogKey() const override final;
-  INPUTCORE_API bool IsDigitalKey() const override final;
-  INPUTCORE_API bool ShouldUpdateAxisWithoutSamples() const override final;
-  INPUTCORE_API bool IsGesture() const override final;
-  INPUTCORE_API bool IsDeprecated() const override final;
-  INPUTCORE_API StringView GetKeyCategory() const override final;
-  INPUTCORE_API StringView GetShortDisplayName() const override final;
-  INPUTCORE_API StringView GetLongDisplayName() const override final;
-  INPUTCORE_API EPairedAxisType GetPairedAxisType() const override final;
-  INPUTCORE_API MInputKey GetPairedAxisInputKey() const override final;
+  bool IsModifierKey() const override final;
+  bool IsGamepadKey() const override final;
+  bool IsTouchKey() const override final;
+  bool IsMouseButtonKey() const override final;
+  bool IsAxis1D() const override final;
+  bool IsAxis2D() const override final;
+  bool IsAxis3D() const override final;
+  bool IsButtonAxis() const override final;
+  bool IsAnalogKey() const override final;
+  bool IsDigitalKey() const override final;
+  bool ShouldUpdateAxisWithoutSamples() const override final;
+  bool IsGesture() const override final;
+  bool IsDeprecated() const override final;
+  StringView GetKeyCategory() const override final;
+  StringView GetShortDisplayName() const override final;
+  StringView GetLongDisplayName() const override final;
+  EPairedAxisType GetPairedAxisType() const override final;
+  MInputKey GetPairedAxisInputKey() const override final;
+  MInputKey GetKey() const override final;
+
+  void SetPairedAxisType(IN EPairedAxisType InType) override final;
+  void SetPairedAxisInputKey(const MInputKey& InKey) override final;
   /**End IInputKeyProxy interface */
 
-  INPUTCORE_API MInputKey GetKey() const;
 
 private:
   void InitializeInternal(IN const uint32 InKeyFlags);

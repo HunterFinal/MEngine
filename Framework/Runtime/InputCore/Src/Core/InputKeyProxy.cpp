@@ -1,8 +1,11 @@
 ﻿#include "Core/InputKeyProxy.h"
 #include "Core/InputKey.h"
+#include "Globals/KeyGlobals.h"
 #include "InputCoreAPI.h"
 
 #include "Macro/AssertionMacros.h"
+
+#include <memory>
 
 namespace
 {
@@ -28,7 +31,7 @@ namespace InputCore
     public:
       InternalData(IN const MInputKey& InInputKey, IN StringView InLongDisplayName, IN StringView InShortDisplayName, IN StringView InKeyCategory)
         : Key{InInputKey}
-        , PairedKey{}
+        , PairedKey{GStaticKeys::Invalid}
         , KeyCategoryName{InKeyCategory}
         , ShortDisplayName{InShortDisplayName}
         , LongDisplayName{InLongDisplayName}
@@ -67,7 +70,7 @@ namespace InputCore
     bIsDeprecated = (InKeyFlags & Deprecated) != EKeyFlags::None;
 
     // Initialize Axis type
-    if ((InKeyFlags & EKeyFlags::Button) != EKeyFlags::None)
+    if ((InKeyFlags & EKeyFlags::ButtonAxis) != EKeyFlags::None)
     {
       me_assert((InKeyFlags & (EKeyFlags::Axis1D | EKeyFlags::Axis2D | EKeyFlags::Axis3D)) == EKeyFlags::None);
       m_pImplData->InputAxisType = EInputAxisType::Button;
@@ -92,7 +95,7 @@ namespace InputCore
     }
 
     // Initialize key category
-    if (GetKeyCategory() == INVALID_KEY_CATEGORY)
+    if (GetKeyCategory() == INVALID_KEY_CATEGORY || GetKeyCategory().empty())
     {
       if (IsGamepadKey())
       {
@@ -182,7 +185,7 @@ namespace InputCore
 
   StringView MInputKeyProxy::GetShortDisplayName() const
   {
-    return m_pImplData->ShortDisplayName;
+    return !m_pImplData->ShortDisplayName.empty() ? m_pImplData->ShortDisplayName : GetLongDisplayName();
   }
 
   StringView MInputKeyProxy::GetLongDisplayName() const
@@ -204,7 +207,16 @@ namespace InputCore
   {
     return m_pImplData->Key;
   }
+  
+  void MInputKeyProxy::SetPairedAxisType(IN EPairedAxisType InType)
+  {
+    m_pImplData->PairedKeyAxisType = InType;
+  }
 
+  void MInputKeyProxy::SetPairedAxisInputKey(const MInputKey& InKey)
+  {
+    m_pImplData->PairedKey = InKey;
+  }
 } // namespace MEngine::InputCore
 
 } // namespace MEngine

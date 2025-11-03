@@ -3,9 +3,9 @@
 #ifndef _ME_INPUTCORE_IINPUTKEY_PROXY_
 #define _ME_INPUTCORE_IINPUTKEY_PROXY_
 
-#include "Internal/Misc/InputCoreDefines.h"
+#include "Internal/InputCoreDefines.h"
 #include "Misc/CoreDefines.h"
-#include <iosfwd>
+#include <iosfwd> // std::char_traits<> 
 
 namespace std
 {
@@ -47,6 +47,11 @@ public:
   INPUTCORE_API virtual StringView GetLongDisplayName() const = 0;
   INPUTCORE_API virtual EPairedAxisType GetPairedAxisType() const = 0;
   INPUTCORE_API virtual MInputKey GetPairedAxisInputKey() const = 0;
+  INPUTCORE_API virtual MInputKey GetKey() const = 0;
+
+  // TODO
+  virtual void SetPairedAxisType(IN EPairedAxisType InType) { (void)InType; };
+  virtual void SetPairedAxisInputKey(const MInputKey& InKey) { (void)InKey; };
 };
 
 } // namespace MEngine::InputCore

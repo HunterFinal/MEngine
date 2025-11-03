@@ -6,6 +6,6 @@
 #include "Core/InputKeyTypes.h"
 #include "Globals/KeyGlobals.h"
 
-#include "Internal/Misc/InputCoreDefines.h"
+#include "Internal/InputCoreDefines.h"
 
 #endif // _ME_RUNTIME_INPUTCORE_API_

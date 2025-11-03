@@ -1,4 +1,5 @@
 ﻿#include "Core/InputKey.h"
+
 #include "InputCoreAPI.h"
 
 #include <string_view>
@@ -8,7 +9,6 @@ namespace MEngine
 
 namespace InputCore
 {
-
   MInputKey::MInputKey()
     : m_proxy{nullptr}
     , m_keyName{INVALID_KEY_NAME}
@@ -23,6 +23,8 @@ namespace InputCore
     : m_proxy{nullptr}
     , m_keyName{InKeyName}
   { }
+
+  MInputKey::~MInputKey() = default;
 
   bool MInputKey::IsModifierKey() const
   {
@@ -129,7 +131,31 @@ namespace InputCore
   MInputKey MInputKey::GetPairedAxisInputKey() const
   {
     ConditionalLookupProxy();
-    return (m_proxy != nullptr) ? m_proxy->GetPairedAxisInputKey() : MInputKey{};    
+    return (m_proxy != nullptr) ? m_proxy->GetPairedAxisInputKey() : GStaticKeys::Invalid;    
+  }
+
+  MInputKey MInputKey::GetKey() const
+  {
+    ConditionalLookupProxy();
+    return (m_proxy != nullptr) ? m_proxy->GetPairedAxisInputKey() : *this;
+  }
+
+  void MInputKey::SetPairedAxisType(IN EPairedAxisType InType)
+  {
+    ConditionalLookupProxy();
+    if (m_proxy != nullptr)
+    {
+      m_proxy->SetPairedAxisType(InType);
+    }
+  }
+
+  void MInputKey::SetPairedAxisInputKey(const MInputKey& InKey)
+  {
+    ConditionalLookupProxy();
+    if (m_proxy != nullptr)
+    {
+      m_proxy->SetPairedAxisInputKey(InKey);
+    }
   }
 
   bool MInputKey::IsValid() const
