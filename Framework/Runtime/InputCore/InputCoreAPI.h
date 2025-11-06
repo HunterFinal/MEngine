@@ -5,6 +5,7 @@
 
 #include "Core/InputKeyTypes.h"
 #include "Globals/KeyGlobals.h"
+#include "IInputKeyManager.h"
 
 #include "Internal/InputCoreDefines.h"
 

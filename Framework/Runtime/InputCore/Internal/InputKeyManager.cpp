@@ -208,6 +208,18 @@ public:
 
   }
 
+  virtual std::shared_ptr<IInputKeyProxy> GetInputKeyProxy(IN const MInputKey& InKey) const override
+  {
+    auto foundItr = m_inputKeys.find(InKey);
+    if (foundItr == m_inputKeys.cend())
+    {
+      // TODO Add debug log
+      return std::shared_ptr<MInputKeyProxy>{nullptr};
+    }
+
+    return foundItr->second;
+  }
+
   virtual int32 GetAllKeys(OUT std::vector<MInputKey>& OutKeys) const override
   {
     return -1;

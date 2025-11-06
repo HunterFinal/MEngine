@@ -35,6 +35,7 @@ public:
   INPUTCORE_API virtual void Initialize() = 0;
   INPUTCORE_API virtual void AddKey(IN std::shared_ptr<IInputKeyProxy> InKeyProxy) = 0; 
   INPUTCORE_API virtual void AddPairedKey(IN std::shared_ptr<IInputKeyProxy> InPairedKeyProxy, IN const IInputKeyProxy& KeyX, IN const IInputKeyProxy& KeyY) = 0;
+  INPUTCORE_API virtual std::shared_ptr<IInputKeyProxy> GetInputKeyProxy(IN const MInputKey& InKey) const = 0;
   INPUTCORE_API virtual int32 GetAllKeys(OUT std::vector<MInputKey>& OutKeys) const = 0;
 };
 

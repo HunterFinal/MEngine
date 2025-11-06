@@ -14,6 +14,7 @@ target_link_libraries(
   FutureFlexCore
   PRIVATE
   Core
+  InputCore
   Application
 )
 
@@ -37,6 +38,8 @@ target_include_directories(
   PRIVATE
   ${CMAKE_SOURCE_DIR}/Framework/Core 
   ${CMAKE_SOURCE_DIR}/Framework/Core/Include
+  ${CMAKE_SOURCE_DIR}/Framework/InputCore
+  ${CMAKE_SOURCE_DIR}/Framework/InputCore/Include
   ${CMAKE_SOURCE_DIR}/Framework/Application
   ${CMAKE_SOURCE_DIR}/Framework/Application/Include
 )

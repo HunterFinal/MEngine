@@ -8,6 +8,8 @@
 #include "APP_Generic/AbstractCursor.h"
 #include "Macro/AssertionMacros.h"
 
+#include "InputCoreAPI.h"
+
 // TODO
 #include "Math/Vector2D.h"
 
@@ -69,6 +71,10 @@ namespace MEngine
     void MFutureFlexApplication::Initialize(IN const std::shared_ptr<MAbstractApplication>& PlatformApplication)
     {
       me_assert(PlatformApplication != nullptr);
+
+      // Initialize Input key manager
+      MEngine::InputCore::IInputKeyManager& inputKeyManager = MEngine::InputCore::IInputKeyManager::GetInstance();
+      inputKeyManager.Initialize();
 
       s_platformApp = PlatformApplication;
       s_curtAppInstance = std::shared_ptr<MFutureFlexApplication>(new MFutureFlexApplication());
@@ -160,16 +166,13 @@ namespace MEngine
         return false;
       }
 
-      // NOTE: We need handle Touch Event
-      {
-
-      }
-
+      
       bool result = true;
       const Vector2D curtCursorPos = s_platformApp->GetCursor()->GetPosition();
-
+      
       if (!m_pImplData->PreviousPlatformCursorPosition.Equals(curtCursorPos))
       {
+        // NOTE: We need handle Touch Event
         m_pImplData->PreviousPlatformCursorPosition = curtCursorPos;
       }
 

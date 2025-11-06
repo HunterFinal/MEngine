@@ -181,7 +181,11 @@ namespace InputCore
 
   void MInputKey::ConditionalLookupProxy() const
   {
-
+    if (m_proxy == nullptr)
+    {
+      IInputKeyManager& inputKeyManager = IInputKeyManager::GetInstance();
+      m_proxy = inputKeyManager.GetInputKeyProxy(*this);
+    }
   }
 
 bool operator==(const MInputKey& Lhs, const MInputKey& Rhs)
