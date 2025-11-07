@@ -35,6 +35,7 @@ namespace MEngine
                                               IN const MWindowDefinition& WindowDefinition,
                                               IN const std::shared_ptr<MAbstractApplicationWindow>& ParentWindow) override;
         APP_API virtual void TerminateApplication() override;
+        APP_API virtual MModifierKeysState GetModState() const override;
       #pragma endregion MAbstractApplication interface
       /**End of MAbstractApplication interface */
 

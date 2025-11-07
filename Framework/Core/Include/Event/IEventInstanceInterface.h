@@ -16,7 +16,7 @@ namespace MEngine
     template<typename DerivedEventInstanceType>
     struct IEventInstanceInterface : public IEventInterface
     {
-
+      static_assert(std::is_base_of_v<IEventInstanceInterface, DerivedEventInstanceType>, "Derived class is not an IEventInstanceInterface");
       CORE_API virtual ~IEventInstanceInterface() = default;
       
       template<typename... InvokeEventArgTypes>

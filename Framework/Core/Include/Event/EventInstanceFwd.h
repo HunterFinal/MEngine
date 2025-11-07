@@ -9,6 +9,7 @@ namespace MEngine
   {
     class MWindowResizeEventInstance;
     class MWindowMoveEventInstance;
+    class MMouseMoveEventInstance;
   }
 }
 

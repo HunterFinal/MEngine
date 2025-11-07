@@ -72,11 +72,26 @@ namespace MEngine
 {
   namespace Application
   {
+    enum EWinModifierKeyType : uint8
+    {
+      Win_LeftShift = 0,    // VK_LSHIFT
+      Win_RightShift = 1,   // VK_RSHIFT
+      Win_LeftControl = 2,  // VK_LCONTROL
+      Win_RightControl = 3, // VK_RCONTROL
+      Win_LeftAlt = 4,      // VK_LMENU
+      Win_RightAlt = 5,     // VK_RMENU
+      Win_CapsLock = 6,     // VK_CAPITAL
+
+      Count,
+    };
+
     struct MWindowsPlatformApplication::InternalData
     {
       std::vector<MWindowsDeferredMessage> DeferredMsgQueue;
 
       POINT PreviousCursorPoint;
+
+      bool ModifierKeysState[EWinModifierKeyType::Count];
     };
 
     std::shared_ptr<MWindowsPlatformApplication> MWindowsPlatformApplication::CreateWindowsApplication(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
@@ -150,6 +165,27 @@ namespace MEngine
     void MWindowsPlatformApplication::TerminateApplication()
     {
       // TODO need implementation
+    }
+
+    MModifierKeysState MWindowsPlatformApplication::GetModState() const
+    {
+      const bool bIsLeftShiftPressed = m_pImplData->ModifierKeysState[Win_LeftShift];
+      const bool bIsRightShiftPressed = m_pImplData->ModifierKeysState[Win_RightShift];
+      const bool bIsLeftControlPressed = m_pImplData->ModifierKeysState[Win_LeftControl];
+      const bool bIsRightControlPressed = m_pImplData->ModifierKeysState[Win_RightControl];
+      const bool bIsLeftAltPressed = m_pImplData->ModifierKeysState[Win_LeftAlt];
+      const bool bIsRightAltPressed = m_pImplData->ModifierKeysState[Win_RightAlt];
+
+      // NOTE
+      const bool bAreCapsLocked = m_pImplData->ModifierKeysState[Win_CapsLock];
+
+      return MModifierKeysState
+      {
+        bIsLeftShiftPressed, bIsRightShiftPressed,
+        bIsLeftControlPressed, bIsRightControlPressed,
+        bIsLeftAltPressed, bIsRightAltPressed,
+        false, false                                  // Windows do not have command keys
+      };
     }
     
     bool MWindowsPlatformApplication::WindowsApplicationRegisterClass(IN const HINSTANCE InstanceHandle, IN const HICON IconHandle)
@@ -464,6 +500,9 @@ namespace MEngine
       , m_windows{}
       , m_pImplData{std::make_unique<MWindowsPlatformApplication::InternalData>()}
     {
+      constexpr SIZE_T modifierKeysMemCount = sizeof(decltype(*InternalData::ModifierKeysState)) * static_cast<SIZE_T>(InternalData::EWinModifierKeyType::Count);
+      ::memset(m_pImplData->ModifierKeysState, 0, modifierKeysMemCount);
+
       // HACK Disable this process from being showing "Ghost UI" during slow tasks
       ::DisableProcessWindowsGhosting();
 

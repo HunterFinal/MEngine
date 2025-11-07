@@ -18,6 +18,112 @@ namespace Application
   class MAbstractCursor;
   struct MWindowDefinition;
   struct MApplicationEventHandler;
+
+  class MModifierKeysState
+  {
+    public:
+      constexpr explicit MModifierKeysState(
+        IN const bool bInIsLeftShiftPressed,
+        IN const bool bInIsRightShiftPressed,
+        IN const bool bInIsLeftControlPressed,
+        IN const bool bInIsRightControlPressed,
+        IN const bool bInIsLeftAltPressed,
+        IN const bool bInIsRightAltPressed,
+        IN const bool bInIsLeftCommandPressed,
+        IN const bool bInIsRightCommandPressed
+      )
+        : bIsLeftShiftPressed{bInIsLeftShiftPressed}
+        , bIsRightShiftPressed{bInIsRightShiftPressed}
+        , bIsLeftControlPressed{bInIsLeftControlPressed}
+        , bIsRightControlPressed{bInIsRightControlPressed}
+        , bIsLeftAltPressed{bInIsLeftAltPressed}
+        , bIsRightAltPressed{bInIsRightAltPressed}
+        , bIsLeftCommandPressed{bInIsLeftCommandPressed}
+        , bIsRightCommandPressed{bInIsRightCommandPressed}
+      { }
+
+      constexpr explicit MModifierKeysState()
+        : bIsLeftShiftPressed{false}
+        , bIsRightShiftPressed{false}
+        , bIsLeftControlPressed{false}
+        , bIsRightControlPressed{false}
+        , bIsLeftAltPressed{false}
+        , bIsRightAltPressed{false}
+        , bIsLeftCommandPressed{false}
+        , bIsRightCommandPressed{false}
+      { }
+
+    public:
+      bool IsLeftShiftPressed() const
+      {
+        return bIsLeftShiftPressed;
+      }
+
+      bool IsRightShiftPressed() const
+      {
+        return bIsRightShiftPressed;
+      }
+
+      bool IsShiftPressed() const
+      {
+        return IsLeftShiftPressed() || IsRightShiftPressed();
+      }
+
+      bool IsLeftControlPressed() const
+      {
+        return bIsLeftControlPressed;
+      }
+
+      bool IsRightControlPressed() const
+      {
+        return bIsRightControlPressed;
+      }
+
+      bool IsControlPressed() const
+      {
+        return IsLeftControlPressed() || IsRightControlPressed();
+      }
+
+      bool IsLeftAltPressed() const
+      {
+        return bIsLeftAltPressed;
+      }
+
+      bool IsRightAltPressed() const
+      {
+        return bIsRightAltPressed;
+      }
+
+      bool IsAltPressed() const
+      {
+        return IsLeftAltPressed() || IsRightAltPressed();
+      }
+
+      bool IsLeftCommandPressed() const
+      {
+        return bIsLeftCommandPressed;
+      }
+
+      bool IsRightCommandPressed() const
+      {
+        return bIsRightCommandPressed;
+      }
+
+      bool IsCommandPressed() const
+      {
+        return IsLeftCommandPressed() || IsRightCommandPressed();
+      }
+
+    private:
+      uint8 bIsLeftShiftPressed : 1;
+      uint8 bIsRightShiftPressed : 1;
+      uint8 bIsLeftControlPressed : 1;
+      uint8 bIsRightControlPressed : 1;
+      uint8 bIsLeftAltPressed : 1;
+      uint8 bIsRightAltPressed : 1;
+      uint8 bIsLeftCommandPressed : 1;
+      uint8 bIsRightCommandPressed : 1;
+  };
   
   /**
    * @brief The base class of platform-base application
@@ -73,6 +179,8 @@ namespace Application
        * @brief Terminate platform application
        */
       APP_API virtual void TerminateApplication() = 0;
+
+      virtual MModifierKeysState GetModState() const { return MModifierKeysState{};}
 
       const std::shared_ptr<MApplicationEventHandler> GetEventHandler() const { return m_eventHandler; }
       const std::shared_ptr<MAbstractCursor> GetCursor() const { return m_cursor; }

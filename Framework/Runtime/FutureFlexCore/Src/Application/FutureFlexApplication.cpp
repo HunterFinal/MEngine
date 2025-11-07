@@ -176,8 +176,9 @@ namespace MEngine
         m_pImplData->PreviousPlatformCursorPosition = curtCursorPos;
       }
 
-      return result;
+      MEngine::Application::MModifierKeysState modState = s_platformApp->GetModState();
 
+      return result;
     }
 
     bool MFutureFlexApplication::OnCursorSet()

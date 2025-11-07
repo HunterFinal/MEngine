@@ -11,7 +11,7 @@
 #define EVENT_TYPE_DECLARATION(EventType) \
         static EEventType StaticEventType() { return EEventType::##EventType; } \
         virtual EEventType GetEventType() const override { return StaticEventType(); } \
-        virtual const char* GetName() const override { return #EventType; }
+        virtual const ANSICHAR* GetName() const override { return #EventType; }
 
 #define EVENT_CATEGORY_DECLARATION(EventCategory) \
         static EEventCategory StaticEventCategory() { return EEventCategory::##EventCategory; } \
@@ -26,6 +26,7 @@ namespace MEngine
       None = -1,
       KeyPress, KeyRelease, KeyHold,                                        // Key event
       WindowClose, WindowFocus, WindowLostFocus, WindowMove, WindowResize,  // Window event
+      MouseMove, MouseButtonPresse, MouseButtonRelease, MouseScroll,        // Mouse event
 
       EventTypeCnt,
     };
@@ -35,6 +36,7 @@ namespace MEngine
       None = -1,
       KeyboardEvent = BIT_FLAG(0),
       WindowEvent = BIT_FLAG(1),
+      MouseEvent = BIT_FLAG(2),
     };
 
     struct CORE_API IEventInterface
@@ -43,7 +45,7 @@ namespace MEngine
 
       virtual EEventType GetEventType() const = 0;
       virtual EEventCategory GetEventCategory() const = 0;
-      virtual const char* GetName() const = 0;
+      virtual const ANSICHAR* GetName() const = 0;
       virtual std::string ToString() const;
       bool IsCategory(IN EEventCategory Category) const;
     };
