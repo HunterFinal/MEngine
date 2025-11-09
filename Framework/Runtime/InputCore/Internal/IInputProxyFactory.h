@@ -14,10 +14,11 @@ namespace MEngine
 namespace InputCore
 {
 
-class MInputKey;
+struct MInputKey;
 
 class IInputProxyFactory
 {
+  
 public:
   INPUTCORE_API virtual ~IInputProxyFactory() = default;
 

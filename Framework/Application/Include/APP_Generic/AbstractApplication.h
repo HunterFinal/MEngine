@@ -5,6 +5,7 @@
 #ifndef _ME_APP_ABSTRACT_APPLICATION_
 #define _ME_APP_ABSTRACT_APPLICATION_
 
+#include "Misc/CoreDefines.h"
 #include "Macro/ApplicationDefines.h"
 #include "Misc/NonCopyable.h"
 

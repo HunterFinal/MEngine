@@ -500,7 +500,7 @@ namespace MEngine
       , m_windows{}
       , m_pImplData{std::make_unique<MWindowsPlatformApplication::InternalData>()}
     {
-      constexpr SIZE_T modifierKeysMemCount = sizeof(decltype(*InternalData::ModifierKeysState)) * static_cast<SIZE_T>(InternalData::EWinModifierKeyType::Count);
+      constexpr SIZE_T modifierKeysMemCount = sizeof(decltype(*InternalData::ModifierKeysState)) * static_cast<SIZE_T>(EWinModifierKeyType::Count);
       ::memset(m_pImplData->ModifierKeysState, 0, modifierKeysMemCount);
 
       // HACK Disable this process from being showing "Ghost UI" during slow tasks

@@ -1,55 +1,46 @@
 ﻿cmake_minimum_required(VERSION 3.29.0)
 
-file(GLOB_RECURSE PRIVATE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
-file(GLOB_RECURSE INTERNAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Internal/*.cpp)
+set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Src)
 
-set( 
-  SRCS 
-  ${PRIVATE_SOURCES}
-  ${INTERNAL_SOURCES}
-)
-
-
-file(GLOB_RECURSE INPUT_CORE_SOURCE CONFIGURE_DEPENDS ${SRCS})
+file(GLOB_RECURSE ECS_CORE_SOURCES CONFIGURE_DEPENDS ${SRC_DIR}/*.cpp)
 
 add_library(
-  InputCore
+  ECSCore
   SHARED
-  ${INPUT_CORE_SOURCE}
+  ${ECS_CORE_SOURCES}
 )
 
 target_link_libraries(
-  InputCore
+  ECSCore
   PRIVATE
   Core
 )
 
 target_compile_features(
-  InputCore
+  ECSCore
   PRIVATE
   cxx_std_20
 )
 
 target_compile_definitions(
-  InputCore
+  ECSCore
   PRIVATE
-  INPUT_CORE_DLL_BUILD
+  ECS_CORE_DLL_BUILD
 )
 
 target_include_directories(
-  InputCore
+  ECSCore
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Include  
   PRIVATE
   ${CMAKE_SOURCE_DIR}/Framework/Core 
   ${CMAKE_SOURCE_DIR}/Framework/Core/Include
-  ${CMAKE_CURRENT_SOURCE_DIR}/Internal
 )
 
 if(MSVC)
   target_compile_options(
-    InputCore 
+    ECSCore 
     PRIVATE 
     /W4
     /std:c++20
@@ -58,4 +49,4 @@ else()
   
 endif()
 
-MEngine_setup_target(InputCore)
+MEngine_setup_target(ECSCore)

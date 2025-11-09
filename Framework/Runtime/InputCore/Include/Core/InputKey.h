@@ -49,14 +49,14 @@ public:
   INPUTCORE_API MInputKey GetKey() const override final;
 
   void SetPairedAxisType(IN EPairedAxisType InType) override final;
-  void SetPairedAxisInputKey(const MInputKey& InKey) override final;
+  void SetPairedAxisInputKey(IN const MInputKey& InKey) override final;
   /**End IInputKeyProxy interface */
 
   INPUTCORE_API bool IsValid() const;
   INPUTCORE_API StringView GetKeyName() const;
 
-  INPUTCORE_API friend bool operator==(const MInputKey& Lhs, const MInputKey& Rhs);
-  INPUTCORE_API friend bool operator!=(const MInputKey& Lhs, const MInputKey& Rhs);
+  INPUTCORE_API friend bool operator==(IN const MInputKey& Lhs,IN const MInputKey& Rhs);
+  INPUTCORE_API friend bool operator!=(IN const MInputKey& Lhs,IN const MInputKey& Rhs);
 
 private:
   void Reset();

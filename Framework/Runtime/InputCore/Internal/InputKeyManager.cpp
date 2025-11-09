@@ -11,6 +11,19 @@
 #include <memory>
 #include <string_view>
 
+namespace std
+{
+  template<>
+  class hash<MEngine::InputCore::MInputKey>
+  {
+    public:
+      size_t operator() (IN const MEngine::InputCore::MInputKey& InInputKey) const
+      {
+        return std::hash<StringView>{}(InInputKey.GetKeyName());
+      }
+  };
+}
+
 namespace MEngine
 {
 
@@ -19,6 +32,8 @@ namespace InputCore
 
 class MInputKeyProxyFactory final : public MEngine::InputCore::IInputProxyFactory
 {
+
+public:
   ~MInputKeyProxyFactory() = default;
 
   std::shared_ptr<IInputKeyProxy> MakeInputKeyProxy(IN const MInputKey InInputKey, IN StringView InLongDisplayName, IN const uint32 InKeyFlags, IN StringView InShortDisplayName, IN StringView InKeyCategory) const override final
@@ -222,6 +237,7 @@ public:
 
   virtual int32 GetAllKeys(OUT std::vector<MInputKey>& OutKeys) const override
   {
+    OutKeys.clear();
     return -1;
   }
 
@@ -245,6 +261,6 @@ IInputKeyManager& IInputKeyManager::GetInstance()
   return MInputKeyManager::GetInstance();
 }
 
-}
+} // namespace MEngine::InputCore
 
-}
+} // namespace MEngine
