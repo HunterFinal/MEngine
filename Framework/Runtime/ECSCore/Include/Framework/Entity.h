@@ -5,6 +5,9 @@
 
 #include "Config/ECSConfig.h"
 
+// TODO Move std::popcount to another implementation(Currently wont work if version is lower than C++20)
+#include <bit>
+
 namespace MEngine
 {
 
@@ -14,44 +17,43 @@ namespace ECSCore
 template<typename EntityPolicyType>
 class MEntity
 {
-  using EntityIDType = typename EntityPolicyType::Entity_ID_Type;
-  inline static constexpr EntityIDType EntityIDMask = EntityPolicyType::ID_Mask;
-  inline static constexpr EntityIDType InvalidEntity = EntityPolicyType::ID_Invalid;
+  friend class MEntityWorld;
+
+  using EntityType = typename EntityPolicyType::Entity_Type;
+  using IDType = typename EntityPolicyType::ID_Type;
+  using GenerationType = typename EntityPolicyType::Generation_Type;
+  inline static constexpr IDType EntityIDMask = EntityPolicyType::ID_Mask;
+  inline static constexpr GenerationType GenerationMask = EntityPolicyType::Generation_Mask;
+  inline static constexpr IDType InvalidEntity = EntityPolicyType::Entity_Invalid;
 
   public:
-    bool IsValid() const
-    {
-      return (m_ID & EntityIDMask) != InvalidEntity;
-    }
-
-    explicit operator bool() const
-    {
-      return IsValid();
-    }
-
-    const EntityIDType& GetID() const 
-    { 
-      return m_ID;
-    }
-
-    void Reset()
-    {
-      m_ID = InvalidEntity;
-    }
-
-  private:
     explicit constexpr MEntity()
-      : m_ID(InvalidEntity)
+      : m_value(InvalidEntity)
     { }
 
+    IDType GetID() const 
+    { 
+      return static_cast<IDType>(m_value) & EntityIDMask;
+    }
+
+    GenerationType GetGeneration() const
+    {
+      return static_cast<GenerationType>(m_value >> std::popcount(EntityIDMask)) & GenerationMask;
+    }
+
+    static bool Equals(const MEntity& V1, const MEntity& V2)
+    {
+      return (V1.GetGeneration() == V2.GetGeneration()) && (V1.GetID() == V2.GetID());
+    }
+
   private:
-    EntityIDType m_ID;
+    EntityType m_value;
 };
 
 template<typename EntityPolicyType>
 bool operator==(const MEntity<EntityPolicyType>& Lhs, const MEntity<EntityPolicyType>& Rhs)
 {
-  return Lhs.GetID() == Rhs.GetID();
+  return MEntity<EntityPolicyType>::Equals(Lhs, Rhs);
 }
 
 template<typename EntityPolicyType, typename DiffPolicyType>
