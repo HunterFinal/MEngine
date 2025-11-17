@@ -4,7 +4,7 @@
 #define _ME_RUNTIME_ECSCORE_FRAMEWORK_ENTITYPOLICY_
 
 #include "Config/ECSConfig.h"
-#include <bit>
+#include "Core/BitLib.h"
 
 namespace MEngine
 {
@@ -19,7 +19,7 @@ struct MDefaultEntityPolicy
   using Generation_Type = uint16;
   inline static constexpr ID_Type ID_Mask = 0xFFFFF;
   inline static constexpr Generation_Type Generation_Mask = 0xFFF;
-  inline static constexpr Entity_Type Entity_Invalid = (Generation_Mask << std::popcount(ID_Mask)) | ID_Mask;
+  inline static constexpr Entity_Type Entity_Invalid = (Generation_Mask << PopCount(ID_Mask)) | ID_Mask;
 };
 
 struct MEntityPolicy_U64

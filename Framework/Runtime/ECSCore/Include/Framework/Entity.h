@@ -4,9 +4,7 @@
 #define _ME_RUNTIME_ECSCORE_ENTITY_
 
 #include "Config/ECSConfig.h"
-
-// TODO Move std::popcount to another implementation(Currently wont work if version is lower than C++20)
-#include <bit>
+#include "Core/BitLib.h"
 
 namespace MEngine
 {
@@ -38,7 +36,7 @@ class MEntity
 
     GenerationType GetGeneration() const
     {
-      return static_cast<GenerationType>(m_value >> std::popcount(EntityIDMask)) & GenerationMask;
+      return static_cast<GenerationType>(m_value >> PopCount(EntityIDMask)) & GenerationMask;
     }
 
     static bool Equals(const MEntity& V1, const MEntity& V2)
