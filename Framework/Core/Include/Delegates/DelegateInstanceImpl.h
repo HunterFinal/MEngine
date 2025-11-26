@@ -252,13 +252,13 @@ namespace MEngine
       assert(m_userInstancePtr != nullptr);
       assert(m_memberFuncPtr != nullptr);
 
-      return (m_userInstancePtr->*m_memberFuncPtr)(std::forward<ArgTypes>(Args)...);
+      return (m_userInstancePtr->*m_memberFuncPtr)(Args...);
     }
 
     template<bool IsConst, typename UserClass, typename ReturnType, typename... ArgTypes>
     ReturnType MClassMethodDelegateInstance<IsConst, UserClass, ReturnType(ArgTypes...)>::operator()(ArgTypes... Args) const
     {
-      return this->Invoke(std::forward<ArgTypes>(Args)...);
+      return this->Invoke(Args...);
     }
     #pragma endregion Struct/Class member functions delegate
     /**End of struct/class member functions delegate instance */
