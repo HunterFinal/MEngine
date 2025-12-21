@@ -1,6 +1,4 @@
-﻿
-
-#pragma once
+﻿#pragma once
 
 #ifndef _ME_APP_ABSTRACT_APPLICATION_
 #define _ME_APP_ABSTRACT_APPLICATION_

@@ -58,6 +58,7 @@ endif()
 
 add_subdirectory(Core)
 add_subdirectory(Extensions)
+add_subdirectory(RHI)
 add_subdirectory(Runtime)
 add_subdirectory(Utilities)
 add_subdirectory(OTGT)
