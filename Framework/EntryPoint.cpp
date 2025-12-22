@@ -13,6 +13,7 @@
 #include <cstring>
 #include <utility>
 #include <conio.h>
+#include <numbers>
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -165,12 +166,12 @@ class AAA
   public:
     void func()
     {
-      std::cout << "not const" << std::endl;
+      std::cout << "class AAA : not const" << std::endl;
     }
 
     void funcConst() const
     {
-      std::cout << "const" << std::endl;
+      std::cout << "class AAA : const" << std::endl;
     }
 };
 
@@ -190,6 +191,16 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   logger->Serialize("Test log 1");
   logger->Serialize("Test log 2");
   logger->Flush();
+
+  // Calculate dot product
+  // Result should be 0.5
+  using MEngine::Math::MVector;
+  MVector<float> vec3_1{1.0f, 0.0f, 0.0f};
+  MVector<float> vec3_2{1.0f, std::numbers::sqrt3_v<float>, 0.0f};
+
+  std::cout << "Result of dot product: " 
+            << MVector<float>::DotProduct(vec3_1, vec3_2.GetNormalizedCopy()) 
+            << std::endl;
 
   {
     IApplicationInterface* app = GenerateAPP();

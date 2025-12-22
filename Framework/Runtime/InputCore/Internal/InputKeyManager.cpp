@@ -81,7 +81,6 @@ public:
     AddPairedKey(PROXY(GStaticKeys::Mouse_2D, formatNameFunc(MTEXT("Mouse XY 2D-Axis")), MInputKeyProxy::Axis2D | MInputKeyProxy::MouseButtonKey | MInputKeyProxy::UpdateAxisWithoutSamples), GStaticKeys::Mouse_X, GStaticKeys::Mouse_Y);
     // Mouse wheel input
     AddKey(PROXY(GStaticKeys::Mouse_ScrollUp, formatNameFunc(MTEXT("Mouse Wheel Scroll Up")), MInputKeyProxy::MouseButtonKey | MInputKeyProxy::ButtonAxis));
-    AddKey(PROXY(GStaticKeys::Mouse_ScrollUp, formatNameFunc(MTEXT("Mouse Wheel Scroll Up")), MInputKeyProxy::MouseButtonKey | MInputKeyProxy::ButtonAxis));
     AddKey(PROXY(GStaticKeys::Mouse_WheelAxis, formatNameFunc(MTEXT("Mouse Wheel Axis")), MInputKeyProxy::Axis1D | MInputKeyProxy::MouseButtonKey | MInputKeyProxy::UpdateAxisWithoutSamples));
     // Mouse button input
     AddKey(PROXY(GStaticKeys::Mouse_LeftButton, formatNameFunc(MTEXT("Mouse Left Button")), MInputKeyProxy::MouseButtonKey, formatNameFunc(MTEXT("MLB"))));

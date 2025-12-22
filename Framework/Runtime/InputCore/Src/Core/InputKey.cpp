@@ -137,7 +137,7 @@ namespace InputCore
   MInputKey MInputKey::GetKey() const
   {
     ConditionalLookupProxy();
-    return (m_proxy != nullptr) ? m_proxy->GetPairedAxisInputKey() : *this;
+    return (m_proxy != nullptr) ? m_proxy->GetKey() : *this;
   }
 
   void MInputKey::SetPairedAxisType(IN EPairedAxisType InType)

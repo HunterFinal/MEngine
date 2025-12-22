@@ -1,0 +1,10 @@
+﻿cmake_minimum_required(VERSION 3.29.0)
+
+file(GLOB_RECURSE RHI_PLATFORM CMAKE_CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
+target_sources(
+  RHI
+  PRIVATE
+  ${RHI_PLATFORM}
+)
+
