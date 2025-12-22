@@ -11,9 +11,9 @@ IRHIBackend* MWindowsRHIPlatform::CreateRHIBackend()
   return nullptr;
 }
 
-void MWindowsRHIPlatform::ShutdownRHIBackend()
+void MWindowsRHIPlatform::ShutdownRHIBackend(IN IRHIBackend* RHIBackend)
 {
-
+  
 }
 
 } // namespace MEngine::RHI

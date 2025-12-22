@@ -24,7 +24,12 @@ void RHIInitialize()
 
 void RHIShutdown()
 {
-
+  if (gRHIBackend != nullptr)
+  {
+    gRHIBackend->Shutdown();
+    RHIPlatform::ShutdownRHIBackend(gRHIBackend);
+    gRHIBackend = nullptr;
+  }
 }
 
 }

@@ -19,7 +19,7 @@ namespace RHI
   {
     static IRHIBackend* CreateRHIBackend();
 
-    static void ShutdownRHIBackend();
+    static void ShutdownRHIBackend(IN IRHIBackend* RHIBackend);
   };
 
 } // namespace MEngine::RHI
