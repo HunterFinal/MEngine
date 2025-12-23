@@ -3,8 +3,7 @@
 #ifndef _ME_TYPE_CAST_
 #define _ME_TYPE_CAST_
 
-#include "Misc/CoreDefines.h"
-
+#include "CoreDefines.h"
 #include "Misc/ConceptsStoragePlace.h"
 #include <type_traits>
 

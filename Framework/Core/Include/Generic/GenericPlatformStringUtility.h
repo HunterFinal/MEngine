@@ -3,8 +3,7 @@
 #ifndef _ME_CORE_GENERIC_PLATFORM_STRING_UTILITY_
 #define _ME_CORE_GENERIC_PLATFORM_STRING_UTILITY_
 
-#include "Misc/CoreDefines.h"
-
+#include "CoreDefines.h"
 #include "Macro/CPPVerMacro.h"
 #include "Misc/ConceptsStoragePlace.h"
 #include "Templates/IsCharEncodingCompatibleTypeTraits.h"

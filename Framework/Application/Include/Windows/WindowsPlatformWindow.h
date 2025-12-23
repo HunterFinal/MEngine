@@ -4,10 +4,8 @@
 #define _ME_APP_WINDOWS_PLATFORM_WINDOW_
 
 #include "APP_Generic/AbstractApplicationWindow.h"
-
 #include "Windows/WindowsPlatformApplicationInstance.h"
 #include "Windows/WindowsPlatformWindowHandle.h"
-
 #include "Macro/TypeAliasMacro.h"
 
 #include <memory>

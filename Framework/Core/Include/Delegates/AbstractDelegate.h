@@ -14,10 +14,10 @@
 #ifndef _ME_ABSTRACT_DELEGATE_
 #define _ME_ABSTRACT_DELEGATE_
 
+#include "CoreDefines.h"
 #include "Allocation/Allocator.h"
 #include "Delegates/IDelegateInterface.h"
 #include "Math/MEngineMathUtility.h"
-#include "Misc/CoreDefines.h"
 
 namespace MEngine
 {

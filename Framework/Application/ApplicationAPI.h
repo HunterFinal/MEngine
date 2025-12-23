@@ -3,7 +3,7 @@
 #ifndef APP_API_PUBLIC_HEADER
 #define APP_API_PUBLIC_HEADER
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 #include "APP_Generic/AbstractApplication.h"
 #include "APP_Generic/AbstractApplicationWindow.h"

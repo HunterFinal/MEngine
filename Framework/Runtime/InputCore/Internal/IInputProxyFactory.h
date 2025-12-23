@@ -3,7 +3,7 @@
 #ifndef _ME_RUNTIME_INPUTCORE_INTERNAL_IINPUTPROXYFACTORY_
 #define _ME_RUNTIME_INPUTCORE_INTERNAL_IINPUTPROXYFACTORY_
 
-#include "Internal/InputCoreDefines.h"
+#include "InputCoreDefines.h"
 #include "IInputKeyProxy.h"
 
 #include <memory>

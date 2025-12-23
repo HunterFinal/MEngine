@@ -3,8 +3,8 @@
 #ifndef _ME_RUNTIME_INPUTCORE_IINPUTKEYMANAGER_
 #define _ME_RUNTIME_INPUTCORE_IINPUTKEYMANAGER_
 
-#include "Misc/CoreDefines.h"
-#include "Internal/InputCoreDefines.h"
+#include "CoreDefines.h"
+#include "InputCoreDefines.h"
 
 namespace std
 {

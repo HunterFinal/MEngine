@@ -5,7 +5,7 @@
 #ifndef ME_CORE_OUTPUT_INTERFACE
 #define ME_CORE_OUTPUT_INTERFACE
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 namespace MEngine
 {

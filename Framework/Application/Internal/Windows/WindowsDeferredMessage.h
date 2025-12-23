@@ -5,6 +5,7 @@
 
 #include "Windows/WindowsHeaderSet.h"
 #include "Windows/WindowsPlatformWindow.h"
+
 #include <memory>
 
 namespace MEngine

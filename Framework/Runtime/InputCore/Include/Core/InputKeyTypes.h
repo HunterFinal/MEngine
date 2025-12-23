@@ -3,7 +3,7 @@
 #ifndef _ME_INPUTCORE_INPUT_KEY_TYPES_
 #define _ME_INPUTCORE_INPUT_KEY_TYPES_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 namespace MEngine
 {

@@ -35,6 +35,8 @@ namespace MEngine
 
     void MWindowsPlatformApplicationAccessPort::TerminateApplication(DEFAULT_VAR bool bForceTerminate)
     {
+      // FIXME Temporary code
+      (void)bForceTerminate;
       // TODO should extend it with variable bForceTerminate
       // May not release global null application because it is shared
       gWindowsApplication.reset();

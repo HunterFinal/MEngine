@@ -3,11 +3,11 @@
 #ifndef _ME_APPLICATION_INTERNAL_WINDOWS_DEFERRED_MESSAGE_BUILDER_
 #define _ME_APPLICATION_INTERNAL_WINDOWS_DEFERRED_MESSAGE_BUILDER_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Macro/ApplicationDefines.h"
-
 #include "Windows/WindowsHeaderSet.h"
 #include "Windows/WindowsPlatformWindow.h"
+
 #include <memory>
 
 namespace MEngine

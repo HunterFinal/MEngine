@@ -116,6 +116,11 @@ namespace MEngine
 
     void MWindowsPlatformWindow::ResizeWindow(IN int32 NewX, IN int32 NewY, IN uint32 NewWidth, IN uint32 NewHeight)
     {
+      // FIXME Temporary code
+      (void)NewX;
+      (void)NewY;
+      (void)NewWidth;
+      (void)NewHeight;
       // TODO need implementation
     }
 
@@ -176,11 +181,15 @@ namespace MEngine
 
     void MWindowsPlatformWindow::SetTitle(IN const ANSICHAR* Text)
     {
+      // FIXME Temporary code
+      (void)Text;
       // TODO need implementation
     }
 
     void MWindowsPlatformWindow::SetWindowMode(IN EWindowMode NewWindowMode)
     {
+      // FIXME Temporary code
+      (void)NewWindowMode;
       // TODO need implementation
     }
 

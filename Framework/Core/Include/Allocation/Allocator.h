@@ -13,9 +13,9 @@
 #ifndef _ME_CORE_ALLOCATOR_
 #define _ME_CORE_ALLOCATOR_
 
+#include "CoreDefines.h"
 #include "Macro/AssertionMacros.h"
 #include "Misc/ConceptsStoragePlace.h"
-#include "Misc/CoreDefines.h"
 
 #include <limits>
 

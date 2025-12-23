@@ -21,7 +21,7 @@ using MEngine::RHI::IRHIBackend;
 namespace RHIGlobals
 {
   extern RHI_API IRHIBackend* RHIBackend;
-  extern RHI_API bool IsRHIBackendInitialized  = false;
+  extern RHI_API bool IsRHIBackendInitialized;
 }
 
 #define gRHIBackend                   RHIGlobals::RHIBackend

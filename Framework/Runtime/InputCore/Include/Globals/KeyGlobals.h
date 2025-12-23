@@ -3,8 +3,8 @@
 #ifndef _ME_INPUTCORE_GLOBALS_KEYGLOBALS_
 #define _ME_INPUTCORE_GLOBALS_KEYGLOBALS_
 
-#include "Internal/InputCoreDefines.h"
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
+#include "InputCoreDefines.h"
 #include "Core/InputKey.h"
 
 namespace MEngine

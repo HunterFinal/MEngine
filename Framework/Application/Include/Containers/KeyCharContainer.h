@@ -3,7 +3,7 @@
 #ifndef _ME_APPLICATION_KEYCHAR_CONTAINER_
 #define _ME_APPLICATION_KEYCHAR_CONTAINER_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 namespace MEngine
 {

@@ -3,7 +3,7 @@
 #ifndef _ME_COREOBJECT_OBJECT_
 #define _ME_COREOBJECT_OBJECT_
 
-#include "Misc/CoreObjectDefines.h"
+#include "CoreObjectDefines.h"
 
 namespace MEngine
 {

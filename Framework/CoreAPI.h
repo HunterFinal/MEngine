@@ -4,13 +4,13 @@
 #ifndef MENGINE_CORE_INCLUDE
 #define MENGINE_CORE_INCLUDE
 
+#include "CoreDefines.h"
 #include "Macro/CPPVerMacro.h"
 #include "Macro/DeprecationMacro.h"
 
 // 低レイヤーヘッダ
 #include "Globals/CoreGlobals.h"
 #include "HAL/Platform.h"
-#include "Misc/CoreDefines.h"
 
 // よく使われるヘッダ
 #include "Macro/ClassMacroHelpers.h"

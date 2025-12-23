@@ -3,7 +3,7 @@
 #ifndef _ME_CORE_DEBUGGER_
 #define _ME_CORE_DEBUGGER_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 #include <cassert>
 #include <type_traits>

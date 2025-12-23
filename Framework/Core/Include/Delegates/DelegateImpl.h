@@ -3,6 +3,7 @@
 #ifndef _ME_DELEGATE_IMPL_
 #define _ME_DELEGATE_IMPL_
 
+#include "CoreDefines.h"
 #include "Delegates/AbstractDelegate.h"
 #include "Delegates/DelegateFactory.h"
 #include "Delegates/DelegateInstanceImplFwd.h"
@@ -10,7 +11,6 @@
 #include "Delegates/IDelegateInstanceInterface.h"
 #include "HAL/Platform.h"
 #include "Macro/TypeAliasMacro.h"
-#include "Misc/CoreDefines.h"
 
 #include <cassert>
 #include <type_traits>

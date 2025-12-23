@@ -4,14 +4,13 @@
 #ifndef MENGINE_MATH_VECTOR
 #define MENGINE_MATH_VECTOR
 
-
+#include "CoreDefines.h"
 #include "HAL/Platform.h"
 #include "Macro/ClassMacroHelpers.h"
 #include "Macro/AssertionMacros.h"
 #include "Math/MathForward.h"
 #include "Math/Axis.h"
 #include "Math/MEngineMathUtility.h"
-#include "Misc/CoreDefines.h"
 #include "Templates/METypeAmbiguityResolve.h"
 #include "Templates/METypeTraits.h"
 

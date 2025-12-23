@@ -3,8 +3,8 @@
 #ifndef _ME_RUNTIME_ECSCORE_ENTITY_
 #define _ME_RUNTIME_ECSCORE_ENTITY_
 
-#include "Config/ECSConfig.h"
 #include "Core/BitLib.h"
+#include "Config/ECSConfig.h"
 
 namespace MEngine
 {

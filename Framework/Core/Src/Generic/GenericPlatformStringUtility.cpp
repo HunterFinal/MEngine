@@ -10,6 +10,10 @@ namespace MEngine
   {
     SIZE_T MGenericPlatformStringUtility::PrivateInner::CalcConvertedLength(const WIDECHAR* DestAddress, const UTF8CHAR* SrcAddress, const SIZE_T SrcLength)
     {
+      // FIXME Temporary code
+      (void)DestAddress;
+      (void)SrcAddress;
+      (void)SrcLength;
       // TODO
       return 0;
     }

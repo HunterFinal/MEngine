@@ -4,8 +4,7 @@
 #ifndef MENGINE_GENERIC_MATH
 #define MENGINE_GENERIC_MATH
 
-#include "Misc/CoreDefines.h"
-
+#include "CoreDefines.h"
 #include "Math/MathForward.h"
 #include "Misc/ConceptsStoragePlace.h"
 #include "Templates/METypeAmbiguityResolve.h"

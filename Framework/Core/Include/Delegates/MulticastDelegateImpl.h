@@ -3,12 +3,12 @@
 #ifndef ME_MULTICASE_DELEGATE_IMPL
 #define ME_MULTICASE_DELEGATE_IMPL
 
+#include "CoreDefines.h"
 #include "Delegates/AbstractMulticastDelegate.h"
 #include "Delegates/FunctionPointerTypeTraits.h"
 #include "Delegates/DelegateImpl.h"
 #include "Delegates/DelegateInstanceImplFwd.h"
 #include "Delegates/IDelegateInstanceInterface.h"
-#include "Misc/CoreDefines.h"
 #include "Macro/TypeAliasMacro.h"
 #include "Templates/METemplates.h"
 

@@ -5,7 +5,6 @@
 
 #include "RHIDefines.h"
 #include "Macro/TypeAliasMacro.h"
-#include "Misc/CoreDefines.h"
 
 namespace MEngine
 {

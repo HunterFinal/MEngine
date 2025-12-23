@@ -4,12 +4,12 @@
 #ifndef _ME_CORE_DEFINES_
 #define _ME_CORE_DEFINES_
 
+#include "BuildDefines.h"
 #include "HAL/Platform.h"
 #include "Macro/CPPVerMacro.h"
 #include "Macro/TypeAliasMacro.h"
 #include "Macro/ClassMacroHelpers.h"
 #include "Templates/METypeTraits.h"
-#include "Misc/BuildDefines.h"
 
 #ifdef CORE_EXPORT
 #define CORE_API DLLEXPORT

@@ -14,8 +14,8 @@
 #ifndef ME_ABSTRACT_MULTICAST_DELEGATE
 #define ME_ABSTRACT_MULTICAST_DELEGATE
 
+#include "CoreDefines.h"
 #include "Macro/CPPVerMacro.h"
-#include "Misc/CoreDefines.h"
 #include "Delegates/AbstractDelegate.h"
 #include "Delegates/DelegateInstanceImplFwd.h"
 #include "Delegates/IDelegateInterface.h"

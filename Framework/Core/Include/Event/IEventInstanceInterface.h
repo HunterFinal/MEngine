@@ -3,8 +3,8 @@
 #ifndef _ME_IEVENT_INSTANCE_INTERFACE_
 #define _ME_IEVENT_INSTANCE_INTERFACE_
 
+#include "CoreDefines.h"
 #include "Event/IEventInterface.h"
-#include "Misc/CoreDefines.h"
 
 #include <cassert>
 #include <type_traits>

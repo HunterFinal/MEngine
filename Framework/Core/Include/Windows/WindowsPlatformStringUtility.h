@@ -3,7 +3,7 @@
 #ifndef _ME_CORE_WINDOWS_PLATFORM_STRING_UTILITY_
 #define _ME_CORE_WINDOWS_PLATFORM_STRING_UTILITY_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Generic/GenericPlatformStringUtility.h"
 
 namespace MEngine

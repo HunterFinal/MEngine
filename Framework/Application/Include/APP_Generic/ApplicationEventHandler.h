@@ -3,7 +3,7 @@
 #ifndef _ME_APP_APPLICATION_EVENT_HANDLER_
 #define _ME_APP_APPLICATION_EVENT_HANDLER_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Macro/ApplicationDefines.h"
 #include "Containers/KeyCharContainer.h"
 

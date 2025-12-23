@@ -3,7 +3,7 @@
 #ifndef _ME_CORE_CONCEPTS_STORAGE_PLACE_
 #define _ME_CORE_CONCEPTS_STORAGE_PLACE_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 #if CAN_USE_CONCEPT
 
@@ -15,53 +15,62 @@
 
 namespace MEngine
 {
-  namespace Concepts
+
+namespace Concepts
+{
+  template<typename CharType>
+  concept CharTypeConcept = requires
   {
-    template<typename CharType>
-    concept CharTypeConcept = requires
-    {
-      requires MEngine::TypeTraits::IsCharType_V<CharType>;
-    };
+    requires MEngine::TypeTraits::IsCharType_V<CharType>;
+  };
 
-    template<typename EnumType>
-    concept EnumTypeConcept = requires
-    {
-      requires std::is_enum_v<EnumType>;
-    };
+  template<typename EnumType>
+  concept EnumTypeConcept = requires
+  {
+    requires std::is_enum_v<EnumType>;
+  };
 
-    template<typename FloatingType>
-    concept FloatingTypeConcept = requires
-    {
-      requires std::is_floating_point_v<FloatingType>;
-    };
+  template<typename FloatingType>
+  concept FloatingTypeConcept = requires
+  {
+    requires std::is_floating_point_v<FloatingType>;
+  };
 
-    template<typename ArithmeticType>
-    concept ArithmeticTypeConcept = requires
-    {
-      requires std::is_arithmetic_v<ArithmeticType>;
-    };
+  template<typename ArithmeticType>
+  concept ArithmeticTypeConcept = requires
+  {
+    requires std::is_arithmetic_v<ArithmeticType>;
+  };
 
-    /**
-     * Allocator concept
-     * Avoid types: void  
-     *              incompleted type
-     */
-    template<typename ElementType>
-    concept AllocatorConcept = requires
-    {
-      requires sizeof(ElementType) > 0;
-    };
-  }
-}
+  /**
+   * Allocator concept
+   * Avoid types: void  
+   *              incompleted type
+   */
+  template<typename ElementType>
+  concept AllocatorConcept = requires
+  {
+    requires sizeof(ElementType) > 0;
+  };
+
+  template<typename BaseType, typename DerivedType>
+  concept ImplementationConcept = requires
+  {
+    requires std::is_base_of_v<BaseType, DerivedType>;
+  };
+} // namespace MEngine::Concepts
+
+} // namespace MEngine
 
 #endif // CAN_USE_CONCEPT
 
 // Concept type define macro
-#define CHAR_TYPE_CONCEPT       CONCEPT_ADAPTER(MEngine::Concepts::CharTypeConcept)
-#define ENUM_TYPE_CONCEPT       CONCEPT_ADAPTER(MEngine::Concepts::EnumTypeConcept)
-#define FLOATING_TYPE_CONCEPT   CONCEPT_ADAPTER(MEngine::Concepts::FloatingTypeConcept)
-#define ARITHMETIC_TYPE_CONCEPT CONCEPT_ADAPTER(MEngine::Concepts::ArithmeticTypeConcept)
-#define ALLOCATOR_TYPE_CONCEPT  CONCEPT_ADAPTER(MEngine::Concepts::AllocatorConcept)
+#define CHAR_TYPE_CONCEPT                     CONCEPT_ADAPTER(MEngine::Concepts::CharTypeConcept)
+#define ENUM_TYPE_CONCEPT                     CONCEPT_ADAPTER(MEngine::Concepts::EnumTypeConcept)
+#define FLOATING_TYPE_CONCEPT                 CONCEPT_ADAPTER(MEngine::Concepts::FloatingTypeConcept)
+#define ARITHMETIC_TYPE_CONCEPT               CONCEPT_ADAPTER(MEngine::Concepts::ArithmeticTypeConcept)
+#define ALLOCATOR_TYPE_CONCEPT                CONCEPT_ADAPTER(MEngine::Concepts::AllocatorConcept)
+#define IMPLEMENTATION_TYPE_CONCEPT           CONCEPT_ADAPTER(MEngine::Concepts::ImplementationConcept)
 
 // define this if use c++20 or higher version
 // downgrade to typename if version is lower c++20
@@ -74,10 +83,5 @@ namespace MEngine
   #define TEMPLATE_REQUIRES_DECLARATION(TemplateArgument, RequirementExpr) template < TemplateArgument, TEMPLATE_CONDITION_DECLARATION(RequirementExpr) >
   #define TEMPLATE_REQUIRES_DEFINITION(TemplateArgument, RequirementExpr) template < TemplateArgument, TEMPLATE_CONDITION_DEFINITION(RequirementExpr) >
 #endif
-
-
-#ifndef CONCEPT_ADAPTER
-  
-#endif // CONCEPT_ADAPTER
 
 #endif // _ME_CORE_CONCEPTS_STORAGE_PLACE_

@@ -3,8 +3,8 @@
 #ifndef _ME_EVENT_INTERFACE_
 #define _ME_EVENT_INTERFACE_
 
+#include "CoreDefines.h"
 #include "Macro/BitOperationMacros.h"
-#include "Misc/CoreDefines.h"
 
 #include <string>
 

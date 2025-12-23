@@ -3,7 +3,7 @@
 #ifndef _ME_APPLICATION_GENERIC_PLATFORM_APPLICATION_ACCESS_PORT_
 #define _ME_APPLICATION_GENERIC_PLATFORM_APPLICATION_ACCESS_PORT_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Macro/ApplicationDefines.h"
 
 namespace std

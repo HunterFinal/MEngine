@@ -3,7 +3,7 @@
 #ifndef _ME_RUNTIME_ECSCORE_CORE_BITLIB_
 #define _ME_RUNTIME_ECSCORE_CORE_BITLIB_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 #include <type_traits>
 #if HAS_CPP_20

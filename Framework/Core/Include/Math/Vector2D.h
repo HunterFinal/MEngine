@@ -4,6 +4,7 @@
 #ifndef MENGINE_MATH_VECTOR2D
 #define MENGINE_MATH_VECTOR2D
 
+#include "CoreDefines.h"
 #include "Math/MathForward.h"
 #include "Math/Axis.h"
 #include "Math/MEngineMathUtility.h"

@@ -3,7 +3,7 @@
 #ifndef _ME_APPLICATION_KEY_INPUT_INFO_CONTAINER_
 #define _ME_APPLICATION_KEY_INPUT_INFO_CONTAINER_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 namespace MEngine
 {

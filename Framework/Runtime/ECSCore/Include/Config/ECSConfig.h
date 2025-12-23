@@ -3,7 +3,7 @@
 #ifndef _ME_RUNTIME_ECSCORE_CONFIG_
 #define _ME_RUNTIME_ECSCORE_CONFIG_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 #ifndef ECS_CORE_DLL_BUILD
 #define ECSCORE_API __declspec(dllexport)

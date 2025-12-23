@@ -3,10 +3,10 @@
 #ifndef _ME_CORE_MATH_MATRIX_4X4_
 #define _ME_CORE_MATH_MATRIX_4X4_
 
+#include "CoreDefines.h"
 #include "Math/MEngineMathUtility.h"
 #include "Math/Vector.h"
 #include "Math/Vector4.h"
-#include "Misc/CoreDefines.h"
 #include "Misc/ConceptsStoragePlace.h"
 
 // FIXME For test propuse

@@ -3,7 +3,7 @@
 #ifndef _ME_CORE_GLOBALS
 #define _ME_CORE_GLOBALS
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 
 namespace MEngine
 {

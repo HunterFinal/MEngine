@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef _ME_CORE_DYNAMICMODULE_
-#define _ME_CORE_DYNAMICMODULE_
+#ifndef _ME_CORE_MODULES_DYNAMICMODULE_
+#define _ME_CORE_MODULES_DYNAMICMODULE_
 
 namespace MEngine
 {
@@ -16,10 +16,6 @@ namespace Module
 
       virtual void LoadModule() {}
 
-      virtual void OnPostModuleLoaded() {}
-
-      virtual void OnPreModuleUnloaded() {}
-
       virtual void UnloadModule() {}
 
   };
@@ -29,4 +25,4 @@ namespace Module
 } // namespace MEngine
 
 
-#endif // _ME_CORE_DYNAMICMODULE_
+#endif // _ME_CORE_MODULES_DYNAMICMODULE_

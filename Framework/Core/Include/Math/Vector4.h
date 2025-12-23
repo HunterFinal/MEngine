@@ -3,7 +3,8 @@
 #ifndef _ME_CORE_MATH_VECTOR4_
 #define _ME_CORE_MATH_VECTOR4_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
+#include "Math/MathForward.h"
 #include "Misc/ConceptsStoragePlace.h"                  // available in C++20
 #include "Templates/IsDifferentFloatingTypeTraits.h"
 

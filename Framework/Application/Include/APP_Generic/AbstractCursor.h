@@ -3,7 +3,7 @@
 #ifndef _ME_APPLICATION_ABSTRACT_CURSOR_
 #define _ME_APPLICATION_ABSTRACT_CURSOR_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Math/MathForward.h"
 
 namespace MEngine

@@ -3,8 +3,7 @@
 #ifndef _ME_APP_ABSTRACT_APPLICATION_WINDOW_
 #define _ME_APP_ABSTRACT_APPLICATION_WINDOW_
 
-#include "Misc/CoreDefines.h"
-
+#include "CoreDefines.h"
 #include "APP_Generic/WindowDefinition.h"
 #include "Macro/ApplicationDefines.h"
 #include "Misc/NonCopyable.h"

@@ -4,7 +4,7 @@
 #ifndef ME_DELEGATE_INTERFACE
 #define ME_DELEGATE_INTERFACE
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Macro/CPPVerMacro.h"
 
 /**

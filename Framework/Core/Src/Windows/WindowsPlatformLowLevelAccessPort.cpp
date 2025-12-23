@@ -1,5 +1,4 @@
 ﻿#include "Windows/WindowsPlatformLowLevelAccessPort.h"
-#include "Misc/CoreDefines.h"
 
 // Application dll
 #include "Windows/WindowsHeaderSet.h"

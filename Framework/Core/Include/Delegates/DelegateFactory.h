@@ -11,9 +11,9 @@
 #ifndef _ME_DELEGATE_FACTORY_
 #define _ME_DELEGATE_FACTORY_
 
+#include "CoreDefines.h"
 #include "Delegates/DelegateImpl.h"
 #include "Delegates/DelegateInstanceImplFwd.h"
-#include "Misc/CoreDefines.h"
 
 namespace MEngine
 {

@@ -3,10 +3,10 @@
 #ifndef _ME_RUNTIME_FUTURE_FLEX_CORE_APPLICATION_
 #define _ME_RUNTIME_FUTURE_FLEX_CORE_APPLICATION_
 
+#include "CoreDefines.h"
+#include "FutureFlexCoreDefines.h"
 #include "APP_Generic/ApplicationEventHandler.h"
-#include "Definitions/CoreDefinitions.h"
 #include "Delegates/Delegate.h"
-#include "Misc/CoreDefines.h"
 #include "Misc/NonCopyable.h"
 
 #include <memory>

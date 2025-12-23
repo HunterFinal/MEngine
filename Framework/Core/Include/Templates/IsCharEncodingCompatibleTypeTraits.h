@@ -3,7 +3,7 @@
 #ifndef _ME_CORE_TEMPLATES_IS_CHAR_ENCODING_COMPATIBLE_TYPE_TRAITS_
 #define _ME_CORE_TEMPLATES_IS_CHAR_ENCODING_COMPATIBLE_TYPE_TRAITS_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Misc/ConceptsStoragePlace.h"
 #include "Templates/IsCharTypeTraits.h"
 

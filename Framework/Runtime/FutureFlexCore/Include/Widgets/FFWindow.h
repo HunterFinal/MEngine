@@ -3,8 +3,8 @@
 #ifndef _ME_RUNTIME_FUTUREFLEX_CORE_FFWINDOWS_
 #define _ME_RUNTIME_FUTUREFLEX_CORE_FFWINDOWS_
 
-#include "Misc/CoreDefines.h"
-#include "Definitions/CoreDefinitions.h"
+#include "CoreDefines.h"
+#include "FutureFlexCoreDefines.h"
 
 #include <memory>
 

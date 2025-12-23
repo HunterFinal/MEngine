@@ -3,7 +3,7 @@
 #ifndef _ME_CORE_THREAD_WORKER_
 #define _ME_CORE_THREAD_WORKER_
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include "Macro/AssertionMacros.h"
 
 #include <thread>

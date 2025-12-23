@@ -7,9 +7,6 @@
 #ifndef __ME__CORE__VECTOR__INL__
 #define __ME__CORE__VECTOR__INL__
 
-#include "Misc/CoreDefines.h"
-#include "Math/MathForward.h" 
-
 namespace MEngine
 {
   namespace Math

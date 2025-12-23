@@ -3,7 +3,7 @@
 #ifndef ME_TEMPLATES
 #define ME_TEMPLATES
 
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
 #include <type_traits>
 
 /**

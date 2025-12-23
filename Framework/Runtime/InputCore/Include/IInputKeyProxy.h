@@ -3,8 +3,8 @@
 #ifndef _ME_INPUTCORE_IINPUTKEY_PROXY_
 #define _ME_INPUTCORE_IINPUTKEY_PROXY_
 
-#include "Internal/InputCoreDefines.h"
-#include "Misc/CoreDefines.h"
+#include "CoreDefines.h"
+#include "InputCoreDefines.h"
 #include <iosfwd> // std::char_traits<> 
 
 namespace std
