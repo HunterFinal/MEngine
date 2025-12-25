@@ -127,9 +127,9 @@ namespace Module
 
       ModuleValue FindModule(IN std::string_view ModuleName) const;
 
-      void* LoadModuleInternal(IN std::string_view ModuleFilePath);
+      void* LoadLibraryInternal(IN std::wstring_view ModuleFilePath);
 
-      void UnloadModuleInternal(IN std::string_view ModuleName, void* ModuleHandle);
+      void UnloadLibraryInternal(IN std::string_view ModuleName, IN const bool bIsShutdown);
 
     private:
       ModuleTable m_modules;
