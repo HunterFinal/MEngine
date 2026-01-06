@@ -3,25 +3,28 @@
 #ifndef _ME_RHI_CORE_RHIGLOBALS_
 #define _ME_RHI_CORE_RHIGLOBALS_
 
-#include "Macro/CPPVerMacro.h"
 #include "RHIDefines.h"
 
 namespace MEngine
 {
-
 namespace RHI
 {
   class IRHIBackend;
 }
-
 }
-
-using MEngine::RHI::IRHIBackend;
 
 namespace RHIGlobals
 {
-  extern RHI_API IRHIBackend* RHIBackend;
+  extern RHI_API MEngine::RHI::IRHIBackend* RHIBackend;
   extern RHI_API bool IsRHIBackendInitialized;
+
+  RHI_API void RHIInitialize();
+
+  RHI_API void RHIShutdown(); 
+
+  RHI_API MEngine::RHI::IRHIBackend* CreateGlobalRHIBackend();
+
+  RHI_API void ShutdownGlobalRHIBackend(MEngine::RHI::IRHIBackend* GlobalRHIBackend);
 }
 
 #define gRHIBackend                   RHIGlobals::RHIBackend

@@ -1,0 +1,170 @@
+﻿#pragma once
+
+#ifndef _ME_RHI_COMMANDLIST_
+#define _ME_RHI_COMMANDLIST_
+
+#include "CoreDefines.h"
+#include "Macro/AssertionMacros.h"
+#include "Memory/MemoryManagement.h"
+#include "RHIDefines.h"
+#include "RHICommand.h"
+#include "RHIContext.h"
+#include "RHIPipeline.h"
+#include "Resources/RHIBuffers.h"
+#include "Utils/RHIRefCountPtr.h"
+
+#include <utility>
+
+namespace MEngine
+{
+
+namespace RHI
+{
+
+class MRHIBufferWriter;
+
+class MRHICommandList
+{
+
+private:
+  TYPEDEF(MEngine::Core::MemChunkStack, MRHICommandAllocator);
+
+  friend class MRHICommandIterator;
+
+  struct MRHICommandChain
+  {
+    IRHICommand* Root  = nullptr;
+    IRHICommand** Tail = nullptr;
+    SIZE_T CommandNum  = 0;
+
+    MRHICommandChain();
+    void PushBack(IN IRHICommand* NewCmd);
+
+    MRHICommandIterator begin();
+    MRHICommandIterator end();
+  };
+
+public:
+  RHI_API MRHICommandList();
+  RHI_API virtual ~MRHICommandList();
+
+  template<typename LambdaType>
+  Requires_RHICommand_Callable(MRHICommandList, LambdaType)
+  void PushLambda(IN LambdaType&& Lambda);
+
+  RHI_API bool IsRecording() const;
+
+  RHI_API bool IsExecuting() const;
+
+  RHI_API bool IsImmediate() const;
+
+  RHI_API bool ShouldExecuteImmediatly() const;
+
+  RHI_API bool HasAnyCommand() const;
+
+  RHI_API MEngine::RHI::ERHIPipelineState GetPipeline() const;
+
+  RHI_API MEngine::RHI::IRHIGraphicsContext& GetGraphicContextChecked();
+
+  RHI_API void ExecuteCommands();
+
+  RHI_API void SwitchPipeline(MEngine::RHI::ERHIPipelineState NewPipeline);
+
+  RHI_API MEngine::RHI::MRHIBufferWriter CreateBufferWriter(const MEngine::RHI::MRHIBufferDescriptor& Descriptor);
+
+  RHI_API void* MapBuffer(MEngine::RHI::MRHIBuffer* Buffer, IN uint32 Size, IN uint32 Offset, IN MEngine::RHI::EResourceAccessMode AccessMode);
+
+  RHI_API void UnmapBuffer(MEngine::RHI::MRHIBuffer* Buffer);
+
+  RHI_API void* AllocMemcpy(const void* Src, IN SIZE_T AllocSize, IN SIZE_T Alignment);
+
+  template<typename CommandType, typename... ConstructArgs>
+  CommandType* AllocCommandAndConstruct(ConstructArgs&&... Args);
+
+protected:
+  void ActivatePipeline(MEngine::RHI::ERHIPipelineState NewPipeline);
+
+private:
+  RHI_API void* AllocCommandInternal(IN SIZE_T AllocSize, IN SIZE_T Alignment);
+
+  RHI_API void* Alloc(IN SIZE_T AllocSize, IN SIZE_T Alignment);
+
+  template<typename CmdType>
+  Requires_Derived_From(MEngine::RHI::IRHICommand, CmdType)
+  void* AllocCommandInternal();
+
+private:
+  MRHICommandChain     m_commandChain;
+  MRHICommandAllocator m_memoryManager;
+
+  // Context to send actual command to graphics API
+  MEngine::RHI::IRHIGraphicsContext* m_graphicContext;
+
+  // Current pipeline state
+  MEngine::RHI::ERHIPipelineState m_activatePipeline;
+
+  uint8 m_bIsExecuting : 1;
+  uint8 m_bIsImmediate : 1;
+};
+
+template<typename CommandType, typename... ConstructArgs>
+CommandType* MRHICommandList::AllocCommandAndConstruct(ConstructArgs&&... Args)
+{
+  static_assert(sizeof(CommandType) > 0, "Can not use incomplete type in AllocCommandAndConstruct");
+  return new (AllocCommandInternal(sizeof(CommandType), alignof(CommandType))) CommandType{std::forward<ConstructArgs>(Args)...};
+}
+
+template<typename CmdType>
+Requires_Derived_From(MEngine::RHI::IRHICommand, CmdType)
+void* MRHICommandList::AllocCommandInternal()
+{
+  return AllocCommandInternal(sizeof(CmdType), alignof(CmdType));
+}
+
+template<typename LambdaType>
+Requires_RHICommand_Callable(MRHICommandList, LambdaType)
+void MRHICommandList::PushLambda(IN LambdaType&& Lambda)
+{
+  if (ShouldExecuteImmediatly())
+  {
+    Lambda(*this);
+  }
+  else
+  {
+    (void)AllocCommandAndConstruct< MEngine::RHI::MRHILambdaCommand<MRHICommandList, LambdaType> >(std::forward<LambdaType>(Lambda));
+  }
+}
+
+class MRHIGraphicsCommandList : public MRHICommandList
+{
+
+public:
+  template<typename LambdaType>
+  Requires_RHICommand_Callable(MRHIGraphicsCommandList, LambdaType)
+  void PushLambda(IN LambdaType&& Lambda);
+
+  RHI_API void DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum);
+
+};
+
+template<typename LambdaType>
+Requires_RHICommand_Callable(MRHIGraphicsCommandList, LambdaType)
+void MRHIGraphicsCommandList::PushLambda(IN LambdaType&& Lambda)
+{
+  if (ShouldExecuteImmediatly())
+  {
+    Lambda(*this);
+  }
+  else
+  {
+    (void)AllocCommandAndConstruct< MEngine::RHI::MRHILambdaCommand< MRHIGraphicsCommandList, LambdaType > >(std::forward<LambdaType>(Lambda));
+  }
+}
+
+
+
+} // namespace MEngine::RHI
+
+} // namespace MEngine
+
+#endif // _ME_RHI_COMMANDLIST_

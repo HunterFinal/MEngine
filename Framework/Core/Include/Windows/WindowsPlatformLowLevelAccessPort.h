@@ -14,8 +14,14 @@ namespace MEngine
     {
       static CORE_API void PlatformPrintToLocalDevice(const TCHAR* Str);
 
-      static CORE_API void* GetDLLLibrary(IN const TCHAR* FileName);
-      static CORE_API void UnloadDLLLibrary(IN const void* Handle);
+      static CORE_API void* GetDllLibrary(IN const TCHAR* Filename);
+      static CORE_API void UnloadDllLibrary(IN void* Handle);
+
+      static CORE_API const TCHAR* GetBaseDir();
+
+      static CORE_API uint32 GetLastError();
+      static CORE_API void SetLastError(IN uint32 ErrorCode);
+      static CORE_API const TCHAR* ConvertSystemErrorMessage(IN TCHAR* Buffer, IN uint32 BufferSize, IN uint32 ErrorCode);
     };
   }
 }

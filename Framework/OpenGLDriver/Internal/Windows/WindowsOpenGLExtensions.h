@@ -1,0 +1,5 @@
+﻿#include "HALOpenGLThirdParty.h"
+
+extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
+extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;

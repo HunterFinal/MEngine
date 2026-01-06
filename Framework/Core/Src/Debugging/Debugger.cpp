@@ -137,7 +137,7 @@ namespace MEngine
 
     void MDebugger::PostAssert(IN const TCHAR* FormattedStr) const
     {
-     wprintf(FormattedStr);
+     ::wprintf(FormattedStr);
       // Empty implementation, override in derived class if needed
     }
  

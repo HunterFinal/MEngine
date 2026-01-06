@@ -64,7 +64,7 @@ namespace MPlatform
       #else
         TYPEDEF(uint16, UTF16CHAR);
       #endif
-
+      
       // Unicode 32-bit character
       #if HAS_CPP_11
         TYPEDEF(char32_t, UTF32CHAR);

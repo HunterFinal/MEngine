@@ -7,13 +7,21 @@
 #include "Event/WindowEventInstances.h"
 #include "Windows/WindowsHeaderSet.h"
 
+// TODO temp
+#include "HAL/PlatformLowLevelAccessPort.h"
+#include "CoreDynamicModule.h"
+
 #include "Application/FutureFlexApplication.h"
 #include "Widgets/FFWindow.h"
+
+// TODO
+#include "Modules/DynamicModuleManager.h"
 
 #include <cstring>
 #include <utility>
 #include <conio.h>
 #include <numbers>
+#include <filesystem>
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -49,9 +57,6 @@ class MMathLibTestCase final : public OTGT::ITestCaseInterface
       me_assert(MMath::Max(22, 33) == 33);
       me_assert(MMath::Max(0, 0) == 0);
       me_assert(MMath::Max(-22, -33) == -22);
-
-      // 
-
       
       // Sign Test(Integer)
       me_assert(MMath::Sign(-2) == -1);
@@ -244,9 +249,13 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   FFApp.AssignExitRequestedDelegate(MEngine::Core::MDelegate<void()>::CreateStatic(&Globals::RequestApplicationExit));
   FFApp.AddWindow(testFFWindow);
 
+  MEngine::Core::MCoreDynamiceModule* dynamicModule = MEngine::Core::MDynamicModuleManager::Get().LoadModule<MEngine::Core::MCoreDynamiceModule>("Core");
+
+
   while(!Globals::IsApplicationExitRequested())
   {
     FFApp.Update();
+    dynamicModule->Hoge();
   }
 
   FFApp.Terminate();

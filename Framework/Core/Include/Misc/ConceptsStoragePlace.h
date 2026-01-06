@@ -48,16 +48,8 @@ namespace Concepts
    *              incompleted type
    */
   template<typename ElementType>
-  concept AllocatorConcept = requires
-  {
-    requires sizeof(ElementType) > 0;
-  };
+  concept AllocatorConcept = sizeof(ElementType) > 0;
 
-  template<typename BaseType, typename DerivedType>
-  concept ImplementationConcept = requires
-  {
-    requires std::is_base_of_v<BaseType, DerivedType>;
-  };
 } // namespace MEngine::Concepts
 
 } // namespace MEngine
@@ -70,7 +62,7 @@ namespace Concepts
 #define FLOATING_TYPE_CONCEPT                 CONCEPT_ADAPTER(MEngine::Concepts::FloatingTypeConcept)
 #define ARITHMETIC_TYPE_CONCEPT               CONCEPT_ADAPTER(MEngine::Concepts::ArithmeticTypeConcept)
 #define ALLOCATOR_TYPE_CONCEPT                CONCEPT_ADAPTER(MEngine::Concepts::AllocatorConcept)
-#define IMPLEMENTATION_TYPE_CONCEPT           CONCEPT_ADAPTER(MEngine::Concepts::ImplementationConcept)
+
 
 // define this if use c++20 or higher version
 // downgrade to typename if version is lower c++20

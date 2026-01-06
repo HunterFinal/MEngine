@@ -25,6 +25,10 @@ namespace
     {
       return true;
     }
+    else if constexpr (std::is_same_v<SourceEncodingType, UTF16CHAR> && std::is_same_v<DestinationEncodingType, WIDECHAR>)
+    {
+      return true;
+    }
 
     return false;
   }
@@ -45,7 +49,7 @@ namespace MEngine
       static_assert(IsCharType_V<DestinationEncodingType>,  "Destination encoding type is not a valid character type");
       #endif
 
-      static constexpr bool Value = IsCharEncodingCompatibleImpl<std::remove_cv_t<SourceEncodingType>, std::remove_cv_t<DestinationEncodingType>>();
+      static constexpr bool Value = IsCharEncodingCompatibleImpl<std::remove_cvref_t<SourceEncodingType>, std::remove_cvref_t<DestinationEncodingType>>();
     };
 
     template<

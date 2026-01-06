@@ -11,9 +11,14 @@ namespace MEngine
   {
     struct MGenericPlatformLowLevelAccessPort
     {
-      CORE_API static bool IsDebuggerPresent();
-      CORE_API static void PlatformPrintDebugString(const TCHAR* Str);
-      CORE_API static void PlatformPrintToLocalDevice(const TCHAR* Str);
+      static CORE_API bool IsDebuggerPresent();
+      static CORE_API void PlatformPrintDebugString(IN const TCHAR* Str);
+      static CORE_API void PlatformPrintToLocalDevice(IN const TCHAR* Str);
+
+      static CORE_API uint32 GetLastError();
+      static CORE_API void SetLastError(IN uint32 ErrorCode);
+      static CORE_API const TCHAR* ConvertSystemErrorMessage(IN TCHAR* Buffer, IN uint32 BufferSize, IN uint32 ErrorCode);
+
     };
   }
 }

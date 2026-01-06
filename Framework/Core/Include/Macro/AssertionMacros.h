@@ -42,7 +42,7 @@
           ABORT_ASSERT_INTERNAL(); \
         } \
       } \
-    } while(0);
+    } while(false);
 
 #else
   #define me_assert_impl(expr) \

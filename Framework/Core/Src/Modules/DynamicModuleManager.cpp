@@ -1,12 +1,15 @@
 ﻿#include "Modules/DynamicModuleManager.h"
+
+#include "Modules/DynamicModuleManifest.h"
 #include "HAL/PlatformLowLevelAccessPort.h"
+#include "HAL/PlatformStringUtility.h"
 #include "Macro/AssertionMacros.h"
 #include <vector>
 
 namespace MEngine
 {
 
-namespace Module
+namespace Core
 {
 
 const MDynamicModuleManager::ModuleValue MDynamicModuleManager::InvalidEntry = nullptr;
@@ -83,13 +86,6 @@ void MDynamicModuleManager::UnloadModules(IN bool bIsShutdown)
   }
 }
 
-std::string MDynamicModuleManager::GetModuleFilename(IN std::string_view ModuleName) const
-{
-  SharedModuleEntryPtr moduleEntry = FindModule(ModuleName);
-
-  return (moduleEntry != nullptr) ? moduleEntry->Filename : std::string{""};
-}
-
 bool MDynamicModuleManager::IsModuleFullLoaded(IN std::string_view ModuleName) const
 {
   SharedModuleEntryPtr moduleEntry = FindModule(ModuleName);
@@ -103,23 +99,21 @@ MDynamicModuleManager::SharedModuleEntryPtr MDynamicModuleManager::CreateModule(
 
   if (!m_modules.contains(moduleNameKey))
   { 
-    return InvalidEntry;
+    auto moduleEntryFactory = []()
+    {
+      return std::make_shared<DynamicModuleEntry>();
+    };
+  
+    SharedModuleEntryPtr newEntry = moduleEntryFactory();
+    me_assert(newEntry != InvalidEntry);
+  
+    SetupModuleFilenameFromManifest(moduleNameKey, *newEntry);
+  
+    // Add new entry to table
+    m_modules.emplace(moduleNameKey, newEntry);
   }
 
-  auto moduleEntryFactory = []()
-  {
-    return std::make_shared<DynamicModuleEntry>();
-  };
-
-  SharedModuleEntryPtr newEntry = moduleEntryFactory();
-  me_assert(newEntry != InvalidEntry);
-
-  SetModuleFilename(moduleNameKey, *newEntry);
-
-  // Add new entry to table
-  m_modules.emplace(moduleNameKey, newEntry);
-
-  return newEntry;
+  return m_modules[moduleNameKey];
 }
 
 IDynamicModule* MDynamicModuleManager::GetOrLoadModule(IN std::string_view ModuleName)
@@ -135,56 +129,65 @@ IDynamicModule* MDynamicModuleManager::GetOrLoadModule(IN std::string_view Modul
   // Create new module entry
   SharedModuleEntryPtr newModuleEntry = CreateModule(ModuleName);
 
-  // Loadup Module
-  {
-    // TODO Add initialization function
-    newModuleEntry->Module = nullptr;
-
-    if (newModuleEntry->Module != nullptr)
-    {
-      // Startup module 
-      newModuleEntry->Module->LoadModule();
-
-      newModuleEntry->bIsLoaded = true;
-
-      // Refresh return parameter
-      modulePtr = newModuleEntry->Module.get();
-    }
-  }
-
   // Load dll/so if it is not linked to program
   {
+    std::wstring libraryFilePathToLoad{};
+    std::string moduleNameStr = std::string{ModuleName};
+    
+    FindModulePathFromManifest(moduleNameStr, libraryFilePathToLoad);
+
     newModuleEntry->Handle = nullptr;
 
-    const std::wstring libraryFilePathToLoad{newModuleEntry->Filename};
-
-    // TODO 
+    // Load library 
     if (true)
     {
       newModuleEntry->Handle = LoadLibraryInternal(libraryFilePathToLoad);
+
+      // Load success. Next we load dynamic module
+      if (newModuleEntry->Handle != nullptr)
+      {
+        DynamicModuleFactoryPtr factoryPtr = IDynamicModuleStaticFactoryCenter::Get().FindModuleFactory(moduleNameStr);
+
+        if (factoryPtr != nullptr)
+        {
+          if (newModuleEntry->Module != nullptr)
+          {
+            // Assign already loaded dynamic module
+            modulePtr = newModuleEntry->Module.get();
+          }
+          // Initialize the module
+          else
+          {
+            newModuleEntry->Module = std::unique_ptr<IDynamicModule>(factoryPtr());
+
+            if (newModuleEntry->Module != nullptr)
+            {
+              // Load the module
+              newModuleEntry->Module->LoadModule();
+
+              // Now the module is fully loaded.It can be used in another thread.
+              newModuleEntry->bIsLoaded = true;
+  
+              modulePtr = newModuleEntry->Module.get();
+            }
+            // Since we can not get a valid dynamice module here, so we decide to release the library 
+            else
+            {
+              UnloadLibraryInternal(ModuleName, false);
+            }
+
+          }
+        }
+        // We can not create a dynamice module. Release the library
+        else
+        {
+          UnloadLibraryInternal(ModuleName, false);
+        }
+      }
     }
   }
 
-  me_assert( ( (modulePtr != nullptr) && IsModuleFullLoaded(ModuleName) ) );
   return modulePtr;
-}
-
-MDynamicModuleManager::ModuleValue& MDynamicModuleManager::GetModuleEntry(IN const std::string& ModuleName) &
-{
-  const_cast<const MDynamicModuleManager*>(this)->GetModuleEntry(ModuleName);
-}
-const MDynamicModuleManager::ModuleValue& MDynamicModuleManager::GetModuleEntry(IN const std::string& ModuleName) const&
-{
-  ModuleTable::const_iterator foundItr = m_modules.find(ModuleName);
-  me_assert(foundItr != m_modules.cend());
-
-  return foundItr->second;
-}
-
-void MDynamicModuleManager::SetModuleFilename(IN const std::string& Filename, OUT DynamicModuleEntry& OutModuleEntry)
-{
-  // FIXME Refactoring this function!!!
-  OutModuleEntry.Filename = Filename;
 }
 
 MDynamicModuleManager::ModuleValue MDynamicModuleManager::FindModule(IN std::string_view ModuleName) const
@@ -205,7 +208,7 @@ void* MDynamicModuleManager::LoadLibraryInternal(IN std::wstring_view ModuleFile
 {
   void* loadedHandle = nullptr;
 
-  loadedHandle = MPlatformLowLevelAccessPort::GetDLLLibrary(ModuleFilePath.data());
+  loadedHandle = MPlatformLowLevelAccessPort::GetDllLibrary(ModuleFilePath.data());
 
   return loadedHandle;
 }
@@ -234,12 +237,65 @@ void MDynamicModuleManager::UnloadLibraryInternal(IN std::string_view ModuleName
     {
       if (!bIsShutdown)
       {
-        MPlatformLowLevelAccessPort::UnloadDLLLibrary(moduleEntry.Handle);
+        MPlatformLowLevelAccessPort::UnloadDllLibrary(moduleEntry.Handle);
+        moduleEntry.Handle = nullptr;
       }
     }
   }
 }
 
-} // namespace MEngine::Module
+void MDynamicModuleManager::FindModulePathFromManifest(IN const std::string& ModuleName, OUT std::wstring& OutModuleFilePath)
+{
+  const std::wstring baseDir = MPlatformLowLevelAccessPort::GetBaseDir();
+  // Cache the manifest
+  if (m_modulePathsCache.size() == 0)
+  {
+    std::wstring manifestPath = MModuleManifest::GetFilename(baseDir);
 
+    MModuleManifest manifest{};
+    const bool bLoadSuccess = MModuleManifest::ReadManifest(manifestPath, manifest);
+    if (bLoadSuccess)
+    {
+      // Read the loaded module path 
+      for (const auto& [ModuleNameWide, ModuleRelativePathWide] : manifest.ModuleNameFilenameTable)
+      {
+        std::string moduleNameAsKey{};
+        const SIZE_T convertLength = ModuleNameWide.size();
+        moduleNameAsKey.resize(convertLength);
+
+        // Convert wstring to string(wchar_t to char.)
+        // NOTE:May lost character
+        (void)MPlatformStringUtility::ConvertToDest(moduleNameAsKey.data(), convertLength, ModuleNameWide.data(), convertLength);
+        
+        // TODO
+        const std::wstring combinedModulePath = (baseDir + ModuleRelativePathWide);
+        m_modulePathsCache.emplace(moduleNameAsKey, combinedModulePath);
+      }
+    }
+  }
+
+  decltype(m_modulePathsCache)::iterator foundPath = m_modulePathsCache.find(ModuleName);
+  if (foundPath != m_modulePathsCache.end())
+  {
+    OutModuleFilePath = foundPath->second;
+  }
+}
+
+void MDynamicModuleManager::SetupModuleFilenameFromManifest(IN std::string_view ModuleName, OUT ModuleEntry& OutModuleEntry)
+{
+  const std::string moduleNameKey{ModuleName};
+
+  std::wstring moduleFilename;
+  FindModulePathFromManifest(moduleNameKey, moduleFilename);
+
+  // TODO
+  if (moduleFilename.size() == 0)
+  {
+    return;
+  }
+
+  OutModuleEntry.Filename = moduleFilename;
+}
+
+} // namespace MEngine::Core
 } // namespace MEngine

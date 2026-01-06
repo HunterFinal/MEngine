@@ -1,0 +1,25 @@
+﻿cmake_minimum_required(VERSION 3.29.0)
+
+file(GLOB_RECURSE OPENGLDRV_PLATFORM_HEADERS CMAKE_CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+file(GLOB_RECURSE OPENGLDRV_PLATFORM_SOURCES CMAKE_CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
+add_library(
+  Platform_OpenGLDrv_Impl
+  INTERFACE
+)
+
+target_sources(
+  Platform_OpenGLDrv_Impl
+  INTERFACE
+  ${OPENGLDRV_PLATFORM_HEADERS}
+  ${OPENGLDRV_PLATFORM_SOURCES}
+)
+
+target_include_directories(
+  Platform_OpenGLDrv_Impl
+  INTERFACE
+  ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+message(STATUS "OpenGL Driver : Windows platform")
+

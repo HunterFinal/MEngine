@@ -10,13 +10,14 @@
 #include <atomic>
 #include <string>
 #include <string_view>
+#include <map>
 #include <unordered_map>
 #include <memory>
 
 namespace MEngine
 {
 
-namespace Module
+namespace Core
 {
 
   /**
@@ -41,7 +42,7 @@ namespace Module
       struct DynamicModuleEntry
       {
         // Module file name(.dll/.so file name)
-        std::string Filename;
+        std::wstring Filename;
 
         // Handle of a module(.dll/.so)
         void* Handle;
@@ -104,46 +105,101 @@ namespace Module
        */
       CORE_API IDynamicModule& LoadModuleChecked(IN std::string_view ModuleName);
 
-      template<IMPLEMENTATION_TYPE_CONCEPT<IDynamicModule> TDynamicModule>
+      /**
+       * Load the specific module with specific type
+       * 
+       * @tparam TDynamicModule Derived class of IDynamicModule
+       * @param ModuleName Base name of module file.(without file path/extension suffix)
+       * @return Loaded module.Return nullptr if load failed
+       */
+#if !HAS_CPP_20
+      template<typename TDynamicModule>
+#else
+      template<std::derived_from<MEngine::Core::IDynamicModule> TDynamicModule>
+#endif
       static TDynamicModule* LoadModule(IN std::string_view ModuleName);
 
-      template<IMPLEMENTATION_TYPE_CONCEPT<IDynamicModule> TDynamicModule>
+      /**
+       * Load the specific module with specific type.Assertion check(Program pause(Only Debug) if not exists)
+       * 
+       * @tparam TDynamicModule Derived class of IDynamicModule
+       * @param ModuleName Base name of module file.(without file path/extension suffix)
+       * @return Loaded module.
+       */
+#if !HAS_CPP_20
+      template<typename TDynamicModule>
+#else
+      template<std::derived_from<MEngine::Core::IDynamicModule> TDynamicModule>
+#endif
       static TDynamicModule& LoadModuleChecked(IN std::string_view ModuleName);
 
+      /**
+       * @brief Unload modules.We will add order to module for dependency purpose so we can reference dependency module safely during unloading
+       * 
+       * @param bIsShutdown If true, we are exiting an application.
+       */
       CORE_API void UnloadModules(IN bool bIsShutdown);
 
-      CORE_API std::string GetModuleFilename(IN std::string_view ModuleName) const;
+      /**
+       * @brief Checks whether the specified module is fully loaded
+       * 
+       * O(1) operation
+       * 
+       * @param ModuleName Base name of module file.(without file path/extension suffix)
+       * @return true if module is fully loaded, false otherwise
+       */
       CORE_API bool IsModuleFullLoaded(IN std::string_view ModuleName) const;
 
     private:
+      
+      /**
+       * @brief Creates a module and adds to our table of modules.Will not create one if given name of module is exists
+       * 
+       * @param ModuleName Base name of module file.(without file path/extension suffix)
+       * @return New module entry we created, InvalidEntry if exists
+       */
       SharedModuleEntryPtr CreateModule(IN std::string_view ModuleName);
 
-      IDynamicModule* GetOrLoadModule(IN std::string_view ModuleName);
-
-      ModuleValue& GetModuleEntry(IN const std::string& ModuleName) &;
-      const ModuleValue& GetModuleEntry(IN const std::string& ModuleName) const&; 
-
-      void SetModuleFilename(IN const std::string& Filename, OUT DynamicModuleEntry& OutModuleEntry);
-
       ModuleValue FindModule(IN std::string_view ModuleName) const;
-
+      IDynamicModule* GetOrLoadModule(IN std::string_view ModuleName);
       void* LoadLibraryInternal(IN std::wstring_view ModuleFilePath);
-
       void UnloadLibraryInternal(IN std::string_view ModuleName, IN const bool bIsShutdown);
 
+      void FindModulePathFromManifest(IN const std::string& ModuleName, OUT std::wstring& OutModuleFilePath);
+      void SetupModuleFilenameFromManifest(IN std::string_view ModuleName, OUT ModuleEntry& OutModuleEntry);
+
     private:
+      /**Table of all modules */
       ModuleTable m_modules;
+
+      /**Map of all known module paths(Caching use). To prevent frequent manifest file read operation */
+      std::map<std::string, std::wstring> m_modulePathsCache;
   };
 
-  template<IMPLEMENTATION_TYPE_CONCEPT<IDynamicModule> TDynamicModule>
-  static TDynamicModule* MDynamicModuleManager::LoadModule(IN std::string_view ModuleName)
+
+#if !HAS_CPP_20
+      template<typename TDynamicModule>
+#else
+      template<std::derived_from<MEngine::Core::IDynamicModule> TDynamicModule>
+#endif
+  TDynamicModule* MDynamicModuleManager::LoadModule(IN std::string_view ModuleName)
   {
+#if !HAS_CPP_20
+    static_assert(std::is_base_of<MEngine::Core::IDynamicModule, TDynamicModule>::value, "Type of LoadModule should be a derived class of IDynamicModule.");
+#endif
     return static_cast<TDynamicModule*>(MDynamicModuleManager::Get().LoadModule(ModuleName));
   }
 
-  template<IMPLEMENTATION_TYPE_CONCEPT<IDynamicModule> TDynamicModule>
-  static TDynamicModule& MDynamicModuleManager::LoadModuleChecked(IN std::string_view ModuleName)
+#if !HAS_CPP_20
+      template<typename TDynamicModule>
+#else
+      template<std::derived_from<MEngine::Core::IDynamicModule> TDynamicModule>
+#endif
+  TDynamicModule& MDynamicModuleManager::LoadModuleChecked(IN std::string_view ModuleName)
   {
+#if !HAS_CPP_20
+    static_assert(std::is_base_of<MEngine::Core::IDynamicModule, TDynamicModule>::value, "Type of LoadModule should be a derived class of IDynamicModule.");
+#endif
     return static_cast<TDynamicModule&>(MDynamicModuleManager::Get().LoadModuleChecked(ModuleName));
   }
 

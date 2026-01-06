@@ -11,18 +11,16 @@
 
 namespace
 {
-  template<
-    CHAR_TYPE_CONCEPT Encoding
-  >
+  template<CHAR_TYPE_CONCEPT Encoding>
   constexpr bool IsCharFixedWidthImpl()
   {
     return 
-      std::is_same<Encoding, ANSICHAR>::value ||
-      std::is_same<Encoding, WIDECHAR>::value ||
-      std::is_same<Encoding, UTF32CHAR>::value
-    ;
+      std::is_same_v<Encoding, ANSICHAR>  ||
+      std::is_same_v<Encoding, WIDECHAR>  ||
+      std::is_same_v<Encoding, UTF16CHAR> ||
+      std::is_same_v<Encoding, UTF32CHAR> ;
   }
-} 
+} // nameless namespace
 
 namespace MEngine
 {

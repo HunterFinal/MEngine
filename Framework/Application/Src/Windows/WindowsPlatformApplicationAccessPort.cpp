@@ -21,10 +21,10 @@ namespace MEngine
     {
       if (gWindowsApplication == nullptr)
       {
-        HICON appIconHandle = LoadIcon(gHInstance, MAKEINTRESOURCE(GetApplicationIcon()));
+        HICON appIconHandle = ::LoadIcon(gHInstance, MAKEINTRESOURCE(GetApplicationIcon()));
         if (appIconHandle == nullptr)
         {
-          appIconHandle = LoadIcon(static_cast<HINSTANCE>(nullptr), IDI_APPLICATION);
+          appIconHandle = ::LoadIcon(static_cast<HINSTANCE>(nullptr), IDI_APPLICATION);
         }
 
         gWindowsApplication = MWindowsPlatformApplication::CreateWindowsApplication(gHInstance, appIconHandle);

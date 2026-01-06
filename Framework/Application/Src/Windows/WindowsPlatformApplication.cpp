@@ -194,6 +194,7 @@ namespace MEngine
       auto cursor = g_bUseWin32Cursor ? LoadCursor(InstanceHandle, IDC_ARROW) : NULL;
       const uint32 wndClassStyle = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 
+      // URL:https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/ns-winuser-wndclassexw
       WNDCLASSEX wc{
         .cbSize = sizeof(WNDCLASSEX),
         .style = wndClassStyle,

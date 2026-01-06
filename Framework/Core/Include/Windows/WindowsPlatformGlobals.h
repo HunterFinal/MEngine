@@ -1,0 +1,13 @@
+﻿#pragma once
+
+#ifndef _ME_APPLICATION_WINDOWS_PLATFORM_GLOBALS_
+#define _ME_APPLICATION_WINDOWS_PLATFORM_GLOBALS_
+
+#include "CoreDefines.h"
+
+struct HINSTANCE__;
+using HINSTANCE = HINSTANCE__*;
+
+extern "C" CORE_API HINSTANCE gHInstance;
+
+#endif // _ME_APPLICATION_WINDOWS_PLATFORM_GLOBALS_

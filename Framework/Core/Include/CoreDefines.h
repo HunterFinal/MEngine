@@ -7,8 +7,9 @@
 #include "BuildDefines.h"
 #include "HAL/Platform.h"
 #include "Macro/CPPVerMacro.h"
-#include "Macro/TypeAliasMacro.h"
 #include "Macro/ClassMacroHelpers.h"
+#include "Macro/StandardMacros.h"
+#include "Macro/TypeAliasMacro.h"
 #include "Templates/METypeTraits.h"
 
 #ifdef CORE_EXPORT
@@ -29,19 +30,12 @@
 #endif // DEFAULT_VAR
 
 // MEngine specific macro
-#define _MENGINE_VER 0
+#define _MENGINE_VER CONCAT(_ME_VER_MAJ,_ME_VER_MIN)
 
-namespace MEngine
-{
-  // Forward declaration
-  struct IEventListener;
-  namespace Core
-  {
+#define CONCAT(x, y) x ## y
+#define _ME_VER_MAJ 1
+#define _ME_VER_MIN 0
+#undef CONCAT
 
-  }
-
-}
-
-TYPEDEF(MEngine::IEventListener, IEventListener);
 
 #endif // _ME_CORE_DEFINES_

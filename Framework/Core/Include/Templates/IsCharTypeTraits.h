@@ -5,78 +5,46 @@
 
 #include "CoreDefines.h"
 
-namespace MEngine
+namespace
 {
-  namespace TypeTraits
+  template<typename CharType>
+  constexpr bool IsCharTypeImpl()
   {
-    template<typename CharType>
-    struct IsCharType;
-
-    template<typename CharType>
-    struct IsCharType
+    if constexpr(std::is_same_v<CharType, ANSICHAR>)
     {
-      static constexpr bool Value = false;
-    };
-
-    /**
-     * Character type template specialization
-     */   
-    // Start of Character type template specialization
-    #pragma region Character type template specialization
-    template<>
-    struct IsCharType<ANSICHAR>
+      return true;
+    }
+    else if constexpr(std::is_same_v<CharType, WIDECHAR>)
     {
-      static constexpr bool Value = true;
-    };
-
-    template<>
-    struct IsCharType<WIDECHAR>
+      return true;
+    }
+    else if constexpr(std::is_same_v<CharType, UTF8CHAR>)
     {
-      static constexpr bool Value = true;
-    };
-
-    template<>
-    struct IsCharType<UTF8CHAR>
+      return true;
+    }
+    else if constexpr(std::is_same_v<CharType, UTF16CHAR>)
     {
-      static constexpr bool Value = true;
-    };
-
-    template<>
-    struct IsCharType<UTF16CHAR>
+      return true;
+    }    
+    else if constexpr(std::is_same_v<CharType, UTF32CHAR>)
     {
-      static constexpr bool Value = true;
-    };
-
-    template<>
-    struct IsCharType<UTF32CHAR>
+      return true;
+    }
+    else
     {
-      static constexpr bool Value = true;
-    };
-    #pragma endregion Character type template specialization
-    // End of Character type template specialization
-
-    template<typename CharType>
-    struct IsCharType<const CharType>
-    {
-      static constexpr bool Value = IsCharType<CharType>::Value;
-    };
-
-    template<typename CharType>
-    struct IsCharType<volatile CharType>
-    {
-      static constexpr bool Value = IsCharType<CharType>::Value;
-    };
-
-    template<typename CharType>
-    struct IsCharType<const volatile CharType>
-    {
-      static constexpr bool Value = IsCharType<CharType>::Value;
-    };
-
-    template<typename CharType>
-    constexpr inline bool IsCharType_V = IsCharType<CharType>::Value;
-
+      return false;
+    }
+    
   }
 }
+
+namespace MEngine
+{
+namespace TypeTraits
+{
+  template<typename CharType>
+  constexpr inline bool IsCharType_V = IsCharTypeImpl<std::remove_cvref_t<CharType>>();
+} // namespace MEngine::TypeTraits
+} // namespace MEngine::TypeTraits
 
 #endif // _ME_CORE_TEMPLATES_IS_CHAR_TYPE_TRAITS_

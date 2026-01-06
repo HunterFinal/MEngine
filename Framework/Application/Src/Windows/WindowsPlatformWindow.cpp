@@ -36,7 +36,10 @@ namespace MEngine
       const float initRectWidth = m_definition.DesiredWidthOnScreen;
       const float initRectHeight = m_definition.DesiredHeightOnScreen;
 
+      // URL:https://learn.microsoft.com/ja-jp/windows/win32/winmsg/window-styles
       uint32 windowStyle = WS_OVERLAPPEDWINDOW;// タイトルバーと境界線があるウィンドウ
+
+      // URL:https://learn.microsoft.com/ja-jp/windows/win32/winmsg/extended-window-styles
       uint32 windowEXStyle = 0l;
 
       int32 windowX = MMath::TruncToInt32(initRectX);

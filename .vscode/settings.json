@@ -15,4 +15,5 @@
   {
     "CMAKE_EXPORT_COMPILE_COMMANDS": true,
   },
+  "C_Cpp.intelliSenseCachePath": "${workspaceFolder}/.vscode",
 }

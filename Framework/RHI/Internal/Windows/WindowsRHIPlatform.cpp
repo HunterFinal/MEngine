@@ -1,23 +1,26 @@
-﻿#include "WindowsRHIPlatform.h"
-#include "Core/RHIBackend.h"
+﻿#include "RHIGlobals.h"
 
-namespace MEngine
+#include "Modules/DynamicModuleManager.h"
+#include "RHIModule.h"
+#include "RHIBackend.h"
+
+namespace RHIGlobals
 {
+  MEngine::RHI::IRHIBackend* CreateGlobalRHIBackend()
+  {
+    MEngine::RHI::IRHIModule* RHIModule = MEngine::Core::MDynamicModuleManager::Get().LoadModule<MEngine::RHI::IRHIModule>("OpenGLDrv");
 
-namespace RHI
-{
+    if (RHIModule != nullptr)
+    {
+      return RHIModule->CreateRHIBackend();
+    }
+    
+    return nullptr;
+  }
 
-IRHIBackend* MWindowsRHIPlatform::CreateRHIBackend()
-{
-  return nullptr;
-}
-
-void MWindowsRHIPlatform::ShutdownRHIBackend(IN IRHIBackend* RHIBackend)
-{
-  // FIXME Temporary code
-  delete RHIBackend;
-}
-
-} // namespace MEngine::RHI
-
-} // namespace MEngine
+  void ShutdownGlobalRHIBackend(IN MEngine::RHI::IRHIBackend* RHIBackend)
+  {
+    // FIXME Temporary code
+    delete RHIBackend;
+  }
+} // namespace RHIGlobals

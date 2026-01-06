@@ -4,6 +4,7 @@
 #define _ME_WINDOWS_HEADER_SET_
 
 #include "HAL/Platform.h"
+#include "Windows/WindowsPlatformGlobals.h"
 
 #if !defined(PLATFORM_WINDOWS) || !PLATFORM_WINDOWS
   #error "Can not include this if current platform is not Windows"
