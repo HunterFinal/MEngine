@@ -15,8 +15,6 @@ namespace MEngine
 namespace RHI
 {
 
-enum class EBufferUsageType : uint32;
-
 struct MRHIBufferDescriptor
 {
   uint32 BufferSize;
@@ -24,6 +22,8 @@ struct MRHIBufferDescriptor
   uint32 ElementStride;
 
   EBufferUsageType BufferUsage = EBufferUsageType::None;
+
+  const void* BufferInitData;
 
   RHI_API static const MRHIBufferDescriptor NullDesc;
 
@@ -34,25 +34,29 @@ struct MRHIBufferDescriptor
     : BufferSize{0}
     , ElementStride{0}
     , BufferUsage{EBufferUsageType::None}
+    , BufferInitData{nullptr}
   { }
 
-  constexpr MRHIBufferDescriptor(IN uint32 Size, IN uint32 Stride, IN EBufferUsageType Usage)
+  constexpr MRHIBufferDescriptor(IN uint32 Size, IN uint32 Stride, IN EBufferUsageType Usage, IN const void* Data)
     : BufferSize{Size}
     , ElementStride{Stride}
     , BufferUsage{Usage}
+    , BufferInitData{Data}
   { }
 
   MRHIBufferDescriptor(const MRHIBufferDescriptor& Other)
     : BufferSize{Other.BufferSize}
     , ElementStride{Other.ElementStride}
     , BufferUsage{Other.BufferUsage}
+    , BufferInitData{Other.BufferInitData}
   {}
 
   MRHIBufferDescriptor& operator=(const MRHIBufferDescriptor& Other)
   {
-    BufferSize    = Other.BufferSize;
-    ElementStride = Other.ElementStride;
-    BufferUsage   = Other.BufferUsage;
+    BufferSize     = Other.BufferSize;
+    ElementStride  = Other.ElementStride;
+    BufferUsage    = Other.BufferUsage;
+    BufferInitData = Other.BufferInitData;
 
     return *this;
   }

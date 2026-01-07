@@ -6,6 +6,7 @@
 #include "RHIDefines.h"
 #include "RHIFwd.h"
 #include "Resources/RHIBuffers.h"
+#include <functional>
 
 namespace MEngine
 {
@@ -18,7 +19,7 @@ class MRHIBufferWriter
 
 public:
   // NOTE: typedef makes cpp unable to reconize it. An error in msvc maybe? So we use using(c++11) 
-  using WriterFinalizer = RHIBufferRefPtr (*)(MRHICommandList& CmdList);
+  using WriterFinalizer = std::function<RHIBufferRefPtr(MEngine::RHI::MRHICommandList&)>;
 
   RHI_API static const MRHIBufferWriter InvalidWriter;
 

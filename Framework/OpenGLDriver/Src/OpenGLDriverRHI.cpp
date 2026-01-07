@@ -2,10 +2,11 @@
 #include "GenericPlatformOpenGLDriver.h"
 #include "OpenGLDriverRHIModule.h"
 #include "OpenGLResource.h"
-#include "Resources/RHIBufferWriter.h"
 #include "OpenGLTypeTraits.h"
 
 #include "Macro/AssertionMacros.h"
+#include "Resources/RHIBufferWriter.h"
+#include "RHICommandList.h"
 
 // TODO
 #include <iostream>
@@ -18,6 +19,8 @@ namespace
   {
     return static_cast<typename MEngine::OpenGLDrv::MOpenGLResourceTypeTraits<RHIResourceType>::OpenGLType*>(Resource);
   };
+
+  GLenum GetBufferTypeFromDesc(const MEngine::RHI::MRHIBufferDescriptor& InDesc);
 
 }
 
@@ -56,32 +59,72 @@ MEngine::RHI::IRHIGraphicsContext* MOpenGLRHIBackend::GetDefaultGraphicsContext(
 
 MEngine::RHI::MRHIBufferWriter MOpenGLRHIBackend::RHICreateBufferWriter(MEngine::RHI::MRHICommandList& CmdList, const MEngine::RHI::MRHIBufferDescriptor& Descriptor)
 {
-  return MEngine::RHI::MRHIBufferWriter::InvalidWriter;
+  OPENGL_STATE_CHECK();
+
+  const GLenum bufferType = GetBufferTypeFromDesc(Descriptor);
+  if (Descriptor.IsNull())
+  {
+    // FIXME Wrap this inside another class to reduce human error
+    // FIXME Maybe we should not new directly here?
+    MOpenGLBuffer* newGLBuffer = new MOpenGLBuffer{&CmdList, bufferType, Descriptor, nullptr};
+    auto defaultWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList&) mutable -> RHIBufferRefPtr
+    {
+      return std::move(Buffer);
+    };
+    return MEngine::RHI::MRHIBufferWriter{
+      &CmdList, 
+      newGLBuffer, 
+      nullptr, 
+      0, 
+      MEngine::RHI::MRHIBufferWriter::WriterFinalizer{defaultWriterFinalizer}
+    };
+  }
+
+  MOpenGLBuffer* newGLBuffer = new MOpenGLBuffer{&CmdList, bufferType, Descriptor, Descriptor.BufferInitData};
+  auto mapWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList& CmdList) mutable -> RHIBufferRefPtr
+  {
+    CmdList.UnmapBuffer(Buffer);
+    return std::move(Buffer);
+  };
+
+  // FIXME Wrap this inside another class to reduce human error
+  return MEngine::RHI::MRHIBufferWriter{
+    &CmdList, 
+    newGLBuffer, 
+    CmdList.MapBuffer(newGLBuffer, Descriptor.BufferSize, 0, MEngine::RHI::EResourceAccessMode::WriteOnly), 
+    Descriptor.BufferSize, 
+    MEngine::RHI::MRHIBufferWriter::WriterFinalizer{mapWriterFinalizer}
+  };
 }
 
 void* MOpenGLRHIBackend::RHIMapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer, IN uint32 Size, IN uint32 Offset, IN MEngine::RHI::EResourceAccessMode AccessMode)
 {
   me_assert(Size > 0);
+  me_assert(Buffer != nullptr);
+
   OPENGL_STATE_CHECK();
 
   MOpenGLBuffer* GLBuffer = OpenGLCast(Buffer);
-
   return GLBuffer->Map(Size, Offset);
 }
 
 void MOpenGLRHIBackend::RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer)
 {
+  me_assert(Buffer != nullptr);
+
   OPENGL_STATE_CHECK();
 
   MOpenGLBuffer* GLBuffer = OpenGLCast(Buffer);
-
   GLBuffer->Unmap();
 }
 
 void MOpenGLRHIBackend::SetVertexBuffer(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset)
 {
-  // FIXME
-  #error Start here
+  me_assert(VertexBuffer != nullptr);
+
+  OPENGL_STATE_CHECK();
+
+  MOpenGLBuffer* GLBuffer = OpenGLCast(VertexBuffer);
 }
 
 void MOpenGLRHIBackend::DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum)

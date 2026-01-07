@@ -42,6 +42,9 @@ public:
   /**End IRHIGraphicsContext interface */
 
 private:
+  void SetupDrawState();
+
+private:
   MOpenGLDevice* m_device;
 
   MEngine::RHI::EPrimitiveTopologyType m_ptType;

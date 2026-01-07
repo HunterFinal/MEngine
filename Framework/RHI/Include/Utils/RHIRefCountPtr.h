@@ -98,7 +98,7 @@ public:
     return m_ref;
   }
 
-  operator RefType() const
+  operator RefPtr() const
   {
     return m_ref;
   }
