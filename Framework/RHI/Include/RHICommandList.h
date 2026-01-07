@@ -3,10 +3,9 @@
 #ifndef _ME_RHI_COMMANDLIST_
 #define _ME_RHI_COMMANDLIST_
 
-#include "CoreDefines.h"
+#include "RHIDefines.h"
 #include "Macro/AssertionMacros.h"
 #include "Memory/MemoryManagement.h"
-#include "RHIDefines.h"
 #include "RHICommand.h"
 #include "RHIContext.h"
 #include "RHIPipeline.h"
@@ -144,7 +143,7 @@ public:
   void PushLambda(IN LambdaType&& Lambda);
 
   RHI_API void DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum);
-
+  RHI_API void DrawPrimitiveIndexed();
 };
 
 template<typename LambdaType>
