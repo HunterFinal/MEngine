@@ -14,7 +14,7 @@ namespace OpenGLDrv
 
 struct MOpenGLVertexBufferBinding
 {
-
+  
 };
 
 } // namespace MEngine::OpenGLDrv
