@@ -2,6 +2,7 @@
 #include "GenericPlatformOpenGLDriver.h"
 #include "OpenGLDriverRHIModule.h"
 #include "OpenGLResource.h"
+#include "OpenGLShaders.h"
 #include "OpenGLTypeTraits.h"
 
 #include "Macro/AssertionMacros.h"
@@ -116,6 +117,11 @@ void MOpenGLRHIBackend::RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, I
 
   MOpenGLBuffer* GLBuffer = OpenGLCast(Buffer);
   GLBuffer->Unmap();
+}
+
+RHIVertexShaderRefPtr MOpenGLRHIBackend::RHICreateVertexShader(IN std::span<const uint8> ShaderCode)
+{
+  return new MOpenGLVertexShader(ShaderCode);
 }
 
 void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset)

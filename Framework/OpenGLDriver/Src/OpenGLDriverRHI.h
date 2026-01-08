@@ -34,6 +34,7 @@ public:
   OPENGLDRV_API MEngine::RHI::MRHIBufferWriter RHICreateBufferWriter(MEngine::RHI::MRHICommandList& CmdList, IN const MEngine::RHI::MRHIBufferDescriptor& Descriptor) override final;
   OPENGLDRV_API void* RHIMapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer, IN uint32 Size, IN uint32 Offset, IN MEngine::RHI::EResourceAccessMode AccessMode) override final;
   OPENGLDRV_API void RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer) override final;
+  OPENGLDRV_API RHIVertexShaderRefPtr RHICreateVertexShader(IN std::span<const uint8> ShaderCode) override final;
   /**End IRHIBackend interface */
 
   /**Start IRHIGraphicsContext interface */

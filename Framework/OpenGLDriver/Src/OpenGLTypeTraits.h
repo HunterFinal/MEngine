@@ -9,6 +9,11 @@
 // TODO We will move Requires_Derived_From to Core
 #include "RHIConcepts.h"
 
+namespace
+{
+
+}
+
 namespace MEngine
 {
 
@@ -17,6 +22,7 @@ namespace OpenGLDrv
 
 // TODO Move this to Fwd header
 class MOpenGLBuffer;
+class MOpenGLVertexShader;
 
 template<typename Type>
 Requires_Derived_From(Type, MEngine::RHI::MRHIResource)
@@ -27,6 +33,12 @@ template<>
 struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIBuffer>
 {
   TYPEDEF(MEngine::OpenGLDrv::MOpenGLBuffer, OpenGLType);
+};
+
+template<>
+struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIVertexShader>
+{
+  TYPEDEF(MEngine::OpenGLDrv::MOpenGLVertexShader, OpenGLType);
 };
 
 

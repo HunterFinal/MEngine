@@ -13,8 +13,10 @@ namespace RHI
 
 class MRHIShader : public MRHIResource
 {
-  public:
+  protected:
     RHI_API MRHIShader(IN MEngine::RHI::EResourceType Type, IN MEngine::RHI::EShaderStage Stage);
+
+  public:
     RHI_API virtual ~MRHIShader();
 
     MEngine::RHI::EShaderStage GetStage() const { return m_stage; }
@@ -23,17 +25,23 @@ class MRHIShader : public MRHIResource
     EShaderStage m_stage;
 };
 
-class MRHIVertexShader : public MRHIShader
+template<EResourceType ResType, EShaderStage StageType>
+class TRHIShader : public MRHIShader
 {
   public: 
-    MRHIVertexShader()
-      : MRHIShader{EResourceType::VertexShader, EShaderStage::Vertex}
+    TRHIShader()
+      : MRHIShader{ResType, StageType}
     {}
 };
+
+// TODO
+using MRHIVertexShader = TRHIShader<EResourceType::VertexShader, EShaderStage::Vertex>;
 
 } // namespace MEngine::RHI
 
 } // namespace MEngine
 
+TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::RHI::MRHIShader>, RHIShaderRefPtr);
+TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::RHI::MRHIVertexShader>, RHIVertexShaderRefPtr);
 
 #endif // _ME_RHI_SHADERS_

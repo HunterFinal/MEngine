@@ -7,7 +7,10 @@
 #include "RHIConcepts.h"
 #include "RHITypes.h"
 #include "RHIFwd.h"
+#include "Resources/RHIShaders.h"
 #include "Modules/DynamicModule.h"
+
+#include <span>
 
 namespace MEngine
 {
@@ -49,6 +52,8 @@ namespace RHI
       virtual void* RHIMapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer, IN uint32 Size, IN uint32 Offset, IN MEngine::RHI::EResourceAccessMode AccessMode) = 0;
 
       virtual void RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer) = 0;
+
+      virtual MEngine::RHI::RHIVertexShaderRefPtr RHICreateVertexShader(IN std::span<const uint8> ShaderCode) = 0;
   };
 
   
