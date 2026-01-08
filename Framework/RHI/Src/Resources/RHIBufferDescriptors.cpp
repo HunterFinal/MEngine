@@ -6,7 +6,7 @@ namespace MEngine
 namespace RHI
 {
 
-const MRHIBufferDescriptor MRHIBufferDescriptor::NullDesc = MRHIBufferDescriptor{0, 0, EBufferUsageType::None};
+const MRHIBufferDescriptor MRHIBufferDescriptor::NullDesc = MRHIBufferDescriptor{0, 0, EBufferUsageType::None, nullptr};
 
 bool operator==(const MRHIBufferDescriptor& Lhs, const MRHIBufferDescriptor& Rhs)
 {

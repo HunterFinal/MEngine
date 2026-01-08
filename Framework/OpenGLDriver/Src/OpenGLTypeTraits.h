@@ -21,9 +21,7 @@ class MOpenGLBuffer;
 template<typename Type>
 Requires_Derived_From(Type, MEngine::RHI::MRHIResource)
 struct MOpenGLResourceTypeTraits
-{
-  static_assert(false, "Unexpected type of MOpenGLResourceTypeTraits");
-};
+{ };
 
 template<>
 struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIBuffer>

@@ -3,7 +3,6 @@
 #ifndef _ME_RHI_FWD_
 #define _ME_RHI_FWD_
 
-#include "CoreDefines.h"
 #include "RHIConcepts.h"
 
 namespace MEngine
@@ -13,11 +12,15 @@ namespace RHI
 {
 
 class  IRHIGraphicsContext;
+
 class  MRHIResource;
 class  MRHIBuffer;
+class  MRHIShader;
+class  MRHIVertexShader;
+
+struct MRHIBufferDescriptor;
 class  MRHIBufferWriter;
 class  MRHICommandList;
-struct MRHIBufferDescriptor;
 
 template<typename RefType>
 Requires_Derived_From(RefType, MEngine::RHI::MRHIResource)

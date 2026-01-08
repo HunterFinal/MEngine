@@ -15,8 +15,8 @@ struct MRHIResource::RefCountImpl
 {
   static constexpr uint8 REF_COUNT_TYPE_BIT = sizeof(RefCountType) * 8;
 
-  static constexpr RefCountType MARK_DISPOSE_MASK = 1 << (REF_COUNT_TYPE_BIT - 2);
-  static constexpr RefCountType DISPOSED_MASK     = 1 << (REF_COUNT_TYPE_BIT - 1);
+  static constexpr RefCountType MARK_DISPOSE_MASK = static_cast<RefCountType>(1) << (REF_COUNT_TYPE_BIT - 2);
+  static constexpr RefCountType DISPOSED_MASK     = static_cast<RefCountType>(1) << (REF_COUNT_TYPE_BIT - 1);
   static constexpr RefCountType REF_COUNT_MASK    = ~(DISPOSED_MASK | MARK_DISPOSE_MASK);
 
   std::atomic<RefCountType> Combined;

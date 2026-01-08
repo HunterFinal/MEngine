@@ -45,6 +45,7 @@ namespace OpenGLDrv
 
       GLenum GLType() { return m_nativeResource.Type; }
       GLenum GLUsage() { return IsDynamic() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW; } 
+      GLuint GLResource() { return m_nativeResource.Resource; }
       GLuint* GLResourceAddress() { return &(m_nativeResource.Resource); }
 
       bool IsDynamic() const { return (::EnumCast(GetDesc().BufferUsage) & ::EnumCast(MEngine::RHI::EBufferUsageType::Dynamic)) != 0; }

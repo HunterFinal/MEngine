@@ -5,6 +5,7 @@
 
 #include "CoreDefines.h"
 #include "HAL/Platform.h"
+#include "RHIFwd.h"
 
 #ifdef RHI_EXPORT
 #define RHI_API DLLEXPORT

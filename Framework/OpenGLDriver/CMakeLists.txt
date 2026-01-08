@@ -1,11 +1,13 @@
 ﻿cmake_minimum_required(VERSION 3.29.0)
 
 file(GLOB_RECURSE OPENGLDRV_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+file(GLOB_RECURSE OPENGLDRV_PRIVATE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.h)
 
 add_library(
   OpenGLDriver 
   SHARED 
   ${OPENGLDRV_SOURCES}
+  ${OPENGLDRV_PRIVATE_HEADERS}
 )
 
 if (WIN32)
@@ -64,6 +66,7 @@ target_include_directories(
   OpenGLDriver
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Src
+  ${CMAKE_CURRENT_SOURCE_DIR}/Internal
 )
 
 target_link_libraries(

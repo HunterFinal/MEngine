@@ -46,10 +46,15 @@ enum class EBufferUsageType : uint32
   None = 0,
 
   /**The buffer data is set only once and used many times. */
-  Static = BIT_FLAG(0),
+  Static       = BIT_FLAG(0),
 
   /**The buffer data is changed a lot and used many times */
-  Dynamic = BIT_FLAG(1),
+  Dynamic      = BIT_FLAG(1),
+
+  /** */
+  VertexBuffer = BIT_FLAG(2),
+
+  IndexBuffer  = BIT_FLAG(3),
 
 };
 
@@ -57,6 +62,14 @@ enum class EResourceAccessMode : uint8
 {
   ReadOnly,
   WriteOnly,
+};
+
+enum class EShaderStage : uint8
+{
+  Vertex,
+  Pixel,
+
+  Fragment = Pixel,
 };
 
 } // namespace MEngine::RHI

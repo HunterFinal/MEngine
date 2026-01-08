@@ -27,7 +27,7 @@ class IRHIGraphicsContext
   public:
     RHI_API ~IRHIGraphicsContext() = default;
 
-    virtual void SetVertexBuffer(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset) = 0;
+    virtual void SetVertexBufferBinding(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset) = 0;
 
     virtual void DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum) = 0;
 

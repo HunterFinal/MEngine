@@ -118,13 +118,20 @@ void MOpenGLRHIBackend::RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, I
   GLBuffer->Unmap();
 }
 
-void MOpenGLRHIBackend::SetVertexBuffer(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset)
+void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset)
 {
+  me_assert(SlotIndex < MOpenGLVertexBufferBinding::MAX_BINDING_NUM);
   me_assert(VertexBuffer != nullptr);
 
   OPENGL_STATE_CHECK();
 
+  // Bind Vertex for future drawing
   MOpenGLBuffer* GLBuffer = OpenGLCast(VertexBuffer);
+  m_renderingState.VertexBindings[SlotIndex].VBResource = (GLBuffer != nullptr) ? GLBuffer->GLResource() : 0;
+  m_renderingState.VertexBindings[SlotIndex].VBType     = (GLBuffer != nullptr) ? GLBuffer->GLType() : 0;
+  m_renderingState.VertexBindings[SlotIndex].Stride     = (GLBuffer != nullptr) ? GLBuffer->GetStride() : 0;
+  m_renderingState.VertexBindings[SlotIndex].Offset     = Offset; 
+
 }
 
 void MOpenGLRHIBackend::DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum)
@@ -150,3 +157,27 @@ void MOpenGLRHIBackend::DrawPrimitiveIndexed(IN MEngine::RHI::MRHIBuffer* IndexB
 } // namespace MEngine::OpenGLDrv
 
 } // namespace MEngine
+
+namespace
+{
+  GLenum GetBufferTypeFromDesc(const MEngine::RHI::MRHIBufferDescriptor& InDesc)
+  {
+    GLenum result = 0;
+
+    if (!InDesc.IsNull())
+    {
+      const MEngine::RHI::EBufferUsageType usage = InDesc.BufferUsage;
+
+      if (::EnumCast(usage) & ::EnumCast(MEngine::RHI::EBufferUsageType::VertexBuffer))
+      {
+        result = GL_ARRAY_BUFFER;
+      }
+      else if (::EnumCast(usage) & ::EnumCast(MEngine::RHI::EBufferUsageType::IndexBuffer))
+      {
+        result = GL_ELEMENT_ARRAY_BUFFER;
+      }
+    }
+
+    return result;
+  }
+}

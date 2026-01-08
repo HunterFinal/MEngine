@@ -285,7 +285,7 @@ namespace
     pfd.iLayerType = PFD_MAIN_PLANE;
 
     int32 pixelFormat = ::ChoosePixelFormat(DeviceCtx, &pfd);
-    if (pixelFormat == 0 | !::SetPixelFormat(DeviceCtx, pixelFormat, &pfd))
+    if (pixelFormat == 0 || !::SetPixelFormat(DeviceCtx, pixelFormat, &pfd))
     {
       // TODO Display error log
       return;

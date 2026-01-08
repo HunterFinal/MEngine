@@ -15,7 +15,7 @@ namespace RHI
 
 namespace RHIGlobals
 {
-  extern RHI_API MEngine::RHI::IRHIBackend* RHIBackend;
+  extern RHI_API MEngine::RHI::IRHIBackend* GlobalRHIBackend;
   extern RHI_API bool IsRHIBackendInitialized;
 
   RHI_API void RHIInitialize();
@@ -24,10 +24,10 @@ namespace RHIGlobals
 
   RHI_API MEngine::RHI::IRHIBackend* CreateGlobalRHIBackend();
 
-  RHI_API void ShutdownGlobalRHIBackend(MEngine::RHI::IRHIBackend* GlobalRHIBackend);
+  RHI_API void ShutdownGlobalRHIBackend(MEngine::RHI::IRHIBackend* RHIBackend);
 }
 
-#define gRHIBackend                   RHIGlobals::RHIBackend
+#define gRHIBackend                   RHIGlobals::GlobalRHIBackend
 #define gIsRHIBackendInitialized      RHIGlobals::IsRHIBackendInitialized
 
 

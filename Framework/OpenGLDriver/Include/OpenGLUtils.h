@@ -24,7 +24,7 @@ namespace OpenGLDrv
   } while (false);
   
 
-#ifndef OPENGL_STATE_CHECK()
+#ifndef OPENGL_STATE_CHECK
 #define OPENGL_STATE_CHECK()
 #endif
 
