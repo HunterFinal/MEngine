@@ -4,7 +4,6 @@
 #define _ME_RHI_CORE_RHICONTEXT_
 
 #include "RHIDefines.h"
-#include "HAL/Platform.h"
 
 namespace MEngine
 {
@@ -27,10 +26,9 @@ class IRHIGraphicsContext
   public:
     RHI_API ~IRHIGraphicsContext() = default;
 
-    virtual void SetVertexBufferBinding(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset) = 0;
-
+    virtual void SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding) = 0;
+    virtual void SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO) = 0;
     virtual void DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum) = 0;
-
     virtual void DrawPrimitiveIndexed(IN MEngine::RHI::MRHIBuffer* IndexBuffer, IN uint32 StartVertexIndex, IN uint32 StartIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum) = 0;
 };
 

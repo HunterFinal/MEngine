@@ -61,13 +61,13 @@ public:
 
   RHI_API bool HasAnyCommand() const;
 
-  RHI_API MEngine::RHI::ERHIPipelineState GetPipeline() const;
+  RHI_API MEngine::RHI::ERHIPipeline GetPipeline() const;
 
   RHI_API MEngine::RHI::IRHIGraphicsContext& GetGraphicContextChecked();
 
   RHI_API void ExecuteCommands();
 
-  RHI_API void SwitchPipeline(MEngine::RHI::ERHIPipelineState NewPipeline);
+  RHI_API void SwitchPipeline(MEngine::RHI::ERHIPipeline NewPipeline);
 
   RHI_API MEngine::RHI::MRHIBufferWriter CreateBufferWriter(const MEngine::RHI::MRHIBufferDescriptor& Descriptor);
 
@@ -81,7 +81,7 @@ public:
   CommandType* AllocCommandAndConstruct(ConstructArgs&&... Args);
 
 protected:
-  void ActivatePipeline(MEngine::RHI::ERHIPipelineState NewPipeline);
+  void ActivatePipeline(MEngine::RHI::ERHIPipeline NewPipeline);
 
 private:
   RHI_API void* AllocCommandInternal(IN SIZE_T AllocSize, IN SIZE_T Alignment);
@@ -99,8 +99,8 @@ private:
   // Context to send actual command to graphics API
   MEngine::RHI::IRHIGraphicsContext* m_graphicContext;
 
-  // Current pipeline state
-  MEngine::RHI::ERHIPipelineState m_activatePipeline;
+  // Current pipeline
+  MEngine::RHI::ERHIPipeline m_activatePipeline;
 
   uint8 m_bIsExecuting : 1;
   uint8 m_bIsImmediate : 1;
@@ -144,6 +144,8 @@ public:
 
   RHI_API void DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum);
   RHI_API void DrawPrimitiveIndexed();
+  RHI_API void SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO);
+  RHI_API void SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding);
 };
 
 template<typename LambdaType>

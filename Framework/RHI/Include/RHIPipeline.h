@@ -12,11 +12,13 @@ namespace MEngine
 namespace RHI
 {
 
-enum class ERHIPipelineState : uint8
+enum class ERHIPipeline : uint8
 {
   None = 0,
   Graphics = BIT_FLAG(0),
 };
+
+
 
 } // namespace MEngine::RHI
 

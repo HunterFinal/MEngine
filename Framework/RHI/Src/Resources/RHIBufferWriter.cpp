@@ -21,7 +21,8 @@ MRHIBufferWriter::MRHIBufferWriter(IN MRHICommandList* InCmdList, IN MRHIBuffer*
 
 MRHIBufferWriter::~MRHIBufferWriter()
 {
-
+  // Ensure to call Finalize before destruction
+  me_assert(Finalizer == nullptr);
 }
 
 RHIBufferRefPtr MRHIBufferWriter::Finalize()

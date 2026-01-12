@@ -3,6 +3,7 @@
 #include "OpenGLDriverRHIModule.h"
 #include "OpenGLResource.h"
 #include "OpenGLShaders.h"
+#include "OpenGLVertexInputLayout.h"
 #include "OpenGLTypeTraits.h"
 
 #include "Macro/AssertionMacros.h"
@@ -22,8 +23,11 @@ namespace
   };
 
   GLenum GetBufferTypeFromDesc(const MEngine::RHI::MRHIBufferDescriptor& InDesc);
+  GLsizei GetElementNumOfGLPrimitive(IN const uint32 PrimitiveNum, IN const GLenum GLPrimitiveType);
 
 }
+
+extern void DeleteAllShaderResources();
 
 namespace MEngine
 {
@@ -50,6 +54,7 @@ void MOpenGLRHIBackend::Initialize()
 
 void MOpenGLRHIBackend::Shutdown()
 {
+  DeleteAllShaderResources();
   std::cout << "OpenGL RHI Backend Shutdown" << std::endl;
 }
 
@@ -124,19 +129,32 @@ RHIVertexShaderRefPtr MOpenGLRHIBackend::RHICreateVertexShader(IN std::span<cons
   return new MOpenGLVertexShader(ShaderCode);
 }
 
-void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 SlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN uint32 Offset)
+RHIPixelShaderRefPtr MOpenGLRHIBackend::RHICreatePixelShader(IN std::span<const uint8> ShaderCode)
 {
-  me_assert(SlotIndex < MOpenGLVertexBufferBinding::MAX_BINDING_NUM);
+  return new MOpenGLPixelShader(ShaderCode);
+}
+
+RHIVertexInputLayoutRefPtr MOpenGLRHIBackend::RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc)
+{
+
+}
+
+void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding)
+{
+  me_assert(BindingSlotIndex < MEngine::RHI::MAX_STAGE_NUM);
   me_assert(VertexBuffer != nullptr);
 
   OPENGL_STATE_CHECK();
 
   // Bind Vertex for future drawing
   MOpenGLBuffer* GLBuffer = OpenGLCast(VertexBuffer);
-  m_renderingState.VertexBindings[SlotIndex].VBResource = (GLBuffer != nullptr) ? GLBuffer->GLResource() : 0;
-  m_renderingState.VertexBindings[SlotIndex].VBType     = (GLBuffer != nullptr) ? GLBuffer->GLType() : 0;
-  m_renderingState.VertexBindings[SlotIndex].Stride     = (GLBuffer != nullptr) ? GLBuffer->GetStride() : 0;
-  m_renderingState.VertexBindings[SlotIndex].Offset     = Offset; 
+
+  #error Bind to cache
+
+}
+
+void MOpenGLRHIBackend::SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO)
+{
 
 }
 
@@ -144,13 +162,18 @@ void MOpenGLRHIBackend::DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 Prim
 {
   OPENGL_STATE_CHECK();
 
-  m_ptType = MEngine::RHI::EPrimitiveTopologyType::TriangleList;
+  const uint32 vertexCount = RHIHelper::GetVertexCountOfPrimitiveType(PrimitiveNum, m_RHIPrimitiveType);
 
-  const uint32 vertexCount = RHIHelper::GetVertexCountOfPrimitiveType(PrimitiveNum, m_ptType);
+  CommitGLDrawState();
+  GLsizei elementNumToDraw = GetElementNumOfGLPrimitive(PrimitiveNum, m_GLPrimitiveType);
 
   if (InstanceNum == 1)
   {
-    // glDrawArrays();
+    ::glDrawArrays(m_GLPrimitiveType, 0, elementNumToDraw);
+  }
+  else
+  {
+    ::glDrawArraysInstanced(m_GLPrimitiveType, 0, elementNumToDraw, InstanceNum);
   }
 }
 
@@ -159,6 +182,10 @@ void MOpenGLRHIBackend::DrawPrimitiveIndexed(IN MEngine::RHI::MRHIBuffer* IndexB
   // FIXME
 }
 
+void MOpenGLRHIBackend::CommitGLDrawState()
+{
+  #error Setup draw state by cached context state
+}
 
 } // namespace MEngine::OpenGLDrv
 
@@ -186,4 +213,27 @@ namespace
 
     return result;
   }
-}
+
+  GLsizei GetElementNumOfGLPrimitive(IN const uint32 PrimitiveNum, IN const GLenum GLPrimitiveType)
+  {
+    GLsizei result = PrimitiveNum;
+
+    switch (GLPrimitiveType)
+    {
+      case GL_TRIANGLES:
+      {
+        result *= 3;
+      }
+      break;
+
+      default:
+      {
+        me_assert(false);
+      }
+      break;
+    }
+
+    return result;
+  }
+
+} // nameless namespace

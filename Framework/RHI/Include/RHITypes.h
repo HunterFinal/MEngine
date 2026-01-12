@@ -20,6 +20,9 @@ enum class EResourceType : uint8
   Buffer,
   VertexShader,
   PixelShader,
+  GraphicsPSO,
+  VertexInputLayout,
+  Viewport,
 
   MaxNum,
 };
@@ -66,11 +69,44 @@ enum class EResourceAccessMode : uint8
 
 enum class EShaderStage : uint8
 {
-  Vertex,
+  Vertex = 0,
   Pixel,
+  Fragment = Pixel,       // Alias
 
-  Fragment = Pixel,
+  MaxStageNum,
 };
+
+inline constexpr uint64 MAX_STAGE_NUM = static_cast<uint64>(::EnumCast(EShaderStage::MaxStageNum));
+
+enum class ERHIVertexFormat : uint8
+{
+  None,
+  Float2,
+  Float3,
+};
+
+enum class ERHIVertexInputRate : uint8
+{
+  PerVertex,
+  PerInstance,
+};
+
+#if HAS_CPP_17
+inline constexpr uint8 MaxVertexBindingCount = 8;
+inline constexpr uint8 MaxVertexElementCount = 16;
+inline constexpr uint8 MaxVertexBindingCount_BitDigits = 4;
+inline constexpr uint8 MaxVertexElementCount_BitDigits = 5;
+#else
+enum
+{
+  MaxVertexBindingCount = 8;
+  MaxVertexElementCount = 16;
+  MaxVertexBufferCount_BitDigits = 4;
+  MaxVertexElementCount_BitDigits = 5;
+};
+#endif
+static_assert(MaxVertexBindingCount <= (1 << MaxVertexBindingCount_BitDigits), "MaxVertexBindingCount will not fit on MaxVertexBindingCount_BitDigits");
+static_assert(MaxVertexElementCount <= (1 << MaxVertexElementCount_BitDigits), "MaxVertexElementCount will not fit on MaxVertexElementCount_BitDigits");
 
 } // namespace MEngine::RHI
 

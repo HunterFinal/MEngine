@@ -120,6 +120,36 @@ class MRHIDrawPrimitiveCommand : public TRHICommand<MRHIDrawPrimitiveCommand>
     uint32 m_instanceNum;
 };
 
+class MRHISetGraphicsPSOCommand : public TRHICommand<MRHISetGraphicsPSOCommand>
+{
+  public:
+    MRHISetGraphicsPSOCommand(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO)
+      : m_graphicsPSORef{GraphicsPSO}
+    { }
+
+    void Execute(OUT MRHIGraphicsCommandList& CommandList);
+
+  private:
+    RHIGraphicsPipelineStateRefPtr m_graphicsPSORef;
+};
+
+class MRHISetVertexBufferBindingCommand : public TRHICommand<MRHISetVertexBufferBindingCommand>
+{
+  public:
+    MRHISetVertexBufferBindingCommand(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding)
+      : m_bindingSlotIndex{BindingSlotIndex}
+      , m_vertexBuffer{VertexBuffer}
+      , m_vertexBinding{VertexBinding}
+    { }
+
+    void Execute(OUT MRHIGraphicsCommandList& CommandList);
+
+  private:
+    uint32 m_bindingSlotIndex;
+    RHIBufferRefPtr m_vertexBuffer;
+    MRHIVertexBinding m_vertexBinding;
+};
+
 } // namespace MEngine::RHI
 
 } // namespace MEngine

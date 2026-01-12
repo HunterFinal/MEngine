@@ -17,6 +17,7 @@ namespace OpenGLDrv
   {
     private:
       friend class MOpenGLBuffer;
+      friend class MOpenGLShader;
 
       explicit MOpenGLResource(IN GLenum InType)
         : Type{InType}

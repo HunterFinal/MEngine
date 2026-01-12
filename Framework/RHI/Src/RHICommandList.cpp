@@ -83,7 +83,7 @@ bool MRHICommandList::HasAnyCommand() const
   return m_memoryManager.IsEmpty();
 }
 
-ERHIPipelineState MRHICommandList::GetPipeline() const
+ERHIPipeline MRHICommandList::GetPipeline() const
 {
   return m_activatePipeline;
 }
@@ -105,7 +105,7 @@ void MRHICommandList::ExecuteCommands()
   }
 }
 
-void MRHICommandList::SwitchPipeline(ERHIPipelineState NewPipeline)
+void MRHICommandList::SwitchPipeline(ERHIPipeline NewPipeline)
 {
   if (GetPipeline() == NewPipeline)
   {
@@ -141,7 +141,7 @@ void* MRHICommandList::AllocMemcpy(const void* Src, IN SIZE_T AllocSize, IN SIZE
   return allocated;
 }
 
-void MRHICommandList::ActivatePipeline(ERHIPipelineState NewPipeline)
+void MRHICommandList::ActivatePipeline(ERHIPipeline NewPipeline)
 {
   me_assert(GetPipeline() != NewPipeline);
 
@@ -150,7 +150,7 @@ void MRHICommandList::ActivatePipeline(ERHIPipelineState NewPipeline)
   // Push a command to cmdList
   auto activatePipelineCommand = 
   [
-    Pipeline = m_activatePipeline
+    Pipeline = NewPipeline
   ]
   (MRHICommandList& CmdList)
   {
@@ -159,13 +159,13 @@ void MRHICommandList::ActivatePipeline(ERHIPipelineState NewPipeline)
 
     switch (Pipeline)
     {
-      case ERHIPipelineState::Graphics:
+      case ERHIPipeline::Graphics:
       {
         context = gRHIBackend->GetDefaultGraphicsContext();
       };
       break;
 
-      case ERHIPipelineState::None:
+      case ERHIPipeline::None:
       {
         // Reset the context
         context = nullptr;
@@ -190,6 +190,30 @@ void MRHIGraphicsCommandList::DrawPrimitive(IN uint32 StartVertexIndex, IN uint3
   else
   {
     (void)AllocCommandAndConstruct<MEngine::RHI::MRHIDrawPrimitiveCommand>(StartVertexIndex, PrimitiveNum, InstanceNum);
+  }
+}
+
+void MRHIGraphicsCommandList::SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO)
+{
+  if (ShouldExecuteImmediatly())
+  {
+    GetGraphicContextChecked().SetGraphicsPipelineState(GraphicsPSO);
+  }
+  else
+  {
+    (void)AllocCommandAndConstruct<MEngine::RHI::MRHISetGraphicsPSOCommand>(GraphicsPSO);
+  }
+}
+
+void MRHIGraphicsCommandList::SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding)
+{
+  if (ShouldExecuteImmediatly())
+  {
+    GetGraphicContextChecked().SetVertexBufferBinding(BindingSlotIndex, VertexBuffer, VertexBinding);
+  }
+  else
+  {
+    (void)AllocCommandAndConstruct<MEngine::RHI::MRHISetVertexBufferBindingCommand>(BindingSlotIndex, VertexBuffer, VertexBinding);
   }
 }
 

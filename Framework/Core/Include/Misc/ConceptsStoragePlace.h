@@ -54,6 +54,8 @@ namespace Concepts
 
 } // namespace MEngine
 
+#define Requires_Derived_From(DerivedType, BaseType) requires std::derived_from<DerivedType, BaseType>
+
 #endif // CAN_USE_CONCEPT
 
 // Concept type define macro
@@ -63,6 +65,9 @@ namespace Concepts
 #define ARITHMETIC_TYPE_CONCEPT               CONCEPT_ADAPTER(MEngine::Concepts::ArithmeticTypeConcept)
 #define ALLOCATOR_TYPE_CONCEPT                CONCEPT_ADAPTER(MEngine::Concepts::AllocatorConcept)
 
+#ifndef Requires_Derived_From
+  #define Requires_Derived_From(...)
+#endif
 
 // define this if use c++20 or higher version
 // downgrade to typename if version is lower c++20

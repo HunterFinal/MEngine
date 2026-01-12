@@ -4,7 +4,7 @@
 #define _ME_RHI_BUFFER_
 
 #include "Resources/RHIResource.h"
-#include "Resources/RHIBufferDescriptors.h"
+#include "Resources/RHIDescriptors.h"
 
 namespace MEngine
 {

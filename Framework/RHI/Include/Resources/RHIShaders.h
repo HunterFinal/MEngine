@@ -36,6 +36,7 @@ class TRHIShader : public MRHIShader
 
 // TODO
 using MRHIVertexShader = TRHIShader<EResourceType::VertexShader, EShaderStage::Vertex>;
+using MRHIPixelShader = TRHIShader<EResourceType::PixelShader, EShaderStage::Pixel>;
 
 } // namespace MEngine::RHI
 
@@ -43,5 +44,7 @@ using MRHIVertexShader = TRHIShader<EResourceType::VertexShader, EShaderStage::V
 
 TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::RHI::MRHIShader>, RHIShaderRefPtr);
 TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::RHI::MRHIVertexShader>, RHIVertexShaderRefPtr);
+TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::RHI::MRHIPixelShader>, RHIPixelShaderRefPtr);
+
 
 #endif // _ME_RHI_SHADERS_

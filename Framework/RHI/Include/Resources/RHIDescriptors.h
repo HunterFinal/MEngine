@@ -8,6 +8,13 @@
 #include "Macro/AssertionMacros.h"
 #include "RHIDefines.h"
 #include "RHITypes.h"
+#include "RHIFwd.h"
+
+#include "Resources/RHIShaders.h"
+#include "Resources/RHIVertexInputLayout.h"
+
+// TODO
+#include <memory>
 
 namespace MEngine
 {
@@ -77,6 +84,61 @@ struct MRHIBufferDescriptor
     return false;
   }
 
+};
+
+struct MRHIVertexBinding
+{
+  uint32 Stride;
+  MEngine::RHI::ERHIVertexInputRate InputRate;
+
+  constexpr MRHIVertexBinding()
+    : Stride{0}
+    , InputRate{MEngine::RHI::ERHIVertexInputRate::PerVertex}
+  {}
+
+  RHI_API friend bool operator==(IN const MRHIVertexBinding& Lhs, IN const MRHIVertexBinding& Rhs);
+  RHI_API friend bool operator!=(IN const MRHIVertexBinding& Lhs, IN const MRHIVertexBinding& Rhs);
+
+};
+
+
+
+struct MRHIVertexBindingDescriptor
+{
+  MRHIVertexBinding Bindings[MEngine::RHI::MaxVertexBindingCount];
+  uint8 BindingValidFlags;
+  
+  MRHIVertexBindingDescriptor() = default;
+  MRHIVertexBindingDescriptor(IN const uint8 InFlags, IN const MRHIVertexBinding* InBindings)
+    : Bindings{}
+    , BindingValidFlags{InFlags}
+  {
+    static_assert(sizeof(InFlags) <= sizeof(BindingValidFlags), "InFlags has no enough bits to construct MRHIVertexBindingDescriptor.");
+    
+    // TODO Not to use memcpy here
+    ::memcpy(Bindings, InBindings, sizeof(Bindings));
+  }
+  
+  bool IsBindingValid(IN const uint32 BindingIndex) const
+  {
+    return ((BindingValidFlags >> BindingIndex) & 1) != 0;
+  }
+  
+  bool IsNull() const
+  {
+    return BindingValidFlags == 0;
+  }
+  
+};
+static_assert(sizeof(MRHIVertexBindingDescriptor::BindingValidFlags) * 8 >= MEngine::RHI::MaxVertexBindingCount, "BindingValidFlags will not able to mark all bits of Bindings. struct MRHIVertexBindingDescriptor");
+
+struct MRHIGraphicsPipelineStateDescriptor
+{
+  RHIVertexInputLayoutRefPtr RHIInputLayout;
+  RHIVertexShaderRefPtr      RHIVertexShader;
+  RHIPixelShaderRefPtr       RHIPixelShader;
+
+  EPrimitiveTopologyType     PrimitiveType;
 };
 
 } // namespace MEngine::RHI

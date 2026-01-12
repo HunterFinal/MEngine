@@ -12,15 +12,21 @@ namespace RHI
 {
 
 class  IRHIGraphicsContext;
+class  MRHICommandList;
+
+struct MRHIVertexElement;
+struct MRHIVertexBinding;
 
 class  MRHIResource;
 class  MRHIBuffer;
 class  MRHIShader;
-class  MRHIVertexShader;
+class  MRHIVertexInputLayout;
+class  MRHIGraphicsPipelineState;
+class  MRHIViewport;
 
 struct MRHIBufferDescriptor;
+struct MRHIVertexBindingDescriptor;
 class  MRHIBufferWriter;
-class  MRHICommandList;
 
 template<typename RefType>
 Requires_Derived_From(RefType, MEngine::RHI::MRHIResource)

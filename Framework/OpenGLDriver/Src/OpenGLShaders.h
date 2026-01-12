@@ -4,8 +4,10 @@
 #define _ME_OPENGLDRV_SHADERS_
 
 #include "PlatformOpenGLDriver.h"
+#include "OpenGLResource.h"
 #include "Resources/RHIShaders.h"
 
+// TODO
 #include <span>
 
 namespace MEngine
@@ -14,38 +16,91 @@ namespace MEngine
 namespace OpenGLDrv
 {
 
-class MOpenGLShaderResource
+class MOpenGLLinkedShaderProgram;
+
+struct MOpenGLCachedShaderKey
 {
-  private: 
-    friend class MOpenGLVertexShader;
+  friend struct MOpenGLCachedShaderKeyHash;
 
-    MOpenGLShaderResource(IN std::span<const uint8> ShaderCode, GLenum ShaderType);
-  
-  public:
-    ~MOpenGLShaderResource();
-    void Compile();
+  MOpenGLCachedShaderKey()
+    : m_shaderType{0}
+    , m_glslCodeSize{0}
+    , m_glslCodeHash{0}
+  { }
+  MOpenGLCachedShaderKey(IN GLenum Type, IN uint64 CodeSize, IN uint64 CodeHash)
+    : m_shaderType{Type}
+    , m_glslCodeSize{CodeSize}
+    , m_glslCodeHash{CodeHash}
+  { }
 
-  public:
-    GLenum Type;
-    GLuint Resource;
+  friend bool operator==(IN const MOpenGLCachedShaderKey& Lhs, IN const MOpenGLCachedShaderKey& Rhs);
+  friend bool operator!=(IN const MOpenGLCachedShaderKey& Lhs, IN const MOpenGLCachedShaderKey& Rhs);
 
+  uint64 GetHash() const { return m_glslCodeHash; }
+
+private:
+  GLenum m_shaderType;
+  uint64 m_glslCodeSize;
+  uint64 m_glslCodeHash;
 };
 
-class MOpenGLVertexShader : public MEngine::RHI::MRHIVertexShader
+class MOpenGLShader
 {
-  public: 
-    MOpenGLVertexShader(IN std::span<const uint8> ShaderCode);
 
-    GLuint GLResource() const   { return m_shaderRes.Resource; }
-    GLenum GLShaderType() const { return m_shaderRes.Type    ; }
+protected:
+  MOpenGLShader(IN std::span<const uint8> ShaderCode, GLenum ShaderType);
+
+public:
+  void Compile();
+
+  GLuint GLResource()                     const { return m_nativeResource.Resource   ; }
+  GLenum GLShaderType()                   const { return m_nativeResource.Type       ; }
+  MOpenGLCachedShaderKey GLSLCodeKey()    const { return m_GLSLCodeKey               ; }
 
   private:
-    MOpenGLShaderResource m_shaderRes;
+    MOpenGLCachedShaderKey m_GLSLCodeKey;
+    MOpenGLResource m_nativeResource;
+};
+
+template<typename RHIShaderBaseType, GLenum GLShaderTypeEnum>
+Requires_Derived_From(RHIShaderBaseType, MEngine::RHI::MRHIShader)
+class TOpenGLShader : public RHIShaderBaseType, public MOpenGLShader
+{
+  public:
+    TOpenGLShader(IN std::span<const uint8> ShaderCode)
+      : MOpenGLShader{ShaderCode, GLShaderTypeEnum}
+    {}
+
+    uint64 GetGLHash() const
+    {
+      return RHIShaderBaseType::GLSLCodeKey().GetHash();
+    }
+};
+
+// TODO
+using MOpenGLVertexShader = TOpenGLShader<MEngine::RHI::MRHIVertexShader, GL_VERTEX_SHADER>;
+using MOpenGLPixelShader = TOpenGLShader<MEngine::RHI::MRHIPixelShader, GL_FRAGMENT_SHADER>;
+
+struct MOpenGLCachedLinkedShaderProgramKey
+{
+
+friend struct MOpenGLCachedLinkedShaderProgramKeyHash;
+  
+public:
+  MOpenGLCachedLinkedShaderProgramKey();
+  MOpenGLCachedLinkedShaderProgramKey(MOpenGLVertexShader* GLVertexShader, MOpenGLPixelShader* GLPixelShader);
+
+  friend bool operator==(const MOpenGLCachedLinkedShaderProgramKey& Lhs, const MOpenGLCachedLinkedShaderProgramKey& Rhs);
+  friend bool operator!=(const MOpenGLCachedLinkedShaderProgramKey& Lhs, const MOpenGLCachedLinkedShaderProgramKey& Rhs);
+
+  uint64 ShaderHashes[MEngine::RHI::MAX_STAGE_NUM];
 };
 
 } // namespace MEngine::OpenGLDrv
 
 } // namespace MEngine
 
+TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::OpenGLDrv::MOpenGLVertexShader>, GLVertexShaderRefPtr);
+TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::OpenGLDrv::MOpenGLPixelShader>,  GLPixelShaderRefPtr);
 
 #endif // _ME_OPENGLDRV_SHADERS_

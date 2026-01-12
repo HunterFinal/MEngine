@@ -89,6 +89,7 @@ target_link_libraries(
   Game
   Application
   FutureFlexCore
+  RHI
 )
 
 # Modules

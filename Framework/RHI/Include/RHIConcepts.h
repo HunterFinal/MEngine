@@ -4,6 +4,7 @@
 #define _ME_RHI_CONCEPTS_
 
 #include "CoreDefines.h"
+#include "Misc/ConceptsStoragePlace.h"
 
 #if CAN_USE_CONCEPT
 #include <concepts>
@@ -29,18 +30,12 @@ concept RHICommandCallable =
 
 #define Requires_RHICommand_Callable(CmdListType, LambdaType) requires MEngine::RHI::RHICommandCallable<CmdListType, LambdaType>
 
-// FIXME Move this to Core 
-#define Requires_Derived_From(DerivedType, BaseType) requires std::derived_from<DerivedType, BaseType>
-
 #endif // CAN_USE_CONCEPT
 
 #ifndef Requires_RHICommand_Callable
   #define Requires_RHICommand_Callable(CmdListType, LambdaType)
 #endif
 
-#ifndef Requires_Derived_From
-  #define Requires_Derived_From(...)
-#endif
 
 
 #endif // _ME_RHI_CONCEPTS_

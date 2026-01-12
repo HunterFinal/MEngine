@@ -17,6 +17,18 @@
 // TODO
 #include "Modules/DynamicModuleManager.h"
 
+// TODO RHI
+#include "RHIGlobals.h"
+#include "Resources/RHIBuffers.h"
+#include "Resources/RHIShaders.h"
+#include "Resources/RHIPipelineState.h"
+#include "Resources/RHIVertexInputLayout.h"
+#include "Resources/RHIBufferWriter.h"
+#include "Resources/RHIDescriptors.h"
+#include "RHICommandList.h"
+#include "RHIBackend.h"
+#include "RHIContext.h"
+
 #include <cstring>
 #include <utility>
 #include <conio.h>
@@ -180,6 +192,10 @@ class AAA
     }
 };
 
+static void RHITestInit();
+static void RHITestRender_Triangle();
+static void RHITestRelease();
+
 #if 0
 int main(int argc, char** argv)
 #else
@@ -249,14 +265,15 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   FFApp.AssignExitRequestedDelegate(MEngine::Core::MDelegate<void()>::CreateStatic(&Globals::RequestApplicationExit));
   FFApp.AddWindow(testFFWindow);
 
-  MEngine::Core::MCoreDynamiceModule* dynamicModule = MEngine::Core::MDynamicModuleManager::Get().LoadModule<MEngine::Core::MCoreDynamiceModule>("Core");
-
+  RHITestInit();
 
   while(!Globals::IsApplicationExitRequested())
   {
     FFApp.Update();
-    dynamicModule->Hoge();
+    RHITestRender_Triangle();
   }
+
+  RHITestRelease();
 
   FFApp.Terminate();
   
@@ -271,3 +288,81 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   return 0;
 }
 
+void RHITestInit()
+{
+  RHIGlobals::RHIInitialize();
+}
+
+void RHITestRender_Triangle()
+{
+  me_assert(gRHIBackend != nullptr);
+  // TODO Use RHI Here
+  const float vertice[] =
+  {
+    -0.5f, -0.5f, 0.0f,
+    0.5f,  -0.5f, 0.0f,
+    0.0f,   0.5f, 0.0f
+  };
+
+  const char *vertexShaderSource = "#version 330 core\nlayout (location = 0) in vec3 aPos;\nvoid main()\n{\ngl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n}\0";
+  const char *fragmentShaderSource = "#version 330 core\nout vec4 FragColor;\nvoid main()\n{\nFragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n}";
+
+  MEngine::RHI::MRHIGraphicsCommandList* cmdList = new MEngine::RHI::MRHIGraphicsCommandList();
+  MEngine::RHI::MRHIBufferDescriptor vertDesc{};
+  vertDesc.BufferSize = sizeof(vertice);
+  vertDesc.BufferUsage = static_cast<MEngine::RHI::EBufferUsageType>(::EnumCast(MEngine::RHI::EBufferUsageType::VertexBuffer) | ::EnumCast(MEngine::RHI::EBufferUsageType::Static));
+  vertDesc.ElementStride = sizeof(vertice);
+  vertDesc.BufferInitData = vertice;
+  RHIBufferRefPtr vertBuffer{};
+
+  // TODO This will create memory leak currently because of lacking of MRHIResource tracing process
+  {
+    MEngine::RHI::MRHIBufferWriter bufferWriter = cmdList->CreateBufferWriter(vertDesc);
+    vertBuffer = bufferWriter.Finalize();
+  }
+
+  cmdList->SwitchPipeline(MEngine::RHI::ERHIPipeline::Graphics);
+
+  RHIVertexShaderRefPtr vs = gRHIBackend->RHICreateVertexShader(std::span<const uint8>{(uint8*)vertexShaderSource , ::strlen(vertexShaderSource) + 1});
+  RHIPixelShaderRefPtr ps = gRHIBackend->RHICreatePixelShader(std::span<const uint8>{(uint8*)fragmentShaderSource , ::strlen(fragmentShaderSource) + 1});
+  
+  // Input layout and buffer bindings
+  std::vector<MEngine::RHI::MRHIVertexElement> vertexElems{};
+  MEngine::RHI::MRHIVertexElement elem{};
+  elem.Offset = 0;
+  elem.Format = MEngine::RHI::ERHIVertexFormat::Float3;
+  elem.Location = 0;
+  elem.SlotIndex = 0;
+  vertexElems.emplace_back(elem);
+
+  MEngine::RHI::MRHIVertexBinding bindings[MEngine::RHI::MaxVertexBindingCount];
+  bindings[0].Stride = sizeof(float) * 3;
+  bindings[0].InputRate = MEngine::RHI::ERHIVertexInputRate::PerVertex;
+  MEngine::RHI::MRHIVertexBindingDescriptor bindingDesc{1, bindings};
+
+  RHIVertexInputLayoutRefPtr inputLayout = gRHIBackend->RHICreateVertexInputLayout(vertexElems, bindingDesc);
+
+  // PSO
+  MEngine::RHI::MRHIGraphicsPipelineStateDescriptor psoDesc{};
+  psoDesc.RHIVertexShader = vs;
+  psoDesc.RHIPixelShader  = ps;
+  psoDesc.RHIInputLayout  = inputLayout;
+  psoDesc.PrimitiveType   = MEngine::RHI::EPrimitiveTopologyType::TriangleList;
+  RHIGraphicsPipelineStateRefPtr graphicsPSO = gRHIBackend->RHICreateGraphicsPSO(psoDesc);
+
+  cmdList->SetGraphicsPipelineState(graphicsPSO);
+  cmdList->SetVertexBufferBinding(0, vertBuffer, bindings[0]);
+
+  // Draw triangles
+  cmdList->DrawPrimitive(0, 1, 1);
+
+  // Exec commands
+  cmdList->ExecuteCommands();
+
+  delete cmdList;
+}
+
+void RHITestRelease()
+{
+  RHIGlobals::RHIShutdown();
+}

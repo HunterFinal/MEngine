@@ -51,5 +51,4 @@ private:
 
 } // namespace MEngine
 
-
 #endif // _ME_RHI_RESOURCE_
