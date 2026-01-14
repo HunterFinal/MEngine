@@ -26,6 +26,39 @@ namespace
   // Get opengl current context
   static HGLRC CurrentContext();
 
+  // Get opengl current device context
+  static HDC   CurrentDC();
+
+  class MOpenGLWindowsScoped_MakeCurrentContext final
+  {
+    public:
+      explicit MOpenGLWindowsScoped_MakeCurrentContext(IN const MEngine::OpenGLDrv::MOpenGLContext& GLContext)
+      {
+        m_prevDeviceCtx = CurrentDC();
+        m_prevRenderingCtx = CurrentContext();
+        m_bSameAsPrev = (GLContext.DeviceCtx == m_prevDeviceCtx) && 
+                        (GLContext.RenderingCtx == m_prevRenderingCtx);
+
+        if (!m_bSameAsPrev)
+        {
+          GLContextMakeCurrent(GLContext.DeviceCtx, GLContext.RenderingCtx);
+        }
+      }
+
+      ~MOpenGLWindowsScoped_MakeCurrentContext()
+      {
+        if (!m_bSameAsPrev)
+        {
+          GLContextMakeCurrent(m_prevDeviceCtx, m_prevRenderingCtx);
+        }
+      }
+
+    private:
+      HDC m_prevDeviceCtx;
+      HGLRC m_prevRenderingCtx;
+      bool  m_bSameAsPrev;
+  };
+
 } // nameless namespace
 
 namespace MEngine
@@ -38,11 +71,13 @@ namespace OpenGLDrv
 struct MOpenGLContext
 {
   HWND WindowHandle;
-  HDC  DeviceCtxHandle;
-  HGLRC OpenGLRenderingCtxHandle;
+  HDC  DeviceCtx;
+  HGLRC RenderingCtx;
 
   GLuint FBO; // A framebuffer object that shares between all vertices.
-  GLuint VAO; // A vertex array object that shared between all vertices. // WARNING:Figure out why we need only one?
+
+  // NOTE: VAOs cannot be shared between OpenGL contexts.
+  GLuint VAO; // A vertex array object that shared between all vertices.
   bool bDestroyWindowOnDispose;
 };
 
@@ -52,7 +87,7 @@ static void GLCreateModernContext(OUT MOpenGLContext* OutCtx, const int32 MajorV
 {
   me_assert(wglCreateContextAttribsARB != NULL);
   me_assert(OutCtx != nullptr);
-  me_assert(OutCtx->DeviceCtxHandle != nullptr);
+  me_assert(OutCtx->DeviceCtx != nullptr);
 
   int attribs[] =
   {
@@ -64,7 +99,7 @@ static void GLCreateModernContext(OUT MOpenGLContext* OutCtx, const int32 MajorV
     0
   };
 
-  OutCtx->OpenGLRenderingCtxHandle = wglCreateContextAttribsARB(OutCtx->DeviceCtxHandle, ParentCtx, attribs);
+  OutCtx->RenderingCtx = wglCreateContextAttribsARB(OutCtx->DeviceCtx, ParentCtx, attribs);
 }
 
 // Create a dummy opengl window
@@ -122,9 +157,9 @@ static void GLCreateDummyWindow(OUT MOpenGLContext* OutCtx)
   OutCtx->bDestroyWindowOnDispose = true;
 
   // Get device ctx
-  OutCtx->DeviceCtxHandle = ::GetDC(OutCtx->WindowHandle);
-  me_assert(OutCtx->DeviceCtxHandle != NULL);
-  GLInitPixelFormat(OutCtx->DeviceCtxHandle);                                       
+  OutCtx->DeviceCtx = ::GetDC(OutCtx->WindowHandle);
+  me_assert(OutCtx->DeviceCtx != NULL);
+  GLInitPixelFormat(OutCtx->DeviceCtx);                                       
 }
 
 /**Windows specific OpenGL device */
@@ -145,9 +180,9 @@ struct MOpenGLDevice
     int32 minorVer = 0;
     GLGetVersionForCoreProfile(majorVer, minorVer);
     GLCreateModernContext(&RenderingContext, majorVer, minorVer, NULL);
-    GLContextMakeCurrent(RenderingContext.DeviceCtxHandle, RenderingContext.OpenGLRenderingCtxHandle);
+    GLContextMakeCurrent(RenderingContext.DeviceCtx, RenderingContext.RenderingCtx);
 
-    me_assert(RenderingContext.OpenGLRenderingCtxHandle != NULL);
+    me_assert(RenderingContext.RenderingCtx != NULL);
 
     glGenVertexArrays(1, &RenderingContext.VAO);
     glBindVertexArray(RenderingContext.VAO);
@@ -169,8 +204,8 @@ bool InitOpenGL()
     GLCreateDummyWindow(&dummyCtx);
   
     // Create OpenGL context
-    dummyCtx.OpenGLRenderingCtxHandle = wglCreateContext(dummyCtx.DeviceCtxHandle);
-    GLContextMakeCurrent(dummyCtx.DeviceCtxHandle, dummyCtx.OpenGLRenderingCtxHandle);
+    dummyCtx.RenderingCtx = wglCreateContext(dummyCtx.DeviceCtx);
+    GLContextMakeCurrent(dummyCtx.DeviceCtx, dummyCtx.RenderingCtx);
     
     // Initialize extension functions
     wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
@@ -188,13 +223,13 @@ bool InitOpenGL()
 
       // Temporary unbind current OpenGL context
       GLContextMakeCurrent(NULL, NULL);
-      ::wglDeleteContext(dummyCtx.OpenGLRenderingCtxHandle);
+      ::wglDeleteContext(dummyCtx.RenderingCtx);
       GLGetVersionForCoreProfile(majorVer, minorVer);
       GLCreateModernContext(&dummyCtx, majorVer, minorVer, NULL);
-      if (dummyCtx.OpenGLRenderingCtxHandle != NULL)
+      if (dummyCtx.RenderingCtx != NULL)
       {
         s_bOpenGLSupported = true;
-        GLContextMakeCurrent(dummyCtx.DeviceCtxHandle, dummyCtx.OpenGLRenderingCtxHandle);
+        GLContextMakeCurrent(dummyCtx.DeviceCtx, dummyCtx.RenderingCtx);
 
         // Reload glad because we create a new opengl context in GLCreateModernContext
         ::gladLoadGL();
@@ -208,12 +243,12 @@ bool InitOpenGL()
     }
 
     // Release dummy context
-    if (dummyCtx.OpenGLRenderingCtxHandle != NULL)
+    if (dummyCtx.RenderingCtx != NULL)
     {
       GLContextMakeCurrent(NULL, NULL);
-      wglDeleteContext(dummyCtx.OpenGLRenderingCtxHandle);
+      wglDeleteContext(dummyCtx.RenderingCtx);
     }
-    ::ReleaseDC(dummyCtx.WindowHandle, dummyCtx.DeviceCtxHandle);
+    ::ReleaseDC(dummyCtx.WindowHandle, dummyCtx.DeviceCtx);
     if (dummyCtx.bDestroyWindowOnDispose)
     {
       ::DestroyWindow(dummyCtx.WindowHandle);
@@ -225,8 +260,7 @@ bool InitOpenGL()
 
 MEngine::OpenGLDrv::MOpenGLDevice* CreateOpenGLDevice()
 {
-  // FIXME
-  return nullptr;
+  return new MOpenGLDevice{};
 }
 
 void DestroyOpenGLDevice(IN MEngine::OpenGLDrv::MOpenGLDevice* Device)
@@ -236,19 +270,79 @@ void DestroyOpenGLDevice(IN MEngine::OpenGLDrv::MOpenGLDevice* Device)
 
 MEngine::OpenGLDrv::MOpenGLContext* CreateOpenGLContext(IN MEngine::OpenGLDrv::MOpenGLDevice* Device, IN void* WindowHandle)
 {
-  // FIXME
-  return nullptr;
+  me_assert((Device != nullptr) && (WindowHandle != nullptr));
+
+  MOpenGLContext* result = new MOpenGLContext{};
+  MOpenGLContext& resultRef = *result;
+  resultRef.WindowHandle = reinterpret_cast<HWND>(WindowHandle);
+  resultRef.bDestroyWindowOnDispose = false;
+  resultRef.DeviceCtx = ::GetDC(resultRef.WindowHandle);
+  me_assert(resultRef.DeviceCtx != nullptr);
+  GLInitPixelFormat(resultRef.DeviceCtx);
+  
+  int32 majorVer = 0;
+  int32 minorVer = 0;
+  GLGetVersionForCoreProfile(majorVer, minorVer);
+
+  GLCreateModernContext(result, majorVer, minorVer, Device->RenderingContext.RenderingCtx);
+  me_assert(resultRef.RenderingCtx);
+  // Create opengl context
+  {
+    MOpenGLWindowsScoped_MakeCurrentContext scopeGuard(resultRef);
+    ::glGenVertexArrays(1, &resultRef.VAO);
+    ::glGenFramebuffers(1, &resultRef.FBO);
+  }
+
+  return result;
 }
 
 void DestroyOpenGLContext(IN MEngine::OpenGLDrv::MOpenGLContext* Context)
 {
-  // FIXME
+  me_assert(Context != nullptr);
+
+  // Release rendering context
+  {
+    {
+      MOpenGLWindowsScoped_MakeCurrentContext ctxGuard(*Context);
+  
+      ::glBindVertexArray(0);
+      ::glDeleteVertexArrays(1, &Context->VAO);
+      Context->VAO = 0;
+      ::glDeleteFramebuffers(1, &Context->FBO);
+      Context->FBO = 0;
+    }
+  
+    ::wglDeleteContext(Context->RenderingCtx);
+    Context->RenderingCtx = nullptr;
+  }
+
+  // Release device context
+  ::ReleaseDC(Context->WindowHandle, Context->DeviceCtx);
+  Context->DeviceCtx = nullptr;
+
+  if (Context->bDestroyWindowOnDispose)
+  {
+    ::DestroyWindow(Context->WindowHandle);
+  }
+  Context->WindowHandle = nullptr;
+
   delete Context;
 }
 
 bool GLHasRenderingContext()
 {
-  return CurrentContext() == g_currentDevice->RenderingContext.OpenGLRenderingCtxHandle;
+  return CurrentContext() == g_currentDevice->RenderingContext.RenderingCtx;
+}
+
+void* GetNativeWindow(MEngine::OpenGLDrv::MOpenGLContext* GLContext)
+{
+  me_assert((GLContext != nullptr) && (GLContext->WindowHandle != nullptr));
+  return static_cast<void*>(&GLContext->WindowHandle);
+}
+
+bool BlitToViewport(IN MEngine::OpenGLDrv::MOpenGLDevice* Device, IN MEngine::OpenGLDrv::MOpenGLViewport* Viewport, IN uint32 Width, IN uint32 height)
+{
+  me_assert((Device != nullptr) && (Device == g_currentDevice));
 }
 
 } // namespace MEngine::OpenGLDrv

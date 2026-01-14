@@ -127,7 +127,7 @@ class MRHISetGraphicsPSOCommand : public TRHICommand<MRHISetGraphicsPSOCommand>
       : m_graphicsPSORef{GraphicsPSO}
     { }
 
-    void Execute(OUT MRHIGraphicsCommandList& CommandList);
+    void Execute(OUT MRHICommandList& CommandList);
 
   private:
     RHIGraphicsPipelineStateRefPtr m_graphicsPSORef;
@@ -142,12 +142,38 @@ class MRHISetVertexBufferBindingCommand : public TRHICommand<MRHISetVertexBuffer
       , m_vertexBinding{VertexBinding}
     { }
 
-    void Execute(OUT MRHIGraphicsCommandList& CommandList);
+    void Execute(OUT MRHICommandList& CommandList);
 
   private:
     uint32 m_bindingSlotIndex;
     RHIBufferRefPtr m_vertexBuffer;
     MRHIVertexBinding m_vertexBinding;
+};
+
+class MRHIStartDrawingViewportCommand : public TRHICommand<MRHIStartDrawingViewportCommand>
+{
+  public:
+    MRHIStartDrawingViewportCommand(IN MEngine::RHI::MRHIViewport* Viewport)
+      : m_viewport{Viewport}
+    { }
+
+    void Execute(OUT MRHICommandList& CommandList);
+
+  private:
+    RHIViewportRefPtr m_viewport;
+};
+
+class MRHIEndDrawingViewportCommand : public TRHICommand<MRHIEndDrawingViewportCommand>
+{
+  public:
+    MRHIEndDrawingViewportCommand(IN MEngine::RHI::MRHIViewport* Viewport)
+      : m_viewport{Viewport}
+    { }
+
+    void Execute(OUT MRHICommandList& CommandList);
+
+  private:
+    RHIViewportRefPtr m_viewport;
 };
 
 } // namespace MEngine::RHI

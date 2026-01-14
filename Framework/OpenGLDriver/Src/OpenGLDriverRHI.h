@@ -43,7 +43,11 @@ public:
   OPENGLDRV_API void SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO) override final;
   OPENGLDRV_API void DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum) override final;
   OPENGLDRV_API void DrawPrimitiveIndexed(IN MEngine::RHI::MRHIBuffer* IndexBuffer, IN uint32 StartVertexIndex, IN uint32 StartIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum) override final;
+  OPENGLDRV_API void StartDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport) override final;
+  OPENGLDRV_API void EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport) override final;
   /**End IRHIGraphicsContext interface */
+
+  MOpenGLDevice* GetGLDevice() const { return m_device; }
 
 private:
   void CommitGLDrawState();
@@ -55,6 +59,8 @@ private:
   GLenum                               m_GLPrimitiveType;
 
 };
+
+MOpenGLRHIBackend* GetGLBackend();
 
 } // namespace MEngine::OpenGLDrv
 

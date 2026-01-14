@@ -39,12 +39,15 @@ struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIPixelShader>
   using OpenGLType = MEngine::OpenGLDrv::TOpenGLShader<MEngine::RHI::MRHIPixelShader, GL_FRAGMENT_SHADER>;
 };
 
+template<>
+struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIViewport>
+{
+  using OpenGLType = MEngine::OpenGLDrv::MOpenGLViewport;
+};
 
+} // namespace MEngine::OpenGLDrv
 
-
-}
-
-}
+} // namespace MEngine
 
 
 #endif // _ME_OPENGLDRV_TYPETRAITS_

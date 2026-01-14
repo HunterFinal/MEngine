@@ -217,6 +217,30 @@ void MRHIGraphicsCommandList::SetVertexBufferBinding(IN uint32 BindingSlotIndex,
   }
 }
 
+void MRHIGraphicsCommandList::StartDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport)
+{
+  if (ShouldExecuteImmediatly())
+  {
+    GetGraphicContextChecked().StartDrawingViewport(Viewport);
+  }
+  else
+  {
+    (void)AllocCommandAndConstruct<MEngine::RHI::MRHIStartDrawingViewportCommand>(Viewport);
+  }
 }
 
+void MRHIGraphicsCommandList::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport)
+{
+  if (ShouldExecuteImmediatly())
+  {
+    GetGraphicContextChecked().EndDrawingViewport(Viewport);
+  }
+  else
+  {
+    (void)AllocCommandAndConstruct<MEngine::RHI::MRHIEndDrawingViewportCommand>(Viewport);
+  }
 }
+
+} // namespace MEngine::RHI
+
+} // namespace MEngine

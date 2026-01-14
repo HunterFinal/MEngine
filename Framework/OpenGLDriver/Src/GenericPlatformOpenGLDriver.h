@@ -20,6 +20,8 @@ struct MOpenGLDevice;
 // MEngine::OpenGLDrv::MOpenGLContext
 struct MOpenGLContext;
 
+class  MOpenGLViewport;
+
 // Platform specific global function declaration
 bool InitOpenGL();
 
@@ -35,6 +37,16 @@ void DestroyOpenGLContext(IN MEngine::OpenGLDrv::MOpenGLContext* Context);
 
 // Returns true when opengl rendering context exist
 bool GLHasRenderingContext();
+
+// Returns the pointer to the platform specific window handle
+void* GetNativeWindow(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext);
+
+bool  BlitToViewport(IN MEngine::OpenGLDrv::MOpenGLDevice* Device, IN MEngine::OpenGLDrv::MOpenGLViewport* Viewport, IN uint32 Width, IN uint32 height);
+
+// Make current opengl context
+void  PlatformMakeCurrent(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext);
+void  PlatformSwapBuffers(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext);
+
 
 } // namespace MEngine::OpenGLDrv
 

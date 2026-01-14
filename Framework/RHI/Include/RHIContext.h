@@ -30,6 +30,8 @@ class IRHIGraphicsContext
     virtual void SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO) = 0;
     virtual void DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum) = 0;
     virtual void DrawPrimitiveIndexed(IN MEngine::RHI::MRHIBuffer* IndexBuffer, IN uint32 StartVertexIndex, IN uint32 StartIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum) = 0;
+    virtual void StartDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport) = 0;
+    virtual void EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport) = 0;
 };
 
 } // namespace MEngine::RHI

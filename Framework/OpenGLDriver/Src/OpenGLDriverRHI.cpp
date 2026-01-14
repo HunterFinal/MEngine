@@ -5,6 +5,7 @@
 #include "OpenGLShaders.h"
 #include "OpenGLVertexInputLayout.h"
 #include "OpenGLTypeTraits.h"
+#include "OpenGLViewport.h"
 
 #include "Macro/AssertionMacros.h"
 #include "Resources/RHIBufferWriter.h"
@@ -24,6 +25,25 @@ namespace
 
   GLenum GetBufferTypeFromDesc(const MEngine::RHI::MRHIBufferDescriptor& InDesc);
   GLsizei GetElementNumOfGLPrimitive(IN const uint32 PrimitiveNum, IN const GLenum GLPrimitiveType);
+
+  class MOpenGLScope_PlatformMakeCurrentContext final
+  {
+    public:
+      MOpenGLScope_PlatformMakeCurrentContext(IN MEngine::OpenGLDrv::MOpenGLViewport* Viewport)
+        : m_viewport{Viewport}
+      {
+        me_assert(Viewport != nullptr);
+        MEngine::OpenGLDrv::PlatformMakeCurrent(Viewport->GetGLContext());
+      }
+
+      ~MOpenGLScope_PlatformMakeCurrentContext()
+      {
+        MEngine::OpenGLDrv::PlatformMakeCurrent(nullptr);
+      }
+
+    private:
+      GLViewportRefPtr m_viewport;
+  };
 
 }
 
@@ -180,6 +200,22 @@ void MOpenGLRHIBackend::DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 Prim
 void MOpenGLRHIBackend::DrawPrimitiveIndexed(IN MEngine::RHI::MRHIBuffer* IndexBuffer, IN uint32 StartVertexIndex, IN uint32 StartIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum)
 {
   // FIXME
+}
+
+void MOpenGLRHIBackend::StartDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport)
+{
+  me_assert(Viewport != nullptr);
+  OPENGL_STATE_CHECK();
+
+  MOpenGLViewport* GLViewport = ::OpenGLCast(Viewport);
+
+  // Switch context to current viewport
+  PlatformMakeCurrent(GLViewport->GetGLContext());
+}
+
+void MOpenGLRHIBackend::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport)
+{
+
 }
 
 void MOpenGLRHIBackend::CommitGLDrawState()

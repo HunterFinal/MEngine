@@ -146,6 +146,8 @@ public:
   RHI_API void DrawPrimitiveIndexed();
   RHI_API void SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO);
   RHI_API void SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding);
+  RHI_API void StartDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport);
+  RHI_API void EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport);
 };
 
 template<typename LambdaType>
