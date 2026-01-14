@@ -13,10 +13,11 @@ namespace OpenGLDrv
 {
 
 class MOpenGLBuffer;
-
-template<typename RHIShaderBaseType, GLenum GLShaderTypeEnum>
-Requires_Derived_From(RHIShaderBaseType, MEngine::RHI::MRHIShader)
-class TOpenGLShader;
+class MOpenGLVertexShader;
+class MOpenGLPixelShader;
+class MOpenGLViewport;
+class MOpenGLGraphicsPipelineState;
+class MOpenGLVertexInputLayout;
 
 
 

@@ -5,10 +5,10 @@
 
 #include "CoreDefines.h"
 #include "RHIFwd.h"
-#include "OpenGLFwd.h"
-
-// TODO We will move Requires_Derived_From to Core
+#include "RHITypes.h"
 #include "RHIConcepts.h"
+
+#include "OpenGLFwd.h"
 
 namespace MEngine
 {
@@ -43,6 +43,18 @@ template<>
 struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIViewport>
 {
   using OpenGLType = MEngine::OpenGLDrv::MOpenGLViewport;
+};
+
+template<>
+struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIGraphicsPipelineState>
+{
+  using OpenGLType = MEngine::OpenGLDrv::MOpenGLGraphicsPipelineState;
+};
+
+template<>
+struct MOpenGLResourceTypeTraits<MEngine::RHI::MRHIVertexInputLayout>
+{
+  using OpenGLType = MEngine::OpenGLDrv::MOpenGLVertexInputLayout;
 };
 
 } // namespace MEngine::OpenGLDrv

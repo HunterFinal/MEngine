@@ -254,6 +254,23 @@ class MOpenGLLinkedShaderProgram final
 
 };
 
+void MOpenGLRHIBackend::SetShaderState(
+  IN MOpenGLVertexShader* VertexShader,
+  IN MOpenGLPixelShader*  PixelShader
+)
+{
+  OPENGL_STATE_CHECK();
+
+  // NOTE: We should not delete here
+  if (m_drawState.LinkedProgram != nullptr)
+  {
+    delete m_drawState.LinkedProgram;
+    m_drawState.LinkedProgram = nullptr;
+  }
+
+  m_drawState.LinkedProgram = new MOpenGLLinkedShaderProgram(VertexShader, PixelShader);
+}
+
 } // namespace MEngine::OpenGLDrv
 
 } // namespace MEngine

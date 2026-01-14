@@ -103,6 +103,11 @@ public:
     return m_ref;
   }
 
+  RefPtr Get() const
+  {
+    return m_ref;
+  }
+
   bool IsValid() const
   {
     return m_ref != nullptr;

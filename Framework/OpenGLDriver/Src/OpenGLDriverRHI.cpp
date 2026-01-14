@@ -6,6 +6,7 @@
 #include "OpenGLVertexInputLayout.h"
 #include "OpenGLTypeTraits.h"
 #include "OpenGLViewport.h"
+#include "OpenGLPipelineState.h"
 
 #include "Macro/AssertionMacros.h"
 #include "Resources/RHIBufferWriter.h"
@@ -25,25 +26,6 @@ namespace
 
   GLenum GetBufferTypeFromDesc(const MEngine::RHI::MRHIBufferDescriptor& InDesc);
   GLsizei GetElementNumOfGLPrimitive(IN const uint32 PrimitiveNum, IN const GLenum GLPrimitiveType);
-
-  class MOpenGLScope_PlatformMakeCurrentContext final
-  {
-    public:
-      MOpenGLScope_PlatformMakeCurrentContext(IN MEngine::OpenGLDrv::MOpenGLViewport* Viewport)
-        : m_viewport{Viewport}
-      {
-        me_assert(Viewport != nullptr);
-        MEngine::OpenGLDrv::PlatformMakeCurrent(Viewport->GetGLContext());
-      }
-
-      ~MOpenGLScope_PlatformMakeCurrentContext()
-      {
-        MEngine::OpenGLDrv::PlatformMakeCurrent(nullptr);
-      }
-
-    private:
-      GLViewportRefPtr m_viewport;
-  };
 
 }
 
@@ -156,7 +138,12 @@ RHIPixelShaderRefPtr MOpenGLRHIBackend::RHICreatePixelShader(IN std::span<const 
 
 RHIVertexInputLayoutRefPtr MOpenGLRHIBackend::RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc)
 {
+  return nullptr;
+}
 
+RHIGraphicsPipelineStateRefPtr MOpenGLRHIBackend::RHICreateGraphicsPSO(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc)
+{
+  return new MOpenGLGraphicsPipelineState{PSODesc};
 }
 
 void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding)
@@ -175,7 +162,15 @@ void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN ME
 
 void MOpenGLRHIBackend::SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPipelineState* GraphicsPSO)
 {
+  MOpenGLGraphicsPipelineState* GLGraphicsPSO = OpenGLCast(GraphicsPSO);
+  me_assert(GLGraphicsPSO != nullptr);
 
+  MOpenGLVertexShader* GLVertexShader = OpenGLCast(GLGraphicsPSO->PSODescriptor.RHIVertexShader.Get());
+  MOpenGLPixelShader*  GLPixelhader = OpenGLCast(GLGraphicsPSO->PSODescriptor.RHIPixelShader.Get());
+
+  SetShaderState(GLVertexShader, GLPixelhader);
+  m_RHIPrimitiveType = GLGraphicsPSO->PSODescriptor.PrimitiveType;
+  m_GLPrimitiveType  = GLGraphicsPSO->GLPrimitiveType;
 }
 
 void MOpenGLRHIBackend::DrawPrimitive(IN uint32 StartVertexIndex, IN uint32 PrimitiveNum, IN uint32 InstanceNum)
@@ -209,13 +204,23 @@ void MOpenGLRHIBackend::StartDrawingViewport(IN MEngine::RHI::MRHIViewport* View
 
   MOpenGLViewport* GLViewport = ::OpenGLCast(Viewport);
 
+  // We should not call StartDrawingViewport in same frame twice before EndDrawingViewport call
+  me_assert(m_drawingViewport != Viewport);
+  
+
+  // NOTE Temp
   // Switch context to current viewport
   PlatformMakeCurrent(GLViewport->GetGLContext());
+  PlatformSetupRenderTarget(GLViewport->GetGLContext());
 }
 
 void MOpenGLRHIBackend::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport)
 {
+  me_assert(Viewport != nullptr);
+  OPENGL_STATE_CHECK();
 
+  // We should not call StartDrawingViewport before the last
+  me_assert(m_drawingViewport == Viewport);
 }
 
 void MOpenGLRHIBackend::CommitGLDrawState()

@@ -45,6 +45,7 @@ bool  BlitToViewport(IN MEngine::OpenGLDrv::MOpenGLDevice* Device, IN MEngine::O
 
 // Make current opengl context
 void  PlatformMakeCurrent(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext);
+void  PlatformSetupRenderTarget(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext);
 void  PlatformSwapBuffers(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext);
 
 

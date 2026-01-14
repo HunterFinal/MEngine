@@ -287,11 +287,14 @@ MEngine::OpenGLDrv::MOpenGLContext* CreateOpenGLContext(IN MEngine::OpenGLDrv::M
   GLCreateModernContext(result, majorVer, minorVer, Device->RenderingContext.RenderingCtx);
   me_assert(resultRef.RenderingCtx);
   // Create opengl context
+  // Context specific VAO and FBO
   {
     MOpenGLWindowsScoped_MakeCurrentContext scopeGuard(resultRef);
     ::glGenVertexArrays(1, &resultRef.VAO);
     ::glGenFramebuffers(1, &resultRef.FBO);
+    GLSetupDefaultContextState();
   }
+
 
   return result;
 }

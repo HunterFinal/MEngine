@@ -6,6 +6,8 @@
 #include "OpenGLDriverDefines.h"
 #include "OpenGLUtils.h"
 #include "PlatformOpenGLDriver.h"
+#include "OpenGLState.h"
+#include "OpenGLFwd.h"
 
 #include "RHITypes.h"
 #include "RHIBackend.h"
@@ -36,6 +38,7 @@ public:
   OPENGLDRV_API RHIVertexShaderRefPtr RHICreateVertexShader(IN std::span<const uint8> ShaderCode) override final;
   OPENGLDRV_API RHIPixelShaderRefPtr RHICreatePixelShader(IN std::span<const uint8> ShaderCode) override final;
   OPENGLDRV_API RHIVertexInputLayoutRefPtr RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc) override final;
+  OPENGLDRV_API RHIGraphicsPipelineStateRefPtr   RHICreateGraphicsPSO(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc) override final;
   /**End IRHIBackend interface */
 
   /**Start IRHIGraphicsContext interface */
@@ -52,8 +55,20 @@ public:
 private:
   void CommitGLDrawState();
 
+  // These functions will be called before drawing any primitive
+  void BindShaderState();
+  
+  void SetShaderState(
+    IN MOpenGLVertexShader* VertexShader,
+    IN MOpenGLPixelShader*  PixelShader
+  );
+
 private:
   MOpenGLDevice* m_device;
+
+  MOpenGLViewport* m_drawingViewport;
+
+  MOpenGLDrawState m_drawState;
 
   MEngine::RHI::EPrimitiveTopologyType m_RHIPrimitiveType;
   GLenum                               m_GLPrimitiveType;

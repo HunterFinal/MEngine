@@ -21,12 +21,8 @@ class MOpenGLGraphicsPipelineState : public MEngine::RHI::MRHIGraphicsPipelineSt
 public: 
   MOpenGLGraphicsPipelineState(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc);
 
-  const GLVertexShaderRefPtr                 VertexShader;
-  const GLPixelShaderRefPtr                  PixelShader;  
-  const GLVertexInputLayoutRefPtr            InputLayout;
-  
-  const MOpenGLLinkedShaderProgram*          GLProgram;
-  const GLenum                               PrimitiveType;
+  MEngine::RHI::MRHIGraphicsPipelineStateDescriptor PSODescriptor;
+  const GLenum                                      GLPrimitiveType;
 
 };
 
