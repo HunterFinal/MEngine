@@ -19,11 +19,23 @@ namespace OpenGLDrv
 
 struct MOpenGLVertexElement
 {
+  // Specifies the type of vertex data
   GLenum GLFormat;
+
+  // Offset of where the position data begins
   GLuint Offset;
+
+  // Specifies which vertex attribute we want to configure
   GLuint AttribLocation;
+
+  // Size of the vertex attribute
   GLint AttribSize;
+
+  // Specifies if we want the data to be normalized
   GLboolean bNormalized;
+
+  // Specifies which vertex buffer binding we want to reference
+  uint8 BindingSlotIndex;
 
 };
 
@@ -35,11 +47,9 @@ struct MOpenGLVertexBufferBinding
 
   constexpr MOpenGLVertexBufferBinding()
     : VertexBufferResource{0}
-    , Stride{-1}
+    , Stride{0}
     , Divisor{0}
   { }
-
-  MOpenGLVertexBufferBinding(IN const MEngine::RHI::MRHIVertexBinding& RHIBinding);
 };
 
 #if HAS_CPP_11
@@ -68,6 +78,5 @@ public:
 } // namespace MEngine
 
 TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::OpenGLDrv::MOpenGLVertexInputLayout>, GLVertexInputLayoutRefPtr);
-
 
 #endif // _ME_OPENGLDRV_VERTEXINPUTLAYOUT_

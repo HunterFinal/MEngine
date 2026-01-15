@@ -26,6 +26,7 @@ namespace
 
   GLenum GetBufferTypeFromDesc(const MEngine::RHI::MRHIBufferDescriptor& InDesc);
   GLsizei GetElementNumOfGLPrimitive(IN const uint32 PrimitiveNum, IN const GLenum GLPrimitiveType);
+  void SetupGLFormat(OUT MEngine::OpenGLDrv::MOpenGLVertexElement& GLElement, IN MEngine::RHI::ERHIVertexFormat RHIFormat);
 
 }
 
@@ -138,7 +139,51 @@ RHIPixelShaderRefPtr MOpenGLRHIBackend::RHICreatePixelShader(IN std::span<const 
 
 RHIVertexInputLayoutRefPtr MOpenGLRHIBackend::RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc)
 {
-  return nullptr;
+  // Setup vertex element
+  MOpenGLVertexElements GLVertexElems{};
+
+  int32 inVertexElementCnt = VertexElements.size() <= MEngine::RHI::MaxVertexElementCount ? VertexElements.size() : MEngine::RHI::MaxVertexElementCount;
+  for (int32 i = 0; i < inVertexElementCnt; ++i)
+  {
+    const MEngine::RHI::MRHIVertexElement& RHIElement = VertexElements[i];
+    MOpenGLVertexElement& GLElement = GLVertexElems[i];
+    GLElement.AttribLocation = RHIElement.Location;
+    GLElement.Offset = RHIElement.Offset;
+    GLElement.BindingSlotIndex = RHIElement.SlotIndex;
+    SetupGLFormat(GLElement, RHIElement.Format);
+  }
+
+  // Setup vertex buffer binding
+  MOpenGLVertexBufferBindings GLBufferBindings{};
+  if (!BindingDesc.IsNull())
+  {
+    for (int32 i = 0; i < BindingDesc.GetBindingMaxSize(); ++i)
+    {
+      if (BindingDesc.IsBindingValid(i))
+      {
+        GLBufferBindings[i].Stride = BindingDesc.Bindings[i].Stride;
+        
+        using enum MEngine::RHI::ERHIVertexInputRate;
+        switch (BindingDesc.Bindings[i].InputRate)
+        {
+          case PerInstance:
+          {
+            GLBufferBindings[i].Divisor = 1;
+          }
+          break;
+
+          case PerVertex:
+          {
+            GLBufferBindings[i].Divisor = 0;
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  return new MOpenGLVertexInputLayout{GLVertexElems, GLBufferBindings};
+
 }
 
 RHIGraphicsPipelineStateRefPtr MOpenGLRHIBackend::RHICreateGraphicsPSO(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc)
@@ -148,15 +193,16 @@ RHIGraphicsPipelineStateRefPtr MOpenGLRHIBackend::RHICreateGraphicsPSO(IN const 
 
 void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding)
 {
-  me_assert(BindingSlotIndex < MEngine::RHI::MAX_STAGE_NUM);
+  me_assert(BindingSlotIndex < MEngine::RHI::MaxVertexBindingCount);
   me_assert(VertexBuffer != nullptr);
+  me_assert(m_drawState.InputLayout != nullptr);
 
   OPENGL_STATE_CHECK();
 
   // Bind Vertex for future drawing
   MOpenGLBuffer* GLBuffer = OpenGLCast(VertexBuffer);
 
-  #error Bind to cache
+  m_drawState.InputLayout->GLBindings[BindingSlotIndex].VertexBufferResource = GLBuffer->GLResource();
 
 }
 
@@ -166,9 +212,10 @@ void MOpenGLRHIBackend::SetGraphicsPipelineState(IN MEngine::RHI::MRHIGraphicsPi
   me_assert(GLGraphicsPSO != nullptr);
 
   MOpenGLVertexShader* GLVertexShader = OpenGLCast(GLGraphicsPSO->PSODescriptor.RHIVertexShader.Get());
-  MOpenGLPixelShader*  GLPixelhader = OpenGLCast(GLGraphicsPSO->PSODescriptor.RHIPixelShader.Get());
+  MOpenGLPixelShader*  GLPixelShader = OpenGLCast(GLGraphicsPSO->PSODescriptor.RHIPixelShader.Get());
+  MOpenGLVertexInputLayout* GLVertexInputLayout = OpenGLCast(GLGraphicsPSO->PSODescriptor.RHIInputLayout.Get());
 
-  SetShaderState(GLVertexShader, GLPixelhader);
+  SetShaderState(GLVertexShader, GLPixelShader, GLVertexInputLayout);
   m_RHIPrimitiveType = GLGraphicsPSO->PSODescriptor.PrimitiveType;
   m_GLPrimitiveType  = GLGraphicsPSO->GLPrimitiveType;
 }
@@ -225,7 +272,45 @@ void MOpenGLRHIBackend::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewpo
 
 void MOpenGLRHIBackend::CommitGLDrawState()
 {
-  #error Setup draw state by cached context state
+
+  {
+    BindShaderState();
+  }
+
+  {
+    BindVertexArrays();
+  }
+
+}
+
+void MOpenGLRHIBackend::BindVertexArrays()
+{
+  OPENGL_STATE_CHECK();
+
+  const MOpenGLVertexInputLayout* inputLayout = m_drawState.InputLayout;
+  me_assert((inputLayout != nullptr) && inputLayout->GLVertexElements.size() <= MEngine::RHI::MaxVertexElementCount);
+
+  for (int32 i = 0; i < inputLayout->GLVertexElements.size(); ++i)
+  {
+    const MOpenGLVertexElement& GLVertexElem = inputLayout->GLVertexElements[i];
+    uint32 bindingSlotIndex = GLVertexElem.BindingSlotIndex;
+    me_assert(bindingSlotIndex < inputLayout->GLBindings.size())
+    const MOpenGLVertexBufferBinding& GLBinding = inputLayout->GLBindings[bindingSlotIndex];
+
+    // Bind vertex attribute
+    // Here we always bind vertex buffer.So a hardcoding is enough
+    ::glBindBuffer(GL_ARRAY_BUFFER, GLBinding.VertexBufferResource);
+
+    // Start binding attribute
+    ::glEnableVertexAttribArray(GLVertexElem.AttribLocation);
+    ::glVertexAttribPointer(GLVertexElem.AttribLocation, GLVertexElem.AttribSize, GLVertexElem.GLFormat, GLVertexElem.bNormalized, GLBinding.Stride, (void*)GLVertexElem.Offset);
+
+    // Bind divisor
+    ::glVertexAttribDivisor(GLVertexElem.AttribLocation, GLBinding.Divisor);
+  }
+
+  // Unbind vertex buffer
+  ::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 } // namespace MEngine::OpenGLDrv
@@ -275,6 +360,35 @@ namespace
     }
 
     return result;
+  }
+
+  void SetupGLFormat(OUT MEngine::OpenGLDrv::MOpenGLVertexElement& GLElement, IN MEngine::RHI::ERHIVertexFormat RHIFormat)
+  {
+    using enum MEngine::RHI::ERHIVertexFormat;
+    switch (RHIFormat)
+    {
+      case Float2:
+      {
+        GLElement.GLFormat = GL_FLOAT;
+        GLElement.AttribSize = 2;
+        GLElement.bNormalized = GL_FALSE;
+      }
+      break;
+      case Float3:
+      {
+        GLElement.GLFormat = GL_FLOAT;
+        GLElement.AttribSize = 3;
+        GLElement.bNormalized = GL_FALSE;
+      }
+      break;
+
+      //
+      default:
+      {
+        me_assert(false);
+      }
+      break;
+    }
   }
 
 } // nameless namespace

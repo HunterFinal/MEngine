@@ -128,6 +128,11 @@ struct MRHIVertexBindingDescriptor
   {
     return BindingValidFlags == 0;
   }
+
+  uint32 GetBindingMaxSize() const
+  {
+    return SIZE_OF_ARRAY(Bindings);
+  }
   
 };
 static_assert(sizeof(MRHIVertexBindingDescriptor::BindingValidFlags) * 8 >= MEngine::RHI::MaxVertexBindingCount, "BindingValidFlags will not able to mark all bits of Bindings. struct MRHIVertexBindingDescriptor");

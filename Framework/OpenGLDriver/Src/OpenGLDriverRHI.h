@@ -57,10 +57,12 @@ private:
 
   // These functions will be called before drawing any primitive
   void BindShaderState();
+  void BindVertexArrays();
   
   void SetShaderState(
     IN MOpenGLVertexShader* VertexShader,
-    IN MOpenGLPixelShader*  PixelShader
+    IN MOpenGLPixelShader*  PixelShader,
+    IN MOpenGLVertexInputLayout* InputLayout
   );
 
 private:

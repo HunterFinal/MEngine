@@ -247,16 +247,17 @@ class MOpenGLLinkedShaderProgram final
       GetOpenGLProgramCache()[m_programKey] = this;
     }
 
+  GLuint GLProgramResource() const { return m_programResource; } 
+
   private:
     const MOpenGLCachedLinkedShaderProgramKey m_programKey;
     GLuint m_programResource;
-
-
 };
 
 void MOpenGLRHIBackend::SetShaderState(
   IN MOpenGLVertexShader* VertexShader,
-  IN MOpenGLPixelShader*  PixelShader
+  IN MOpenGLPixelShader*  PixelShader,
+  IN MOpenGLVertexInputLayout* InputLayout
 )
 {
   OPENGL_STATE_CHECK();
@@ -269,7 +270,20 @@ void MOpenGLRHIBackend::SetShaderState(
   }
 
   m_drawState.LinkedProgram = new MOpenGLLinkedShaderProgram(VertexShader, PixelShader);
+  m_drawState.InputLayout = InputLayout;
 }
+
+void MOpenGLRHIBackend::BindShaderState()
+{
+  OPENGL_STATE_CHECK();
+
+  const MOpenGLLinkedShaderProgram* const linkedProgram = m_drawState.LinkedProgram;
+  if (linkedProgram != nullptr)
+  {
+    ::glUseProgram(linkedProgram->GLProgramResource());
+  }
+}
+
 
 } // namespace MEngine::OpenGLDrv
 
