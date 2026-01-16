@@ -3,71 +3,75 @@
 #ifndef _ME_OPENGLDRV_RESOURCE_
 #define _ME_OPENGLDRV_RESOURCE_
 
-#include "GenericPlatformOpenGLDriver.h"
+#include "Templates/TypeCast.h"
+
 #include "Utils/RHIRefCountPtr.h"
 #include "Resources/RHIBuffers.h"
-#include "Templates/TypeCast.h"
+
+#include "PlatformOpenGLDriver.h"
 
 namespace MEngine
 {
 
 namespace OpenGLDrv
 {
-  class MOpenGLResource
-  {
-    private:
-      friend class MOpenGLBuffer;
-      friend class MOpenGLShader;
 
-      explicit MOpenGLResource(IN GLenum InType)
-        : Type{InType}
-        , Resource{0}
-      {}
+class MOpenGLResource
+{
+  private:
+    friend class MOpenGLBuffer;
+    friend class MOpenGLShader;
 
-    public:
-      void Bind();
-      void OnDeleted();
+    explicit MOpenGLResource(IN GLenum InType)
+      : Type{InType}
+      , Resource{0}
+    {}
 
-      GLenum Type;
-      GLuint Resource;
-  };
+  public:
+    void Bind();
+    void OnDeleted();
 
-  class MOpenGLBuffer : public MEngine::RHI::MRHIBuffer
-  {
-    public:
-      MOpenGLBuffer(IN MEngine::RHI::MRHICommandList* CmdList, IN GLenum BufferType, IN const MEngine::RHI::MRHIBufferDescriptor& Descriptor, IN const void* Data);      
-      virtual ~MOpenGLBuffer();
+    GLenum Type;
+    GLuint Resource;
+};
 
-      void BindToOpenGL();
+class MOpenGLBuffer : public MEngine::RHI::MRHIBuffer
+{
+  public:
+    MOpenGLBuffer(IN MEngine::RHI::MRHICommandList* CmdList, IN GLenum BufferType, IN const MEngine::RHI::MRHIBufferDescriptor& Descriptor, IN const void* Data);      
+    virtual ~MOpenGLBuffer();
 
-      void* Map(IN uint32 InSize, IN uint32 InOffset);
+    void BindToOpenGL();
 
-      void Unmap();
+    void* Map(IN uint32 InSize, IN uint32 InOffset);
 
-      GLenum GLType() { return m_nativeResource.Type; }
-      GLenum GLUsage() { return IsDynamic() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW; } 
-      GLuint GLResource() { return m_nativeResource.Resource; }
-      GLuint* GLResourceAddress() { return &(m_nativeResource.Resource); }
+    void Unmap();
 
-      bool IsDynamic() const { return (::EnumCast(GetDesc().BufferUsage) & ::EnumCast(MEngine::RHI::EBufferUsageType::Dynamic)) != 0; }
+    GLenum GLType() { return m_nativeResource.Type; }
+    GLenum GLUsage() { return IsDynamic() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW; } 
+    GLuint GLResource() { return m_nativeResource.Resource; }
+    GLuint* GLResourceAddress() { return &(m_nativeResource.Resource); }
 
-    private:
-      void ReleaseResource();
+    bool IsDynamic() const { return (::EnumCast(GetDesc().BufferUsage) & ::EnumCast(MEngine::RHI::EBufferUsageType::Dynamic)) != 0; }
 
-    private:
-      struct MappingInfo
-      {
-        void* MapData = nullptr;
-        uint32 MapSize = 0;
-        uint32 MapOffset = 0;
-        bool bWasMapDataAllocated = false;
-      } m_mappingState;
+  private:
+    void ReleaseResource();
 
-      MOpenGLResource m_nativeResource;
-      bool m_bIsMapping;
-  };
-}
+  private:
+    struct MappingInfo
+    {
+      void* MapData = nullptr;
+      uint32 MapSize = 0;
+      uint32 MapOffset = 0;
+      bool bWasMapDataAllocated = false;
+    } m_mappingState;
 
-}
+    MOpenGLResource m_nativeResource;
+    bool m_bIsMapping;
+};
+
+} // namespace MEngine::OpenGLDrv
+
+} // namespace MEngine
 
 #endif // _ME_OPENGLDRV_RESOURCE_

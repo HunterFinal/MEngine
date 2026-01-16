@@ -52,6 +52,9 @@ public:
 
   MOpenGLDevice* GetGLDevice() const { return m_device; }
 
+  void GLBindBuffer(IN GLenum BufferType, IN GLuint BufferResource);
+  void GLOnBufferDeleted(IN GLenum BufferType, IN GLuint BufferResource);
+
 private:
   void CommitGLDrawState();
 
@@ -77,7 +80,7 @@ private:
 
 };
 
-MOpenGLRHIBackend* GetGLBackend();
+MEngine::OpenGLDrv::MOpenGLRHIBackend& GetGLBackend();
 
 } // namespace MEngine::OpenGLDrv
 

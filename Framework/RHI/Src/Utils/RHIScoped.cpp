@@ -11,9 +11,9 @@ MRHIScoped_SwitchGraphicsPipeline::MRHIScoped_SwitchGraphicsPipeline(IN MRHIComm
   : m_cmdList{CmdList}
   , m_bGraphicsPipelineSet{false}
   {
-    if (m_cmdList.GetPipeline() == ERHIPipelineState::None)
+    if (m_cmdList.GetPipeline() == ERHIPipeline::None)
     {
-      m_cmdList.SwitchPipeline(ERHIPipelineState::Graphics);
+      m_cmdList.SwitchPipeline(ERHIPipeline::Graphics);
       m_bGraphicsPipelineSet = true;
     }
   }
@@ -22,7 +22,7 @@ MRHIScoped_SwitchGraphicsPipeline::~MRHIScoped_SwitchGraphicsPipeline()
 {
   if (m_bGraphicsPipelineSet)
   {
-    m_cmdList.SwitchPipeline(ERHIPipelineState::None);
+    m_cmdList.SwitchPipeline(ERHIPipeline::None);
   }
 }
 

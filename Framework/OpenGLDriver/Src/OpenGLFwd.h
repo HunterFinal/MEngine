@@ -13,13 +13,10 @@ namespace OpenGLDrv
 {
 
 class MOpenGLBuffer;
-class MOpenGLVertexShader;
-class MOpenGLPixelShader;
+class MOpenGLShader;
 class MOpenGLViewport;
 class MOpenGLGraphicsPipelineState;
 class MOpenGLVertexInputLayout;
-
-
 
 } // namespace MEngine::OpenGLDrv
 

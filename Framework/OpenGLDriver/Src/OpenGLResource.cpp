@@ -1,5 +1,6 @@
 ﻿#include "OpenGLResource.h"
 #include "OpenGLCommands.h"
+#include "OpenGLDriverRHI.h"
 #include "RHICommandList.h"
 
 namespace MEngine
@@ -12,14 +13,15 @@ void MOpenGLResource::Bind()
 {
   OPENGL_STATE_CHECK();
 
-  // FIXME Do something to bind this resource to global state
+  GetGLBackend().GLBindBuffer(Type, Resource);
+
 }
 
 void MOpenGLResource::OnDeleted()
 {
   OPENGL_STATE_CHECK();
 
-  // FIXME Do something to bind this resource to global state
+  GetGLBackend().GLOnBufferDeleted(Type, Resource);
 }
 
 MOpenGLBuffer::MOpenGLBuffer(IN MEngine::RHI::MRHICommandList* CmdList, IN GLenum BufferType, IN const MEngine::RHI::MRHIBufferDescriptor& Descriptor, IN const void* Data)

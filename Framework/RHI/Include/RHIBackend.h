@@ -16,6 +16,7 @@
 #include "Modules/DynamicModule.h"
 
 #include <span>
+#include <vector>
 
 namespace MEngine
 {

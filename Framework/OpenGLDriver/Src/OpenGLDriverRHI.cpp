@@ -28,6 +28,7 @@ namespace
   GLsizei GetElementNumOfGLPrimitive(IN const uint32 PrimitiveNum, IN const GLenum GLPrimitiveType);
   void SetupGLFormat(OUT MEngine::OpenGLDrv::MOpenGLVertexElement& GLElement, IN MEngine::RHI::ERHIVertexFormat RHIFormat);
 
+  static MEngine::OpenGLDrv::MOpenGLRHIBackend* g_GLBackend = nullptr;
 }
 
 extern void DeleteAllShaderResources();
@@ -41,6 +42,8 @@ namespace OpenGLDrv
 MOpenGLRHIBackend::MOpenGLRHIBackend()
   : m_device{nullptr}
 {
+  me_assert(g_GLBackend == nullptr);
+  g_GLBackend = this;
   const bool bInitSuccess = InitOpenGL();
   me_assert(bInitSuccess);
   m_device = CreateOpenGLDevice();
@@ -299,14 +302,17 @@ void MOpenGLRHIBackend::BindVertexArrays()
 
     // Bind vertex attribute
     // Here we always bind vertex buffer.So a hardcoding is enough
-    ::glBindBuffer(GL_ARRAY_BUFFER, GLBinding.VertexBufferResource);
-
-    // Start binding attribute
-    ::glEnableVertexAttribArray(GLVertexElem.AttribLocation);
-    ::glVertexAttribPointer(GLVertexElem.AttribLocation, GLVertexElem.AttribSize, GLVertexElem.GLFormat, GLVertexElem.bNormalized, GLBinding.Stride, (void*)GLVertexElem.Offset);
-
-    // Bind divisor
-    ::glVertexAttribDivisor(GLVertexElem.AttribLocation, GLBinding.Divisor);
+    if (GLBinding.VertexBufferResource != 0)
+    {
+      ::glBindBuffer(GL_ARRAY_BUFFER, GLBinding.VertexBufferResource);
+  
+      // Start binding attribute
+      ::glEnableVertexAttribArray(GLVertexElem.AttribLocation);
+      ::glVertexAttribPointer(GLVertexElem.AttribLocation, GLVertexElem.AttribSize, GLVertexElem.GLFormat, GLVertexElem.bNormalized, GLBinding.Stride, (void*)GLVertexElem.Offset);
+  
+      // Bind divisor
+      ::glVertexAttribDivisor(GLVertexElem.AttribLocation, GLBinding.Divisor);
+    }
   }
 
   // Unbind vertex buffer
@@ -392,3 +398,9 @@ namespace
   }
 
 } // nameless namespace
+
+MEngine::OpenGLDrv::MOpenGLRHIBackend& GetGLBackend()
+{
+  me_assert(g_GLBackend != nullptr);
+  return *g_GLBackend;
+}

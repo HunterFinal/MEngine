@@ -14,10 +14,9 @@ MOpenGLViewport::MOpenGLViewport(IN void* WindowHandle, IN uint32 Width, IN uint
 {
   me_assert(WindowHandle != nullptr);
 
-  MOpenGLRHIBackend* GLBackend = GetGLBackend();
-  me_assert(GLBackend != nullptr);
+  MOpenGLRHIBackend& GLBackend = GetGLBackend();
 
-  MOpenGLDevice* device = GLBackend->GetGLDevice();
+  MOpenGLDevice* device = GLBackend.GetGLDevice();
   me_assert(device != nullptr);
 
   m_GLContext = MEngine::OpenGLDrv::CreateOpenGLContext(device, WindowHandle);

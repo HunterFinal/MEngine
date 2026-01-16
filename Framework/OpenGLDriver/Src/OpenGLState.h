@@ -12,14 +12,15 @@ namespace MEngine
 namespace OpenGLDrv
 {
 
+class MOpenGLLinkedShaderProgram;
+
 struct MOpenGLDrawState
 {
-
-MOpenGLLinkedShaderProgram* LinkedProgram;  
-GLVertexShaderRefPtr VertexShader;
-GLPixelShaderRefPtr  PixelShader;
-GLVertexInputLayoutRefPtr InputLayout;
-
+  MOpenGLLinkedShaderProgram* LinkedProgram;  
+  GLVertexShaderRefPtr        VertexShader;
+  GLPixelShaderRefPtr         PixelShader;
+  GLVertexInputLayoutRefPtr   InputLayout;
+  GLuint                      BoundVBO;
 };
 
 } // namespace MEngine::OpenGLDrv 

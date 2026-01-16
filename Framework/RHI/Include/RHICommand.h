@@ -5,6 +5,9 @@
 
 #include "RHIDefines.h"
 #include "RHIConcepts.h"
+#include "Resources/RHIBuffers.h"
+#include "Resources/RHIPipelineState.h"
+#include "Resources/RHIViewport.h"
 
 #include <type_traits>
 #include <utility>

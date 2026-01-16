@@ -3,8 +3,8 @@
 #ifndef _ME_OPENGLDRV_SHADERS_
 #define _ME_OPENGLDRV_SHADERS_
 
-#include "PlatformOpenGLDriver.h"
 #include "OpenGLResource.h"
+
 #include "Resources/RHIShaders.h"
 
 // TODO
@@ -57,9 +57,9 @@ public:
   GLenum GLShaderType()                   const { return m_nativeResource.Type       ; }
   MOpenGLCachedShaderKey GLSLCodeKey()    const { return m_GLSLCodeKey               ; }
 
-  private:
-    MOpenGLCachedShaderKey m_GLSLCodeKey;
-    MOpenGLResource m_nativeResource;
+private:
+  MOpenGLCachedShaderKey m_GLSLCodeKey;
+  MOpenGLResource m_nativeResource;
 };
 
 template<typename RHIShaderBaseType, GLenum GLShaderTypeEnum>
