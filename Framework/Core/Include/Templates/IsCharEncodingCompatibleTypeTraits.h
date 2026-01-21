@@ -15,7 +15,7 @@ namespace
     CHAR_TYPE_CONCEPT SourceEncodingType, 
     CHAR_TYPE_CONCEPT DestinationEncodingType
   >
-  constexpr bool IsCharEncodingCompatibleImpl()
+  static constexpr bool IsCharEncodingCompatibleImpl()
   {
     if constexpr (std::is_same_v<SourceEncodingType, DestinationEncodingType>)
     {

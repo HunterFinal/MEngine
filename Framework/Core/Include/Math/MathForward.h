@@ -7,6 +7,7 @@
 #include "HAL/Platform.h"
 #include "Macro/TypeAliasMacro.h"
 #include "Misc/ConceptsStoragePlace.h"
+#include "Math/VectorConcepts.h"
 
 // Template types forward declarations
 namespace MEngine::Math
@@ -15,6 +16,9 @@ namespace MEngine::Math
   template<typename T> struct MVector2D;
   template<FLOATING_TYPE_CONCEPT T, uint32 AlignSize> struct alignas(AlignSize) MVector4;
   template<FLOATING_TYPE_CONCEPT T, uint32 AlignSize> struct alignas(AlignSize) MMatrix4x4;
+  template<typename T>
+  Int_Vector_Requirement(T)
+  struct MIntVector2;
 }
 
 // Concrete types forward declarations
@@ -28,6 +32,12 @@ TYPEDEF(MEngine::Math::MVector2D<double>, Vector2d);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2F);
 TYPEDEF(MEngine::Math::MVector2D<float>, Vector2f);
+TYPEDEF(MEngine::Math::MIntVector2<int32>, IntVector2);
+TYPEDEF(MEngine::Math::MIntVector2<int64>, Int64Vector2);
+TYPEDEF(MEngine::Math::MIntVector2<uint32>, UIntVector2);
+TYPEDEF(MEngine::Math::MIntVector2<uint64>, UInt64Vector2);
+TYPEDEF(IntVector2, IntPoint);
+TYPEDEF(IntVector2, IntSize);
 
 #define COMMA ,
 

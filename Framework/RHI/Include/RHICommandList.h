@@ -51,6 +51,10 @@ public:
   Requires_RHICommand_Callable(MRHICommandList, LambdaType)
   void PushLambda(IN LambdaType&& Lambda);
 
+  template<typename CommandType, typename... ConstructArgs>
+  Requires_Derived_From(CommandType, MEngine::RHI::IRHICommand)
+  CommandType* AllocCommandAndConstruct(ConstructArgs&&... Args);
+
   RHI_API bool IsRecording() const;
 
   RHI_API bool IsExecuting() const;
@@ -77,9 +81,6 @@ public:
 
   RHI_API void* AllocMemcpy(const void* Src, IN SIZE_T AllocSize, IN SIZE_T Alignment);
 
-  template<typename CommandType, typename... ConstructArgs>
-  CommandType* AllocCommandAndConstruct(ConstructArgs&&... Args);
-
 protected:
   void ActivatePipeline(MEngine::RHI::ERHIPipeline NewPipeline);
 
@@ -88,8 +89,8 @@ private:
 
   RHI_API void* Alloc(IN SIZE_T AllocSize, IN SIZE_T Alignment);
 
-  template<typename CmdType>
-  Requires_Derived_From(MEngine::RHI::IRHICommand, CmdType)
+  template<typename CommandType>
+  Requires_Derived_From(CommandType, MEngine::RHI::IRHICommand)
   void* AllocCommandInternal();
 
 private:
@@ -107,17 +108,18 @@ private:
 };
 
 template<typename CommandType, typename... ConstructArgs>
+Requires_Derived_From(CommandType, MEngine::RHI::IRHICommand)
 CommandType* MRHICommandList::AllocCommandAndConstruct(ConstructArgs&&... Args)
 {
   static_assert(sizeof(CommandType) > 0, "Can not use incomplete type in AllocCommandAndConstruct");
-  return new (AllocCommandInternal(sizeof(CommandType), alignof(CommandType))) CommandType{std::forward<ConstructArgs>(Args)...};
+  return new ( AllocCommandInternal( sizeof(CommandType), alignof(CommandType ) ) ) CommandType{std::forward<ConstructArgs>(Args)...};
 }
 
-template<typename CmdType>
-Requires_Derived_From(MEngine::RHI::IRHICommand, CmdType)
+template<typename CommandType>
+Requires_Derived_From(CommandType, MEngine::RHI::IRHICommand)
 void* MRHICommandList::AllocCommandInternal()
 {
-  return AllocCommandInternal(sizeof(CmdType), alignof(CmdType));
+  return AllocCommandInternal(sizeof(CommandType), alignof(CommandType));
 }
 
 template<typename LambdaType>
@@ -163,7 +165,6 @@ void MRHIGraphicsCommandList::PushLambda(IN LambdaType&& Lambda)
     (void)AllocCommandAndConstruct< MEngine::RHI::MRHILambdaCommand< MRHIGraphicsCommandList, LambdaType > >(std::forward<LambdaType>(Lambda));
   }
 }
-
 
 
 } // namespace MEngine::RHI

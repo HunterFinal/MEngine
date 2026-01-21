@@ -86,6 +86,16 @@ namespace MEngine
       // Null window would never be minimized
       return false;
     }
+
+    void* MNullApplicationWindow::GetNativeWindowHandle() const
+    {
+      return nullptr;
+    }
+
+    IntSize MNullApplicationWindow::GetWindowSize() const
+    {
+      return IntSize{0, 0};
+    }
     #pragma endregion MAbstractWindow interface implementation
     /**End of MAbstractWindow interface implementation */
 

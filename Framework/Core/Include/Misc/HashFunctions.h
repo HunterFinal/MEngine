@@ -47,7 +47,7 @@ FORCEINLINE HashType FNV1a(IN const void* Src, IN SIZE_T Size)
 {
   HashType result = MFNV1aTypeTraits<HashType>::FNV_Offset_Basis;
 
-  const uint8* scrTemp = reinterpret_cast<const uint8*>(Src);
+  const uint8* srcTemp = reinterpret_cast<const uint8*>(Src);
   for (SIZE_T i = 0; i < Size; ++i)
   {
     result ^= srcTemp[i];

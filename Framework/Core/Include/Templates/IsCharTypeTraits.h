@@ -45,6 +45,6 @@ namespace TypeTraits
   template<typename CharType>
   constexpr inline bool IsCharType_V = IsCharTypeImpl<std::remove_cvref_t<CharType>>();
 } // namespace MEngine::TypeTraits
-} // namespace MEngine::TypeTraits
+} // namespace MEngine
 
 #endif // _ME_CORE_TEMPLATES_IS_CHAR_TYPE_TRAITS_

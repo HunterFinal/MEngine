@@ -60,18 +60,18 @@ public:
 
   TRHIRefCountPtr& operator=(const TRHIRefCountPtr& OtherCopy)
   {
-    if (this->m_ref != OtherCopy->m_ref)
+    if (m_ref != OtherCopy.m_ref)
     {
-      if (OtherCopy->m_ref != nullptr)
+      if (OtherCopy.m_ref != nullptr)
       {
-        OtherCopy->m_ref->AddRef();
+        OtherCopy.m_ref->AddRef();
       }
-      if (this->m_ref != nullptr)
+      if (m_ref != nullptr)
       {
-        this->m_ref->RemoveRef();
+        m_ref->RemoveRef();
       }
 
-      this->m_ref = OtherCopy->m_ref;
+      m_ref = OtherCopy.m_ref;
     }
 
     return *this;

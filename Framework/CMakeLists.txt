@@ -113,19 +113,6 @@ target_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/spdlog/include
 )
 
-# dll copy
-add_custom_command(TARGET MEngine POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-          $<TARGET_FILE:Core>
-          $<TARGET_FILE:OTGT>
-          $<TARGET_FILE:Game>
-          $<TARGET_FILE:Application>
-          $<TARGET_FILE:InputCore>
-          $<TARGET_FILE:RHI>
-          $<TARGET_FILE:FutureFlexCore>
-          $<TARGET_FILE_DIR:MEngine>
-)
-
 # Generate module manifest
 get_property(ALL_MODULES GLOBAL PROPERTY MODULE_NAMES)
 

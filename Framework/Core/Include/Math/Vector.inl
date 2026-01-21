@@ -4,8 +4,8 @@
 // NOTE: Inline file of Vector.h to seperate declaration and implementation
 //
 
-#ifndef __ME__CORE__VECTOR__INL__
-#define __ME__CORE__VECTOR__INL__
+#ifndef _ME_CORE_MATH_VECTOR_INL_
+#define _ME_CORE_MATH_VECTOR_INL_
 
 namespace MEngine
 {
@@ -386,4 +386,4 @@ namespace MEngine
   }
 }
 
-#endif 
+#endif // _ME_CORE_MATH_VECTOR_INL_

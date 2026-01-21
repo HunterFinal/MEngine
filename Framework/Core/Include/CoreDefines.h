@@ -30,7 +30,7 @@
 #endif // DEFAULT_VAR
 
 // MEngine specific macro
-#define _MENGINE_VER CONCAT(_ME_VER_MAJ,_ME_VER_MIN)
+#define _MENGINE_VER CONCAT(_ME_VER_MAJ, _ME_VER_MIN)
 
 #define CONCAT(x, y) x ## y
 #define _ME_VER_MAJ 1

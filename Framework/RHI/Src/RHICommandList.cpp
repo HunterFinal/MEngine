@@ -50,7 +50,7 @@ MRHICommandList::~MRHICommandList()
 void* MRHICommandList::AllocCommandInternal(IN SIZE_T AllocSize, IN SIZE_T Alignment)
 {
   me_assert(!IsExecuting());
-  me_assert(!IsRecording());
+  me_assert(IsRecording());
 
   IRHICommand* newCmd = reinterpret_cast<IRHICommand*>(m_memoryManager.Allocate(AllocSize, Alignment));
   m_commandChain.PushBack(newCmd);

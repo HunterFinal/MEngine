@@ -73,7 +73,7 @@ class TOpenGLShader : public RHIShaderBaseType, public MOpenGLShader
 
     uint64 GetGLHash() const
     {
-      return RHIShaderBaseType::GLSLCodeKey().GetHash();
+      return MOpenGLShader::GLSLCodeKey().GetHash();
     }
 };
 

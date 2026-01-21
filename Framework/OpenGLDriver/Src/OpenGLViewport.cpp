@@ -36,6 +36,11 @@ void* MOpenGLViewport::GetNativeWindowHandle() const
   return MEngine::OpenGLDrv::GetNativeWindow(m_GLContext);
 }
 
+void MOpenGLViewport::Resize(IN uint32 NewWidth, IN uint32 NewHeight)
+{
+  
+}
+
 } // namespace MEngine::OpenGLDrv
 
 } // namespace MEngine

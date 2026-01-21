@@ -38,6 +38,8 @@ namespace MEngine
         APP_API virtual void SetWindowMode(IN EWindowMode NewWindowMode) override; 
         APP_API virtual bool IsMaximized() const override;
         APP_API virtual bool IsMinimized() const override;
+        APP_API virtual void* GetNativeWindowHandle() const override;
+        APP_API virtual IntSize GetWindowSize() const override;
         #pragma endregion MAbstractWindow interface
         /**End of MAbstractWindow interface */
 

@@ -7,7 +7,6 @@
 
 #include <string>
 
-
 #ifndef PREDEFINED_MODULE_NAME
   #define PREDEFINED_MODULE_NAME nullptr
 #endif

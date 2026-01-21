@@ -8,7 +8,7 @@ namespace RHIGlobals
 {
   MEngine::RHI::IRHIBackend* CreateGlobalRHIBackend()
   {
-    MEngine::RHI::IRHIModule* RHIModule = MEngine::Core::MDynamicModuleManager::Get().LoadModule<MEngine::RHI::IRHIModule>("OpenGLDrv");
+    MEngine::RHI::IRHIModule* RHIModule = MEngine::Core::MDynamicModuleManager::Get().LoadModule<MEngine::RHI::IRHIModule>("OpenGLDriver");
 
     if (RHIModule != nullptr)
     {

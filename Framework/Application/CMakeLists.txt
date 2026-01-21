@@ -38,7 +38,7 @@ target_compile_features(
 target_compile_definitions(
   Application
   PRIVATE
-  APP_DLL_BUILD
+  APP_EXPORT
 )
 
 target_include_directories(

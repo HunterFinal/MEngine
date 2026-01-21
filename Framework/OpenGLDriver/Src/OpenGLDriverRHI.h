@@ -32,13 +32,14 @@ public:
   OPENGLDRV_API void Initialize() override final;
   OPENGLDRV_API void Shutdown() override final;
   OPENGLDRV_API MEngine::RHI::IRHIGraphicsContext* GetDefaultGraphicsContext() override final;
-  OPENGLDRV_API MEngine::RHI::MRHIBufferWriter RHICreateBufferWriter(MEngine::RHI::MRHICommandList& CmdList, IN const MEngine::RHI::MRHIBufferDescriptor& Descriptor) override final;
   OPENGLDRV_API void* RHIMapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer, IN uint32 Size, IN uint32 Offset, IN MEngine::RHI::EResourceAccessMode AccessMode) override final;
   OPENGLDRV_API void RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer) override final;
-  OPENGLDRV_API RHIVertexShaderRefPtr RHICreateVertexShader(IN std::span<const uint8> ShaderCode) override final;
-  OPENGLDRV_API RHIPixelShaderRefPtr RHICreatePixelShader(IN std::span<const uint8> ShaderCode) override final;
-  OPENGLDRV_API RHIVertexInputLayoutRefPtr RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc) override final;
+  OPENGLDRV_API MEngine::RHI::MRHIBufferWriter   RHICreateBufferWriter(MEngine::RHI::MRHICommandList& CmdList, IN const MEngine::RHI::MRHIBufferDescriptor& Descriptor) override final;
+  OPENGLDRV_API RHIVertexShaderRefPtr            RHICreateVertexShader(IN std::span<const uint8> ShaderCode) override final;
+  OPENGLDRV_API RHIPixelShaderRefPtr             RHICreatePixelShader(IN std::span<const uint8> ShaderCode) override final;
+  OPENGLDRV_API RHIVertexInputLayoutRefPtr       RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc) override final;
   OPENGLDRV_API RHIGraphicsPipelineStateRefPtr   RHICreateGraphicsPSO(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc) override final;
+  OPENGLDRV_API RHIViewportRefPtr                RHICreateViewport(IN void* WindowHandle, IN uint32 Width, IN uint32 Height) override final;
   /**End IRHIBackend interface */
 
   /**Start IRHIGraphicsContext interface */

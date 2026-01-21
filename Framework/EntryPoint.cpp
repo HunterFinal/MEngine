@@ -25,6 +25,7 @@
 #include "Resources/RHIVertexInputLayout.h"
 #include "Resources/RHIBufferWriter.h"
 #include "Resources/RHIDescriptors.h"
+#include "Resources/RHIViewport.h"
 #include "RHICommandList.h"
 #include "RHIBackend.h"
 #include "RHIContext.h"
@@ -193,7 +194,7 @@ class AAA
 };
 
 static void RHITestInit();
-static void RHITestRender_Triangle();
+static void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height);
 static void RHITestRelease();
 
 #if 0
@@ -258,7 +259,7 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
     delete p;
   }
 
-  auto testFFWindow = std::make_shared<MEngine::FutureFlex::FFWindow>();
+  std::shared_ptr<MEngine::FutureFlex::FFWindow> testFFWindow = std::make_shared<MEngine::FutureFlex::FFWindow>();
 
   MEngine::FutureFlex::MFutureFlexApplication::Initialize();
   MEngine::FutureFlex::MFutureFlexApplication& FFApp = MEngine::FutureFlex::MFutureFlexApplication::GetInstance();
@@ -270,7 +271,8 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
   while(!Globals::IsApplicationExitRequested())
   {
     FFApp.Update();
-    RHITestRender_Triangle();
+    IntSize windowSize = testFFWindow->GetNativeWindow()->GetWindowSize();
+    RHITestRender_Triangle((HWND)testFFWindow->GetNativeWindow()->GetNativeWindowHandle(), windowSize.X, windowSize.Y);
   }
 
   RHITestRelease();
@@ -293,7 +295,7 @@ void RHITestInit()
   RHIGlobals::RHIInitialize();
 }
 
-void RHITestRender_Triangle()
+void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
 {
   me_assert(gRHIBackend != nullptr);
   // TODO Use RHI Here
@@ -350,14 +352,20 @@ void RHITestRender_Triangle()
   psoDesc.PrimitiveType   = MEngine::RHI::EPrimitiveTopologyType::TriangleList;
   RHIGraphicsPipelineStateRefPtr graphicsPSO = gRHIBackend->RHICreateGraphicsPSO(psoDesc);
 
+  RHIViewportRefPtr viewport = gRHIBackend->RHICreateViewport(Handle, Width, Height);
+
   cmdList->SetGraphicsPipelineState(graphicsPSO);
   cmdList->SetVertexBufferBinding(0, vertBuffer, bindings[0]);
+
+  cmdList->StartDrawingViewport(viewport);
 
   // Draw triangles
   cmdList->DrawPrimitive(0, 1, 1);
 
   // Exec commands
   cmdList->ExecuteCommands();
+
+  cmdList->EndDrawingViewport(viewport);
 
   delete cmdList;
 }

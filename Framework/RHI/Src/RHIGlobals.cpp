@@ -1,13 +1,10 @@
 ﻿#include "RHIGlobals.h"
 #include "RHIBackend.h"
 
-MEngine::RHI::IRHIBackend* gRHIBackend = nullptr; 
+MEngine::RHI::IRHIBackend* gRHIBackend = nullptr;
 bool gIsRHIBackendInitialized = false;
 
-namespace MEngine
-{
-
-namespace RHI
+namespace RHIGlobals
 {
 
 void RHIInitialize()
@@ -22,6 +19,8 @@ void RHIInitialize()
   if (gRHIBackend != nullptr)
   {
     gRHIBackend->Initialize();
+
+    IsRHIBackendInitialized = true;
   }
 }
 
@@ -32,10 +31,10 @@ void RHIShutdown()
     gRHIBackend->Shutdown();
     RHIGlobals::ShutdownGlobalRHIBackend(gRHIBackend);
     gRHIBackend = nullptr;
+
+    IsRHIBackendInitialized = false;
   }
 }
 
+} // namespace RHIGlobals
 
-}
-
-}

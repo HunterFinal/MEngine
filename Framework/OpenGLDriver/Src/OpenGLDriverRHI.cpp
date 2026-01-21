@@ -194,6 +194,11 @@ RHIGraphicsPipelineStateRefPtr MOpenGLRHIBackend::RHICreateGraphicsPSO(IN const 
   return new MOpenGLGraphicsPipelineState{PSODesc};
 }
 
+RHIViewportRefPtr MOpenGLRHIBackend::RHICreateViewport(IN void* WindowHandle, IN uint32 Width, IN uint32 Height)
+{
+  return new MOpenGLViewport{WindowHandle, Width, Height};
+}
+
 void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding)
 {
   me_assert(BindingSlotIndex < MEngine::RHI::MaxVertexBindingCount);
@@ -260,8 +265,8 @@ void MOpenGLRHIBackend::StartDrawingViewport(IN MEngine::RHI::MRHIViewport* View
 
   // NOTE Temp
   // Switch context to current viewport
-  PlatformMakeCurrent(GLViewport->GetGLContext());
-  PlatformSetupRenderTarget(GLViewport->GetGLContext());
+  // PlatformMakeCurrent(GLViewport->GetGLContext());
+  // PlatformSetupRenderTarget(GLViewport->GetGLContext());
 }
 
 void MOpenGLRHIBackend::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport)
@@ -317,6 +322,12 @@ void MOpenGLRHIBackend::BindVertexArrays()
 
   // Unbind vertex buffer
   ::glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+MEngine::OpenGLDrv::MOpenGLRHIBackend& GetGLBackend()
+{
+  me_assert(g_GLBackend != nullptr);
+  return *g_GLBackend;
 }
 
 } // namespace MEngine::OpenGLDrv
@@ -399,8 +410,3 @@ namespace
 
 } // nameless namespace
 
-MEngine::OpenGLDrv::MOpenGLRHIBackend& GetGLBackend()
-{
-  me_assert(g_GLBackend != nullptr);
-  return *g_GLBackend;
-}

@@ -1,5 +1,6 @@
 ﻿#include "OpenGLShaders.h"
 #include "OpenGLUtils.h"
+#include "OpenGLDriverRHI.h"
 
 #include "HAL/PlatformStringUtility.h"
 #include "Misc/HashFunctions.h"
@@ -12,7 +13,7 @@
 
 namespace
 {
-  void AppendGLSLString(OUT std::vector<const ANSICHAR>& Dest, IN const ANSICHAR* const Src);
+  void AppendGLSLString(OUT std::vector<ANSICHAR>& Dest, IN const ANSICHAR* const Src);
 
   bool VerifyShaderCompilationStatus(IN GLuint ShaderResource);
   bool VerifyProgramLinkStatus(IN GLuint ProgramResource);
@@ -82,20 +83,19 @@ struct MOpenGLCachedShaderValue
     return !m_glslCode.empty();
   }
 
-  void WriteGLSLShader(const std::vector<const ANSICHAR>& InGLSLCode)
+  void WriteGLSLShader(const std::vector<ANSICHAR>& InGLSLCode)
   {
     static_assert(sizeof(InGLSLCode[0]) == sizeof(char), "Expecting GLSL code type to be byte");
-    me_assert(!m_glslCode.empty());
 
     m_glslCode.clear();
     m_glslCode = InGLSLCode;
   }
 
-  std::vector<const ANSICHAR> GetGLSLShader() const { return m_glslCode; }
+  std::vector<ANSICHAR> GetGLSLShader() const { return m_glslCode; }
 
 
 private:
-  std::vector<const ANSICHAR> m_glslCode;
+  std::vector<ANSICHAR> m_glslCode;
 
 };
 
@@ -162,7 +162,7 @@ MOpenGLShader::MOpenGLShader(IN std::span<const uint8> ShaderCode, GLenum Shader
   , m_GLSLCodeKey{}
 { 
   // Read ShaderCode as string(std::vector<char>)
-  std::vector<const ANSICHAR> codeString{};
+  std::vector<ANSICHAR> codeString{};
   AppendGLSLString(codeString, reinterpret_cast<const ANSICHAR*>(ShaderCode.data()));
   uint64 codeHash = MEngine::Core::FNV1a64(codeString.data(), codeString.size());
 
@@ -197,7 +197,7 @@ void MOpenGLShader::Compile()
   if (resourceRef == 0)
   {
     resourceRef = ::glCreateShader(typeRef);
-    std::vector<const ANSICHAR> GLSLCode = foundValue.GetGLSLShader();
+    std::vector<ANSICHAR> GLSLCode = foundValue.GetGLSLShader();
     const ANSICHAR* GLSLCodeData = GLSLCode.data();
     // Assume there is a null terminator or '\n' in GLSL code
     const GLint codeLength = static_cast<GLint>(GLSLCode.size() - 1);
@@ -292,7 +292,7 @@ void MOpenGLRHIBackend::BindShaderState()
 namespace
 {
 
-void AppendGLSLString(OUT std::vector<const ANSICHAR>& Dest, IN const ANSICHAR* const Src)
+void AppendGLSLString(OUT std::vector<ANSICHAR>& Dest, IN const ANSICHAR* const Src)
 {
   me_assert(Src != nullptr);
 

@@ -206,6 +206,19 @@ namespace MEngine
       return false;
     }
 
+    void* MWindowsPlatformWindow::GetNativeWindowHandle() const
+    {
+      return m_hwnd->GetHandle();
+    }
+
+    IntSize MWindowsPlatformWindow::GetWindowSize() const
+    {
+      RECT clientRect{};
+      ::GetClientRect(m_hwnd->GetHandle(), &clientRect);
+     
+      return IntSize{clientRect.right - clientRect.left, clientRect.bottom - clientRect.top};
+    }
+
     MWindowsPlatformWindow::MWindowsPlatformWindow(IN MWindowsPlatformWindow&& Other) noexcept
       : Super(std::move(Other))
       , m_hwnd(std::move(Other.m_hwnd))

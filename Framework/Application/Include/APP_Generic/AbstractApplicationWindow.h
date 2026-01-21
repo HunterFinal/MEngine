@@ -7,6 +7,7 @@
 #include "APP_Generic/WindowDefinition.h"
 #include "Macro/ApplicationDefines.h"
 #include "Misc/NonCopyable.h"
+#include "Math/IntVector2.h"
 
 namespace MEngine
 {
@@ -39,6 +40,8 @@ namespace MEngine
         APP_API virtual void SetWindowMode(IN EWindowMode NewWindowMode) = 0; 
         APP_API virtual bool IsMaximized() const = 0;
         APP_API virtual bool IsMinimized() const = 0;
+        APP_API virtual void* GetNativeWindowHandle() const = 0;
+        APP_API virtual IntSize GetWindowSize() const = 0;
 
         APP_API MAbstractApplicationWindow(IN MAbstractApplicationWindow&& Other) noexcept;
         APP_API MAbstractApplicationWindow& operator=(IN MAbstractApplicationWindow&& Other) noexcept;

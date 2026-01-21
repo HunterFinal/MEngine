@@ -7,12 +7,14 @@
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
 
+#include "Math/IntVector2.h"
+
 #include <iostream>
 
 
 // MVector<Type>
-template<> const Vector3D Vector3D::ZeroVector(0.0, 0.0, 0.0);
-template<> const Vector3D Vector3D::OneVector(1.0, 1.0, 1.0);
+template<> const Vector3D Vector3D::ZeroVector{0.0, 0.0, 0.0};
+template<> const Vector3D Vector3D::OneVector{1.0, 1.0, 1.0};
 template<> const Vector3D Vector3D::RightVector(1.0, 0.0, 0.0);
 template<> const Vector3D Vector3D::LeftVector(-1.0, 0.0, 0.0);
 template<> const Vector3D Vector3D::UpVector(0.0, 1.0, 0.0);
@@ -62,13 +64,16 @@ template<> const Vector4 Vector4::ZeroVector(0.0f, 0.0f, 0.0f, 0.0f);
 template<> const Vector4 Vector4::OneVector(1.0f, 1.0f, 1.0f, 1.0f);
 
 // MMatrix4x4<Type, AlignSize>
-template<> const Matrix44D Matrix44D::Identity( Vector4D{1.0, 0.0, 0.0, 0.0},
-                                                Vector4D{0.0, 1.0, 0.0, 0.0},
-                                                Vector4D{0.0, 0.0, 1.0, 0.0},
-                                                Vector4D{0.0, 0.0, 0.0, 1.0});
+template<> const Matrix44D Matrix44D::Identity{ Vector4D{1.0, 0.0, 0.0, 0.0} ,
+                                                Vector4D{0.0, 1.0, 0.0, 0.0} ,
+                                                Vector4D{0.0, 0.0, 1.0, 0.0} ,
+                                                Vector4D{0.0, 0.0, 0.0, 1.0}};
 
-template<> const Matrix44 Matrix44::Identity( Vector4{1.0f, 0.0f, 0.0f, 0.0f},
-                                              Vector4{0.0f, 1.0f, 0.0f, 0.0f},
-                                              Vector4{0.0f, 0.0f, 1.0f, 0.0f},
-                                              Vector4{0.0f, 0.0f, 0.0f, 1.0f});
+template<> const Matrix44 Matrix44::Identity{ Vector4{1.0f, 0.0f, 0.0f, 0.0f} ,
+                                              Vector4{0.0f, 1.0f, 0.0f, 0.0f} ,
+                                              Vector4{0.0f, 0.0f, 1.0f, 0.0f} ,
+                                              Vector4{0.0f, 0.0f, 0.0f, 1.0f}};
 
+template<typename IntegerType>
+Int_Vector_Requirement(IntegerType)
+const MEngine::Math::MIntVector2<IntegerType> MEngine::Math::MIntVector2<IntegerType>::ZeroVector{0, 0};

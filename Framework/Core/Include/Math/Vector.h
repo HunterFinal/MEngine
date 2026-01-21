@@ -1,8 +1,8 @@
 ﻿// MEngine vector definition
 #pragma once
 
-#ifndef MENGINE_MATH_VECTOR
-#define MENGINE_MATH_VECTOR
+#ifndef _ME_CORE_MATH_VECTOR_
+#define _ME_CORE_MATH_VECTOR_
 
 #include "CoreDefines.h"
 #include "HAL/Platform.h"
@@ -486,4 +486,4 @@ namespace MEngine
 #pragma warning (pop) // (disable : 4459) (disable : 4544) (disable : 4201)
 #endif
 
-#endif // MENGINE_MATH_VECTOR
+#endif // _ME_CORE_VECTOR_

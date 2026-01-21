@@ -15,9 +15,7 @@ MRHIBufferWriter::MRHIBufferWriter(IN MRHICommandList* InCmdList, IN MRHIBuffer*
   , Buffer{InBuffer}
   , Destination{InDest}
   , DestSize{InDestSize}
-{
-  me_assert((InBuffer != nullptr) && (InCmdList != nullptr));
-}
+{ }
 
 MRHIBufferWriter::~MRHIBufferWriter()
 {
