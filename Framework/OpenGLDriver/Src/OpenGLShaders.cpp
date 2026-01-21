@@ -237,7 +237,6 @@ class MOpenGLLinkedShaderProgram final
 
       // Link
       ::glLinkProgram(m_programResource);
-
       const bool bSuccess = VerifyProgramLinkStatus(m_programResource);
       me_assert(bSuccess);
 
@@ -297,7 +296,10 @@ void AppendGLSLString(OUT std::vector<ANSICHAR>& Dest, IN const ANSICHAR* const 
   me_assert(Src != nullptr);
 
   const SIZE_T srcLength = MPlatformStringUtility::Strlen(Src);
-  for (SIZE_T i = 0; i < srcLength; ++i)
+
+  // FIXME
+  // Make for-loop run one more time to append null terminator 
+  for (SIZE_T i = 0; i < srcLength + 1; ++i)
   {
     Dest.push_back(Src[i]);
   }

@@ -4,6 +4,8 @@
 #include "GenericPlatformOpenGLDriver.h"
 #include "PlatformOpenGLDriverGlobals.h"
 
+#include <unordered_set>
+
 namespace
 {
   bool g_bOpenGLInitialized = false;
@@ -40,6 +42,8 @@ namespace
       HGLRC m_prevRenderingCtx;
       bool  m_bSameAsPrev;
   };
+
+  std::unordered_set<HGLRC> g_CreatedGLContexts{};
 
 } // nameless namespace
 
@@ -91,6 +95,9 @@ static void GLCreateModernContext(OUT MOpenGLContext* OutCtx, const int32 MajorV
   };
 
   OutCtx->RenderingCtx = ::wglCreateContextAttribsARB(OutCtx->DeviceCtx, ParentCtx, attribs);
+  
+  // TODO
+  g_CreatedGLContexts.emplace(OutCtx->RenderingCtx);
 }
 
 // Create a dummy opengl window
@@ -189,6 +196,8 @@ bool InitOpenGL()
   static bool s_bOpenGLSupported = false;
   if (!g_bOpenGLInitialized)
   {
+    g_CreatedGLContexts.clear();
+
     // 1. Create dummy OpenGL context for extension initialization
     // Create dummy window 
     MOpenGLContext dummyCtx{};
@@ -300,11 +309,16 @@ void DestroyOpenGLContext(IN MEngine::OpenGLDrv::MOpenGLContext* Context)
     {
       MOpenGLWindowsScoped_MakeCurrentContext ctxGuard(*Context);
   
-      ::glBindVertexArray(0);
+      //::glBindVertexArray(0);
       ::glDeleteVertexArrays(1, &Context->VAO);
       Context->VAO = 0;
       ::glDeleteFramebuffers(1, &Context->FBO);
       Context->FBO = 0;
+    }
+
+    if (g_CreatedGLContexts.contains(Context->RenderingCtx))
+    {
+      g_CreatedGLContexts.erase(Context->RenderingCtx);
     }
   
     ::wglDeleteContext(Context->RenderingCtx);
@@ -326,7 +340,7 @@ void DestroyOpenGLContext(IN MEngine::OpenGLDrv::MOpenGLContext* Context)
 
 bool GLHasRenderingContext()
 {
-  return CurrentContext() == g_currentDevice->RenderingContext.RenderingCtx;
+  return g_CreatedGLContexts.contains(CurrentContext());
 }
 
 void* GetNativeWindow(MEngine::OpenGLDrv::MOpenGLContext* GLContext)
@@ -340,6 +354,24 @@ bool BlitToViewport(IN MEngine::OpenGLDrv::MOpenGLDevice* Device, IN MEngine::Op
   me_assert((Device != nullptr) && (Device == g_currentDevice));
 
   return true;
+}
+
+
+void PlatformSetupRenderTarget(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext)
+{
+  me_assert(GLContext != nullptr);
+  GLContextMakeCurrent(GLContext->DeviceCtx, GLContext->RenderingCtx);
+
+  ::glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+  ::glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void PlatformSwapBuffers(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext)
+{
+  me_assert(GLContext != nullptr);
+
+  // URL:https://learn.microsoft.com/ja-jp/windows/win32/api/wingdi/nf-wingdi-swapbuffers
+  ::SwapBuffers(GLContext->DeviceCtx);
 }
 
 } // namespace MEngine::OpenGLDrv

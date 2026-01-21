@@ -61,6 +61,8 @@ class IRHIBackend
     virtual RHIVertexInputLayoutRefPtr       RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc) = 0;
     virtual RHIGraphicsPipelineStateRefPtr   RHICreateGraphicsPSO(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc) = 0;
     virtual RHIViewportRefPtr                RHICreateViewport(IN void* WindowHandle, IN uint32 Width, IN uint32 Height) = 0;
+
+    virtual void RHITest_DrawTriangle() = 0;
 };
 
 } // namespace MEngine::RHI

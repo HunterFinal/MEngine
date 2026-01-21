@@ -260,13 +260,13 @@ void MOpenGLRHIBackend::StartDrawingViewport(IN MEngine::RHI::MRHIViewport* View
   MOpenGLViewport* GLViewport = ::OpenGLCast(Viewport);
 
   // We should not call StartDrawingViewport in same frame twice before EndDrawingViewport call
-  me_assert(m_drawingViewport != Viewport);
-  
+  me_assert(m_drawingViewport != GLViewport);
+  m_drawingViewport = GLViewport;
 
   // NOTE Temp
   // Switch context to current viewport
   // PlatformMakeCurrent(GLViewport->GetGLContext());
-  // PlatformSetupRenderTarget(GLViewport->GetGLContext());
+  PlatformSetupRenderTarget(GLViewport->GetGLContext());
 }
 
 void MOpenGLRHIBackend::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewport)
@@ -274,8 +274,13 @@ void MOpenGLRHIBackend::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* Viewpo
   me_assert(Viewport != nullptr);
   OPENGL_STATE_CHECK();
 
+  MOpenGLViewport* GLViewport = ::OpenGLCast(Viewport);
   // We should not call StartDrawingViewport before the last
-  me_assert(m_drawingViewport == Viewport);
+  me_assert(m_drawingViewport == GLViewport);
+
+  PlatformSwapBuffers(GLViewport->GetGLContext());
+
+  m_drawingViewport = nullptr;
 }
 
 void MOpenGLRHIBackend::CommitGLDrawState()
@@ -312,16 +317,63 @@ void MOpenGLRHIBackend::BindVertexArrays()
       ::glBindBuffer(GL_ARRAY_BUFFER, GLBinding.VertexBufferResource);
   
       // Start binding attribute
-      ::glEnableVertexAttribArray(GLVertexElem.AttribLocation);
       ::glVertexAttribPointer(GLVertexElem.AttribLocation, GLVertexElem.AttribSize, GLVertexElem.GLFormat, GLVertexElem.bNormalized, GLBinding.Stride, (void*)GLVertexElem.Offset);
+      ::glEnableVertexAttribArray(GLVertexElem.AttribLocation);
   
       // Bind divisor
       ::glVertexAttribDivisor(GLVertexElem.AttribLocation, GLBinding.Divisor);
     }
   }
 
-  // Unbind vertex buffer
-  ::glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void MOpenGLRHIBackend::RHITest_DrawTriangle()
+{
+    // TODO Use RHI Here
+  const float vertice[] =
+  {
+    -0.5f, -0.5f, 0.0f,
+    0.5f,  -0.5f, 0.0f,
+    0.0f,   0.5f, 0.0f
+  };
+
+
+  const char *vertexShaderSource = "#version 460 core\nlayout (location = 0) in vec3 aPos;\nvoid main()\n{\ngl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n}\0";
+  const char *fragmentShaderSource = "#version 460 core\nout vec4 FragColor;\nvoid main()\n{\nFragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n}\0";
+
+  {
+    GLuint vao, vbo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertice), vertice, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12, nullptr);
+    glEnableVertexAttribArray(0);
+    
+    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vs, 1, &vertexShaderSource, nullptr);
+    glCompileShader(vs);
+    
+    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fs, 1, &fragmentShaderSource, nullptr);
+    glCompileShader(fs);
+    
+    GLuint prog = glCreateProgram();
+    glAttachShader(prog, vs);
+    glAttachShader(prog, fs);
+    glLinkProgram(prog);
+    glUseProgram(prog);
+    
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    
+    glDeleteProgram(prog);
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
+  }
 }
 
 MEngine::OpenGLDrv::MOpenGLRHIBackend& GetGLBackend()

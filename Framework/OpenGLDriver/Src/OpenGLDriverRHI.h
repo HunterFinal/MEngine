@@ -40,6 +40,8 @@ public:
   OPENGLDRV_API RHIVertexInputLayoutRefPtr       RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc) override final;
   OPENGLDRV_API RHIGraphicsPipelineStateRefPtr   RHICreateGraphicsPSO(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc) override final;
   OPENGLDRV_API RHIViewportRefPtr                RHICreateViewport(IN void* WindowHandle, IN uint32 Width, IN uint32 Height) override final;
+  
+  OPENGLDRV_API void RHITest_DrawTriangle() override final;
   /**End IRHIBackend interface */
 
   /**Start IRHIGraphicsContext interface */

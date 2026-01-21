@@ -21,6 +21,14 @@ struct MOpenGLDrawState
   GLPixelShaderRefPtr         PixelShader;
   GLVertexInputLayoutRefPtr   InputLayout;
   GLuint                      BoundVBO;
+
+  MOpenGLDrawState()
+    : LinkedProgram{nullptr}
+    , VertexShader{}
+    , PixelShader{}
+    , InputLayout{}
+    , BoundVBO{0}
+  { }
 };
 
 } // namespace MEngine::OpenGLDrv 

@@ -44,7 +44,7 @@ MRHICommandList::MRHICommandList()
 
 MRHICommandList::~MRHICommandList()
 {
-  me_assert(!IsExecuting() && !HasAnyCommand());
+  // me_assert(!IsExecuting() && !HasAnyCommand());
 }
 
 void* MRHICommandList::AllocCommandInternal(IN SIZE_T AllocSize, IN SIZE_T Alignment)
@@ -239,6 +239,11 @@ void MRHIGraphicsCommandList::EndDrawingViewport(IN MEngine::RHI::MRHIViewport* 
   {
     (void)AllocCommandAndConstruct<MEngine::RHI::MRHIEndDrawingViewportCommand>(Viewport);
   }
+}
+
+void MRHIGraphicsCommandList::Test_DrawTriangle()
+{
+  gRHIBackend->RHITest_DrawTriangle();
 }
 
 } // namespace MEngine::RHI
