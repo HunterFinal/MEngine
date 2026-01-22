@@ -342,11 +342,9 @@ void MOpenGLRHIBackend::RHITest_DrawTriangle()
   const char *fragmentShaderSource = "#version 460 core\nout vec4 FragColor;\nvoid main()\n{\nFragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n}\0";
 
   {
-    GLuint vao, vbo;
-    glGenVertexArrays(1, &vao);
+    GLuint vbo;
     glGenBuffers(1, &vbo);
     
-    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertice), vertice, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12, nullptr);
@@ -372,7 +370,6 @@ void MOpenGLRHIBackend::RHITest_DrawTriangle()
     glDeleteShader(vs);
     glDeleteShader(fs);
     glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
   }
 }
 

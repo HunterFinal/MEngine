@@ -9,7 +9,7 @@ namespace Math
 
 template<typename IntegerType>
 Int_Vector_Requirement(IntegerType)
-MIntVector2<IntegerType>::MIntVector2<IntegerType>(IN IntegerType InX, IN IntegerType InY)
+MIntVector2<IntegerType>::MIntVector2(IN IntegerType InX, IN IntegerType InY)
   : X{InX}
   , Y{InY}
 { }

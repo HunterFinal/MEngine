@@ -310,71 +310,64 @@ void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
     0.0f,   0.5f, 0.0f
   };
 
-
-  // const char *vertexShaderSource = "#version 460 core\nlayout (location = 0) in vec3 aPos;\nvoid main()\n{\ngl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n}\0";
-  // const char *fragmentShaderSource = "#version 460 core\nout vec4 FragColor;\nvoid main()\n{\nFragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n}\0";
+  const char *vertexShaderSource = "#version 460 core\nlayout (location = 0) in vec3 aPos;\nvoid main()\n{\ngl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n}\0";
+  const char *fragmentShaderSource = "#version 460 core\nout vec4 FragColor;\nvoid main()\n{\nFragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n}\0";
 
   MEngine::RHI::MRHIGraphicsCommandList* cmdList = new MEngine::RHI::MRHIGraphicsCommandList();
-  RHIViewportRefPtr viewport = gRHIBackend->RHICreateViewport(Handle, Width, Height);
   cmdList->SwitchPipeline(MEngine::RHI::ERHIPipeline::Graphics);
+  RHIViewportRefPtr viewport = gRHIBackend->RHICreateViewport(Handle, Width, Height);
   
   cmdList->StartDrawingViewport(viewport);
+  
+  MEngine::RHI::MRHIBufferDescriptor vertDesc{};
+  vertDesc.BufferSize = sizeof(vertice);
+  vertDesc.BufferUsage = static_cast<MEngine::RHI::EBufferUsageType>(::EnumCast(MEngine::RHI::EBufferUsageType::VertexBuffer) | ::EnumCast(MEngine::RHI::EBufferUsageType::Static));
+  vertDesc.ElementStride = sizeof(vertice);
+  vertDesc.BufferInitData = vertice;
+  RHIBufferRefPtr vertBuffer{};
+
+  // TODO This will create memory leak currently because of lacking of MRHIResource tracing process
+  {
+    MEngine::RHI::MRHIBufferWriter bufferWriter = cmdList->CreateBufferWriter(vertDesc);
+    vertBuffer = bufferWriter.Finalize();
+  }
+
+
+  RHIVertexShaderRefPtr vs = gRHIBackend->RHICreateVertexShader(std::span<const uint8>{(uint8*)vertexShaderSource , ::strlen(vertexShaderSource) + 1});
+  RHIPixelShaderRefPtr ps = gRHIBackend->RHICreatePixelShader(std::span<const uint8>{(uint8*)fragmentShaderSource , ::strlen(fragmentShaderSource) + 1});
+  
+  // Input layout and buffer bindings
+  std::vector<MEngine::RHI::MRHIVertexElement> vertexElems{};
+  MEngine::RHI::MRHIVertexElement elem{};
+  elem.Offset = 0;
+  elem.Format = MEngine::RHI::ERHIVertexFormat::Float3;
+  elem.Location = 0;
+  elem.SlotIndex = 0;
+  vertexElems.emplace_back(elem);
+
+  MEngine::RHI::MRHIVertexBinding bindings[MEngine::RHI::MaxVertexBindingCount];
+  bindings[0].Stride = sizeof(float) * 3;
+  bindings[0].InputRate = MEngine::RHI::ERHIVertexInputRate::PerVertex;
+  MEngine::RHI::MRHIVertexBindingDescriptor bindingDesc{1, bindings};
+
+  RHIVertexInputLayoutRefPtr inputLayout = gRHIBackend->RHICreateVertexInputLayout(vertexElems, bindingDesc);
+
+  // PSO
+  MEngine::RHI::MRHIGraphicsPipelineStateDescriptor psoDesc{};
+  psoDesc.RHIVertexShader = vs;
+  psoDesc.RHIPixelShader  = ps;
+  psoDesc.RHIInputLayout  = inputLayout;
+  psoDesc.PrimitiveType   = MEngine::RHI::EPrimitiveTopologyType::TriangleList;
+  RHIGraphicsPipelineStateRefPtr graphicsPSO = gRHIBackend->RHICreateGraphicsPSO(psoDesc);
+
+  cmdList->SetGraphicsPipelineState(graphicsPSO);
+  cmdList->SetVertexBufferBinding(0, vertBuffer, bindings[0]);
+
+  // Draw triangles
+  cmdList->DrawPrimitive(0, 1, 1);
+
+  // Exec commands
   cmdList->ExecuteCommands();
-
-  cmdList->Test_DrawTriangle();
-  
-
-  // MEngine::RHI::MRHIBufferDescriptor vertDesc{};
-  // vertDesc.BufferSize = sizeof(vertice);
-  // vertDesc.BufferUsage = static_cast<MEngine::RHI::EBufferUsageType>(::EnumCast(MEngine::RHI::EBufferUsageType::VertexBuffer) | ::EnumCast(MEngine::RHI::EBufferUsageType::Static));
-  // vertDesc.ElementStride = sizeof(vertice);
-  // vertDesc.BufferInitData = vertice;
-  // RHIBufferRefPtr vertBuffer{};
-
-  // // TODO This will create memory leak currently because of lacking of MRHIResource tracing process
-  // {
-  //   MEngine::RHI::MRHIBufferWriter bufferWriter = cmdList->CreateBufferWriter(vertDesc);
-  //   vertBuffer = bufferWriter.Finalize();
-  // }
-
-
-  // RHIVertexShaderRefPtr vs = gRHIBackend->RHICreateVertexShader(std::span<const uint8>{(uint8*)vertexShaderSource , ::strlen(vertexShaderSource) + 1});
-  // RHIPixelShaderRefPtr ps = gRHIBackend->RHICreatePixelShader(std::span<const uint8>{(uint8*)fragmentShaderSource , ::strlen(fragmentShaderSource) + 1});
-  
-  // // Input layout and buffer bindings
-  // std::vector<MEngine::RHI::MRHIVertexElement> vertexElems{};
-  // MEngine::RHI::MRHIVertexElement elem{};
-  // elem.Offset = 0;
-  // elem.Format = MEngine::RHI::ERHIVertexFormat::Float3;
-  // elem.Location = 0;
-  // elem.SlotIndex = 0;
-  // vertexElems.emplace_back(elem);
-
-  // MEngine::RHI::MRHIVertexBinding bindings[MEngine::RHI::MaxVertexBindingCount];
-  // bindings[0].Stride = sizeof(float) * 3;
-  // bindings[0].InputRate = MEngine::RHI::ERHIVertexInputRate::PerVertex;
-  // MEngine::RHI::MRHIVertexBindingDescriptor bindingDesc{1, bindings};
-
-  // RHIVertexInputLayoutRefPtr inputLayout = gRHIBackend->RHICreateVertexInputLayout(vertexElems, bindingDesc);
-
-  // // PSO
-  // MEngine::RHI::MRHIGraphicsPipelineStateDescriptor psoDesc{};
-  // psoDesc.RHIVertexShader = vs;
-  // psoDesc.RHIPixelShader  = ps;
-  // psoDesc.RHIInputLayout  = inputLayout;
-  // psoDesc.PrimitiveType   = MEngine::RHI::EPrimitiveTopologyType::TriangleList;
-  // RHIGraphicsPipelineStateRefPtr graphicsPSO = gRHIBackend->RHICreateGraphicsPSO(psoDesc);
-
-
-  // cmdList->SetGraphicsPipelineState(graphicsPSO);
-  // cmdList->SetVertexBufferBinding(0, vertBuffer, bindings[0]);
-
-
-  // // Draw triangles
-  // cmdList->DrawPrimitive(0, 1, 1);
-
-  // // Exec commands
-  // cmdList->ExecuteCommands();
 
   cmdList->EndDrawingViewport(viewport);
 

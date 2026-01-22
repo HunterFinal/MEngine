@@ -293,6 +293,7 @@ MEngine::OpenGLDrv::MOpenGLContext* CreateOpenGLContext(IN MEngine::OpenGLDrv::M
   {
     MOpenGLWindowsScoped_MakeCurrentContext scopeGuard(resultRef);
     ::glGenVertexArrays(1, &resultRef.VAO);
+    ::glBindVertexArray(resultRef.VAO);
     ::glGenFramebuffers(1, &resultRef.FBO);
     GLSetupDefaultContextState();
   }
