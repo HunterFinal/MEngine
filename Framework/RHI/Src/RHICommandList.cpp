@@ -6,6 +6,11 @@
 #include "Utils/RHIScoped.h"
 #include "Resources/RHIBufferWriter.h"
 
+namespace MEngine::RHI::Internal
+{
+  extern void FlushResourcesToDelete();
+}
+
 namespace MEngine
 {
 
@@ -44,7 +49,8 @@ MRHICommandList::MRHICommandList()
 
 MRHICommandList::~MRHICommandList()
 {
-  // me_assert(!IsExecuting() && !HasAnyCommand());
+  // Delete resources that reference count reach 0
+  MEngine::RHI::Internal::FlushResourcesToDelete();
 }
 
 void* MRHICommandList::AllocCommandInternal(IN SIZE_T AllocSize, IN SIZE_T Alignment)

@@ -206,7 +206,6 @@ int main(int argc, char** argv)
 int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTANCE hPrevInstance, IN MAYBE_UNUSED /**LPSTR */ char* lpCmdLine, IN MAYBE_UNUSED int32 nShowCmd)
 #endif
 {
-  // TODO
   gHInstance = hInstance;
 
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -219,47 +218,34 @@ int32 WINAPI WinMain(IN MAYBE_UNUSED HINSTANCE hInstance, IN MAYBE_UNUSED HINSTA
 
   // Calculate dot product
   // Result should be 0.5
-  using MEngine::Math::MVector;
-  MVector<float> vec3_1{1.0f, 0.0f, 0.0f};
-  MVector<float> vec3_2{1.0f, std::numbers::sqrt3_v<float>, 0.0f};
+  Vector3 vec3_1{1.0f, 0.0f, 0.0f};
+  Vector3 vec3_2{1.0f, std::numbers::sqrt3_v<float>, 0.0f};
 
   std::cout << "Result of dot product: " 
-            << MVector<float>::DotProduct(vec3_1, vec3_2.GetNormalizedCopy()) 
+            << Vector3::DotProduct(vec3_1, vec3_2.GetNormalizedCopy()) 
             << std::endl;
-
-  {
-    IApplicationInterface* app = GenerateAPP();
-    if (app != nullptr)
-    {
-      app->Startup();
-      app->Terminate();
-    }
-    delete app;
-  }
 
   MEngine::Core::MDebugger::CreateDefaultDebugger();
 
+  // {
+  //   OTGT::ITestCaseInterface* pTest = new MMathLibTestCase();
+  //   pTest->StartupTest_Interface();
+  //   pTest->RunTest_Interface();
+  //   delete pTest;
+
+  //   pTest = new DelegateTestCase();
+  //   pTest->StartupTest_Interface();
+  //   pTest->RunTest_Interface();
+  //   delete pTest;
+  // }
+
   {
-    OTGT::ITestCaseInterface* pTest = new MMathLibTestCase();
-    pTest->StartupTest_Interface();
-    pTest->RunTest_Interface();
-    delete pTest;
+    MEngine::Core::MWindowResizeEventInstance resize{};
 
-    pTest = new DelegateTestCase();
-    pTest->StartupTest_Interface();
-    pTest->RunTest_Interface();
-    delete pTest;
-  }
-
-  {
-    MEngine::Core::MWindowResizeEventInstance* p = new MEngine::Core::MWindowResizeEventInstance{};
-
-    p->ResizeEvent.AddStatic(&func_out);
+    resize.ResizeEvent.AddStatic(&func_out);
   
-    p->InvokeEvent(100u, 200u);
-    p->InvokeEvent(200u, 300u);
-  
-    delete p;
+    resize.InvokeEvent(100u, 200u);
+    resize.InvokeEvent(200u, 300u);
   }
 
   std::shared_ptr<MEngine::FutureFlex::FFWindow> testFFWindow = std::make_shared<MEngine::FutureFlex::FFWindow>();
@@ -305,7 +291,7 @@ void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
   // TODO Use RHI Here
   const float vertice[] =
   {
-    -0.5f, -0.5f, 0.0f,
+    -0.5f, -0.8f, 0.0f,
     0.5f,  -0.5f, 0.0f,
     0.0f,   0.5f, 0.0f
   };
@@ -316,9 +302,9 @@ void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
   MEngine::RHI::MRHIGraphicsCommandList* cmdList = new MEngine::RHI::MRHIGraphicsCommandList();
   cmdList->SwitchPipeline(MEngine::RHI::ERHIPipeline::Graphics);
   RHIViewportRefPtr viewport = gRHIBackend->RHICreateViewport(Handle, Width, Height);
-  
   cmdList->StartDrawingViewport(viewport);
-  
+
+  // Describe usage of vertex buffer
   MEngine::RHI::MRHIBufferDescriptor vertDesc{};
   vertDesc.BufferSize = sizeof(vertice);
   vertDesc.BufferUsage = static_cast<MEngine::RHI::EBufferUsageType>(::EnumCast(MEngine::RHI::EBufferUsageType::VertexBuffer) | ::EnumCast(MEngine::RHI::EBufferUsageType::Static));
@@ -332,11 +318,11 @@ void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
     vertBuffer = bufferWriter.Finalize();
   }
 
-
+  // Shader
   RHIVertexShaderRefPtr vs = gRHIBackend->RHICreateVertexShader(std::span<const uint8>{(uint8*)vertexShaderSource , ::strlen(vertexShaderSource) + 1});
   RHIPixelShaderRefPtr ps = gRHIBackend->RHICreatePixelShader(std::span<const uint8>{(uint8*)fragmentShaderSource , ::strlen(fragmentShaderSource) + 1});
   
-  // Input layout and buffer bindings
+  // Describe input layout of vertex
   std::vector<MEngine::RHI::MRHIVertexElement> vertexElems{};
   MEngine::RHI::MRHIVertexElement elem{};
   elem.Offset = 0;
@@ -349,9 +335,9 @@ void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
   bindings[0].Stride = sizeof(float) * 3;
   bindings[0].InputRate = MEngine::RHI::ERHIVertexInputRate::PerVertex;
   MEngine::RHI::MRHIVertexBindingDescriptor bindingDesc{1, bindings};
-
+  
   RHIVertexInputLayoutRefPtr inputLayout = gRHIBackend->RHICreateVertexInputLayout(vertexElems, bindingDesc);
-
+  
   // PSO
   MEngine::RHI::MRHIGraphicsPipelineStateDescriptor psoDesc{};
   psoDesc.RHIVertexShader = vs;
@@ -359,13 +345,12 @@ void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
   psoDesc.RHIInputLayout  = inputLayout;
   psoDesc.PrimitiveType   = MEngine::RHI::EPrimitiveTopologyType::TriangleList;
   RHIGraphicsPipelineStateRefPtr graphicsPSO = gRHIBackend->RHICreateGraphicsPSO(psoDesc);
-
+  
   cmdList->SetGraphicsPipelineState(graphicsPSO);
   cmdList->SetVertexBufferBinding(0, vertBuffer, bindings[0]);
 
   // Draw triangles
   cmdList->DrawPrimitive(0, 1, 1);
-
   // Exec commands
   cmdList->ExecuteCommands();
 

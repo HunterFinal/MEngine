@@ -78,7 +78,7 @@ MEngine::RHI::MRHIBufferWriter MOpenGLRHIBackend::RHICreateBufferWriter(MEngine:
   {
     // FIXME Wrap this inside another class to reduce human error
     // FIXME Maybe we should not new directly here?
-    MOpenGLBuffer* newGLBuffer = new MOpenGLBuffer{&CmdList, bufferType, Descriptor, nullptr};
+    MOpenGLBuffer* newGLBuffer = ::RHINewObject<MOpenGLBuffer>(&CmdList, bufferType, Descriptor, nullptr);
     auto defaultWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList&) mutable -> RHIBufferRefPtr
     {
       return std::move(Buffer);
@@ -92,7 +92,7 @@ MEngine::RHI::MRHIBufferWriter MOpenGLRHIBackend::RHICreateBufferWriter(MEngine:
     };
   }
 
-  MOpenGLBuffer* newGLBuffer = new MOpenGLBuffer{&CmdList, bufferType, Descriptor, Descriptor.BufferInitData};
+  MOpenGLBuffer* newGLBuffer = ::RHINewObject<MOpenGLBuffer>(&CmdList, bufferType, Descriptor, Descriptor.BufferInitData);
   auto mapWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList& CmdList) mutable -> RHIBufferRefPtr
   {
     CmdList.UnmapBuffer(Buffer);
@@ -132,12 +132,12 @@ void MOpenGLRHIBackend::RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, I
 
 RHIVertexShaderRefPtr MOpenGLRHIBackend::RHICreateVertexShader(IN std::span<const uint8> ShaderCode)
 {
-  return new MOpenGLVertexShader(ShaderCode);
+  return ::RHINewObject<MOpenGLVertexShader>(ShaderCode);
 }
 
 RHIPixelShaderRefPtr MOpenGLRHIBackend::RHICreatePixelShader(IN std::span<const uint8> ShaderCode)
 {
-  return new MOpenGLPixelShader(ShaderCode);
+  return ::RHINewObject<MOpenGLPixelShader>(ShaderCode);
 }
 
 RHIVertexInputLayoutRefPtr MOpenGLRHIBackend::RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc)
@@ -185,18 +185,18 @@ RHIVertexInputLayoutRefPtr MOpenGLRHIBackend::RHICreateVertexInputLayout(IN cons
     }
   }
 
-  return new MOpenGLVertexInputLayout{GLVertexElems, GLBufferBindings};
+  return ::RHINewObject<MOpenGLVertexInputLayout>(GLVertexElems, GLBufferBindings);
 
 }
 
 RHIGraphicsPipelineStateRefPtr MOpenGLRHIBackend::RHICreateGraphicsPSO(IN const MEngine::RHI::MRHIGraphicsPipelineStateDescriptor& PSODesc)
 {
-  return new MOpenGLGraphicsPipelineState{PSODesc};
+  return ::RHINewObject<MOpenGLGraphicsPipelineState>(PSODesc);
 }
 
 RHIViewportRefPtr MOpenGLRHIBackend::RHICreateViewport(IN void* WindowHandle, IN uint32 Width, IN uint32 Height)
 {
-  return new MOpenGLViewport{WindowHandle, Width, Height};
+  return ::RHINewObject<MOpenGLViewport>(WindowHandle, Width, Height);
 }
 
 void MOpenGLRHIBackend::SetVertexBufferBinding(IN uint32 BindingSlotIndex, IN MEngine::RHI::MRHIBuffer* VertexBuffer, IN const MEngine::RHI::MRHIVertexBinding& VertexBinding)
@@ -337,14 +337,15 @@ void MOpenGLRHIBackend::RHITest_DrawTriangle()
     0.0f,   0.5f, 0.0f
   };
 
-
   const char *vertexShaderSource = "#version 460 core\nlayout (location = 0) in vec3 aPos;\nvoid main()\n{\ngl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n}\0";
   const char *fragmentShaderSource = "#version 460 core\nout vec4 FragColor;\nvoid main()\n{\nFragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n}\0";
 
   {
-    GLuint vbo;
+    GLuint vao,vbo;
+    glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
-    
+  
+    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertice), vertice, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12, nullptr);
@@ -370,6 +371,7 @@ void MOpenGLRHIBackend::RHITest_DrawTriangle()
     glDeleteShader(vs);
     glDeleteShader(fs);
     glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
   }
 }
 

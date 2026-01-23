@@ -2,8 +2,13 @@
 
 #include "Macro/AssertionMacros.h"
 #include "Macro/BitOperationMacros.h"
+
 #include <atomic>
 #include <type_traits>
+
+#include <unordered_set>
+
+
 
 namespace MEngine
 {
@@ -97,9 +102,66 @@ struct MRHIResource::RefCountImpl
 
 };
 
+} // namespace MEngine::RHI
+
+} // namespace MEngine
+
+namespace MEngine::RHI::Internal
+{
+  void FlushResourceToDelete();
+  // TODO We currently manage all pending delete resource on single thread
+  // TODO Once we switch to multithread we should also change implementation too
+  class MRHIResourceManager final
+  {
+    public:
+      static MRHIResourceManager& Get()
+      {
+        static MRHIResourceManager s_Instance;
+        return s_Instance;
+      }
+
+      void EnqueuePendingDelete(IN MEngine::RHI::MRHIResource* PendingDeleteResource)
+      {
+        me_assert(PendingDeleteResource != nullptr);
+
+        // Call DestroyUntracked
+        if (PendingDeleteResource->IsUntracked())
+        {
+          PendingDeleteResource->DestroyUntracked();
+          return;
+        }
+
+        m_pendingDeletes.emplace(PendingDeleteResource); 
+      }
+
+      void FlushTrackedDeletingResources()
+      {
+        for (MEngine::RHI::MRHIResource* resource : m_pendingDeletes)
+        {
+          if (resource->m_pRefCountImpl->Disposing())
+          {
+            delete resource;
+          }
+        }
+
+        m_pendingDeletes.clear();
+      }
+
+    private:
+      std::unordered_set<MEngine::RHI::MRHIResource*> m_pendingDeletes;
+  };
+}
+
+namespace MEngine
+{
+
+namespace RHI
+{
+
 MRHIResource::MRHIResource(IN EResourceType InType)
   : mc_type{InType}
   , m_pRefCountImpl{std::make_unique<MRHIResource::RefCountImpl>()}
+  , m_trackState{Untracked}
 {}
 
 MRHIResource::~MRHIResource()
@@ -148,10 +210,18 @@ void MRHIResource::MarkDispose() const
 {
   if (!m_pRefCountImpl->MarkDispose(/**std::memory_order_release */))
   {
-    // FIXME Add this resource to pending dispose list
+    MEngine::RHI::Internal::MRHIResourceManager::Get().EnqueuePendingDelete(const_cast<MRHIResource*>(this));
   }
 }
 
 } // namespace MEngine::RHI
 
 } // namespace MEngine
+
+namespace MEngine::RHI::Internal
+{
+  void FlushResourcesToDelete()
+  {
+    MRHIResourceManager::Get().FlushTrackedDeletingResources();
+  }
+} // namespace MEngine::RHI::Internal
