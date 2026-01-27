@@ -86,10 +86,18 @@ struct MRHIBufferDescriptor
 
 };
 
+struct MRHIUniformBufferDescriptor
+{
+
+  
+
+  const uint32 ConstantBufferSize;
+};
+
 struct MRHIVertexBinding
 {
-  uint32 Stride;
-  MEngine::RHI::ERHIVertexInputRate InputRate;
+  const uint32 Stride;
+  const MEngine::RHI::ERHIVertexInputRate InputRate;
 
   constexpr MRHIVertexBinding()
     : Stride{0}

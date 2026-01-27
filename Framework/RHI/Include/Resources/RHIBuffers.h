@@ -28,6 +28,20 @@ private:
 
 };
 
+class MRHIUniformBuffer : public MRHIResource
+{
+
+public:
+  RHI_API MRHIUniformBuffer(const MRHIUniformBufferDescriptor& Descriptor);
+
+  const MRHIUniformBufferDescriptor& GetDesc() const { return m_descriptor; }
+  uint32 GetSize() const { return m_descriptor.ConstantBufferSize; }
+
+private:
+  const MRHIUniformBufferDescriptor m_descriptor;
+
+};
+
 } // namespace MEngine::RHI
 
 } // namespace MEngine

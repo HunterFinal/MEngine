@@ -76,7 +76,6 @@ struct MOpenGLContext
   { }
 };
 
-
 // Create a modern opengl context
 static void GLCreateModernContext(OUT MOpenGLContext* OutCtx, const int32 MajorVersion, const int32 MinorVersion, HGLRC ParentCtx)
 {
@@ -85,7 +84,7 @@ static void GLCreateModernContext(OUT MOpenGLContext* OutCtx, const int32 MajorV
   me_assert(OutCtx->DeviceCtx != nullptr);
 
   // URL:https://registry.khronos.org/OpenGL/extensions/ARB/WGL_ARB_create_context.txt
-  int attribs[] =
+  int32 attribs[] =
   {
     WGL_CONTEXT_MAJOR_VERSION_ARB, MajorVersion,
     WGL_CONTEXT_MINOR_VERSION_ARB, MinorVersion,
@@ -163,7 +162,7 @@ static void GLCreateDummyWindow(OUT MOpenGLContext* OutCtx)
 /**Windows specific OpenGL device */
 struct MOpenGLDevice
 {
-  MOpenGLContext RenderingContext;
+  MOpenGLContext GLContext;
 
   MOpenGLDevice()
   {
@@ -172,19 +171,19 @@ struct MOpenGLDevice
     g_currentDevice = this;
 
     // Initialize opengl context
-    GLCreateDummyWindow(&RenderingContext);
+    GLCreateDummyWindow(&GLContext);
 
     int32 majorVer = 0;
     int32 minorVer = 0;
     GLGetVersionForCoreProfile(majorVer, minorVer);
-    GLCreateModernContext(&RenderingContext, majorVer, minorVer, NULL);
-    GLContextMakeCurrent(RenderingContext.DeviceCtx, RenderingContext.RenderingCtx);
+    GLCreateModernContext(&GLContext, majorVer, minorVer, NULL);
+    GLContextMakeCurrent(GLContext.DeviceCtx, GLContext.RenderingCtx);
 
-    me_assert(RenderingContext.RenderingCtx != NULL);
+    me_assert(GLContext.RenderingCtx != NULL);
 
-    glGenVertexArrays(1, &RenderingContext.VAO);
-    glBindVertexArray(RenderingContext.VAO);
-    glGenFramebuffers(1, &RenderingContext.FBO);
+    glGenVertexArrays(1, &GLContext.VAO);
+    glBindVertexArray(GLContext.VAO);
+    glGenFramebuffers(1, &GLContext.FBO);
 
     GLSetupDefaultContextState();
   }
@@ -275,26 +274,27 @@ MEngine::OpenGLDrv::MOpenGLContext* CreateOpenGLContext(IN MEngine::OpenGLDrv::M
   me_assert((Device != nullptr) && (WindowHandle != nullptr));
 
   MOpenGLContext* result = new MOpenGLContext{};
-  MOpenGLContext& resultRef = *result;
-  resultRef.WindowHandle = reinterpret_cast<HWND>(WindowHandle);
-  resultRef.bDestroyWindowOnDispose = false;
-  resultRef.DeviceCtx = ::GetDC(resultRef.WindowHandle);
-  me_assert(resultRef.DeviceCtx != nullptr);
-  GLInitPixelFormat(resultRef.DeviceCtx);
+  result->WindowHandle = reinterpret_cast<HWND>(WindowHandle);
+  result->bDestroyWindowOnDispose = false;
+  result->DeviceCtx = ::GetDC(result->WindowHandle);
+  me_assert(result->DeviceCtx != nullptr);
+  GLInitPixelFormat(result->DeviceCtx);
   
   int32 majorVer = 0;
   int32 minorVer = 0;
   GLGetVersionForCoreProfile(majorVer, minorVer);
 
-  GLCreateModernContext(result, majorVer, minorVer, Device->RenderingContext.RenderingCtx);
-  me_assert(resultRef.RenderingCtx);
+  GLCreateModernContext(result, majorVer, minorVer, Device->GLContext.RenderingCtx);
+  me_assert(result->RenderingCtx);
+
   // Create opengl context
   // Context specific VAO and FBO
   {
-    MOpenGLWindowsScoped_MakeCurrentContext scopeGuard(resultRef);
-    ::glGenVertexArrays(1, &resultRef.VAO);
-    ::glBindVertexArray(resultRef.VAO);
-    ::glGenFramebuffers(1, &resultRef.FBO);
+    MOpenGLWindowsScoped_MakeCurrentContext scopeGuard(*result);
+    ::glGenVertexArrays(1, &result->VAO);
+    // VAO is OpenGL context dependent.So we should bind this to specific context
+    ::glBindVertexArray(result->VAO);
+    ::glGenFramebuffers(1, &result->FBO);
     GLSetupDefaultContextState();
   }
 
@@ -307,24 +307,21 @@ void DestroyOpenGLContext(IN MEngine::OpenGLDrv::MOpenGLContext* Context)
 
   // Release rendering context
   {
-    {
-      MOpenGLWindowsScoped_MakeCurrentContext ctxGuard(*Context);
-  
-      //::glBindVertexArray(0);
-      ::glDeleteVertexArrays(1, &Context->VAO);
-      Context->VAO = 0;
-      ::glDeleteFramebuffers(1, &Context->FBO);
-      Context->FBO = 0;
-    }
+    MOpenGLWindowsScoped_MakeCurrentContext ctxGuard(*Context);
 
-    if (g_CreatedGLContexts.contains(Context->RenderingCtx))
-    {
-      g_CreatedGLContexts.erase(Context->RenderingCtx);
-    }
-  
-    ::wglDeleteContext(Context->RenderingCtx);
-    Context->RenderingCtx = nullptr;
+    ::glDeleteVertexArrays(1, &Context->VAO);
+    Context->VAO = 0;
+    ::glDeleteFramebuffers(1, &Context->FBO);
+    Context->FBO = 0;
   }
+
+  if (g_CreatedGLContexts.contains(Context->RenderingCtx))
+  {
+    g_CreatedGLContexts.erase(Context->RenderingCtx);
+  }
+
+  ::wglDeleteContext(Context->RenderingCtx);
+  Context->RenderingCtx = nullptr;
 
   // Release device context
   ::ReleaseDC(Context->WindowHandle, Context->DeviceCtx);
@@ -418,10 +415,10 @@ namespace
 
   void GLContextMakeCurrent(HDC DeviceCtx, HGLRC RenderingCtx)
   {
-    BOOL result = wglMakeCurrent(DeviceCtx, RenderingCtx);
+    BOOL result = ::wglMakeCurrent(DeviceCtx, RenderingCtx);
     if (!result)
     {
-      result = wglMakeCurrent(NULL, NULL);
+      result = ::wglMakeCurrent(NULL, NULL);
     }
     
     me_assert(result);
