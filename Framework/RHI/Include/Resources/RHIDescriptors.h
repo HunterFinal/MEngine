@@ -15,6 +15,7 @@
 
 // TODO
 #include <memory>
+#include <set>
 
 namespace MEngine
 {
@@ -86,12 +87,18 @@ struct MRHIBufferDescriptor
 
 };
 
+struct MRHIUniformBufferField
+{
+  uint32 Offset;
+
+  EUniformBufferFieldBaseType BaseType;
+};
+
 struct MRHIUniformBufferDescriptor
 {
+  std::set<MRHIUniformBufferField> UniformBufferFields;
 
-  
-
-  const uint32 ConstantBufferSize;
+  uint32 UniformBufferSize;
 };
 
 struct MRHIVertexBinding
@@ -108,8 +115,6 @@ struct MRHIVertexBinding
   RHI_API friend bool operator!=(IN const MRHIVertexBinding& Lhs, IN const MRHIVertexBinding& Rhs);
 
 };
-
-
 
 struct MRHIVertexBindingDescriptor
 {

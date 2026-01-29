@@ -35,7 +35,7 @@ public:
   RHI_API MRHIUniformBuffer(const MRHIUniformBufferDescriptor& Descriptor);
 
   const MRHIUniformBufferDescriptor& GetDesc() const { return m_descriptor; }
-  uint32 GetSize() const { return m_descriptor.ConstantBufferSize; }
+  uint32 GetSize() const { return m_descriptor.UniformBufferSize; }
 
 private:
   const MRHIUniformBufferDescriptor m_descriptor;

@@ -27,6 +27,13 @@ enum class EResourceType : uint8
   MaxNum,
 };
 
+enum class EUniformBufferFieldBaseType : uint8
+{
+  VOID,
+
+  FLOAT32,
+};
+
 enum class EPrimitiveTopologyType : uint8
 {
   // PointList,
