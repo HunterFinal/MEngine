@@ -56,6 +56,7 @@ class IRHIBackend
     virtual void  RHIUnmapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer) = 0;
     
     virtual MEngine::RHI::MRHIBufferWriter   RHICreateBufferWriter(IN MEngine::RHI::MRHICommandList& CmdList, IN const MEngine::RHI::MRHIBufferDescriptor& Descriptor) = 0;
+    virtual RHIUniformBufferRefPtr           RHICreateUniformBuffer() = 0;
     virtual RHIVertexShaderRefPtr            RHICreateVertexShader(IN std::span<const uint8> ShaderCode) = 0;
     virtual RHIPixelShaderRefPtr             RHICreatePixelShader(IN std::span<const uint8> ShaderCode) = 0;
     virtual RHIVertexInputLayoutRefPtr       RHICreateVertexInputLayout(IN const std::vector<MEngine::RHI::MRHIVertexElement>& VertexElements, IN const MEngine::RHI::MRHIVertexBindingDescriptor& BindingDesc) = 0;

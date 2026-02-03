@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef _ME_CORE_TEMPLATES_IS_CHAR_TYPE_TRAITS_
-#define _ME_CORE_TEMPLATES_IS_CHAR_TYPE_TRAITS_
+#ifndef _ME_CORE_TEMPLATES_ISCHARTYPETRAITS_
+#define _ME_CORE_TEMPLATES_ISCHARTYPETRAITS_
 
 #include "CoreDefines.h"
 
@@ -10,23 +10,23 @@ namespace
   template<typename CharType>
   constexpr bool IsCharTypeImpl()
   {
-    if constexpr(std::is_same_v<CharType, ANSICHAR>)
+    if constexpr (std::is_same_v<CharType, ANSICHAR>)
     {
       return true;
     }
-    else if constexpr(std::is_same_v<CharType, WIDECHAR>)
+    else if constexpr (std::is_same_v<CharType, WIDECHAR>)
     {
       return true;
     }
-    else if constexpr(std::is_same_v<CharType, UTF8CHAR>)
+    else if constexpr (std::is_same_v<CharType, UTF8CHAR>)
     {
       return true;
     }
-    else if constexpr(std::is_same_v<CharType, UTF16CHAR>)
+    else if constexpr (std::is_same_v<CharType, UTF16CHAR>)
     {
       return true;
     }    
-    else if constexpr(std::is_same_v<CharType, UTF32CHAR>)
+    else if constexpr (std::is_same_v<CharType, UTF32CHAR>)
     {
       return true;
     }
@@ -47,4 +47,4 @@ namespace TypeTraits
 } // namespace MEngine::TypeTraits
 } // namespace MEngine
 
-#endif // _ME_CORE_TEMPLATES_IS_CHAR_TYPE_TRAITS_
+#endif // _ME_CORE_TEMPLATES_ISCHARTYPETRAITS_

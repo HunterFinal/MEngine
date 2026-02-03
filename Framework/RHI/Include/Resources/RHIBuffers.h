@@ -35,7 +35,7 @@ public:
   RHI_API MRHIUniformBuffer(const MRHIUniformBufferDescriptor& Descriptor);
 
   const MRHIUniformBufferDescriptor& GetDesc() const { return m_descriptor; }
-  uint32 GetSize() const { return m_descriptor.UniformBufferSize; }
+  uint32 GetUniformBufferSize() const { return m_descriptor.UniformBufferSize; }
 
 private:
   const MRHIUniformBufferDescriptor m_descriptor;
@@ -47,6 +47,7 @@ private:
 } // namespace MEngine
 
 TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::RHI::MRHIBuffer>, RHIBufferRefPtr);
+TYPEDEF(MEngine::RHI::TRHIRefCountPtr<MEngine::RHI::MRHIUniformBuffer>, RHIUniformBufferRefPtr);
 
 #endif // _ME_RHI_BUFFER_
 

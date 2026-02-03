@@ -87,6 +87,7 @@ struct MRHIBufferDescriptor
 
 };
 
+/**Uniform buffer associated */
 struct MRHIUniformBufferField
 {
   uint32 Offset;
@@ -99,7 +100,10 @@ struct MRHIUniformBufferDescriptor
   std::set<MRHIUniformBufferField> UniformBufferFields;
 
   uint32 UniformBufferSize;
+  uint8  UniformBufferBindingSlot;
 };
+
+
 
 struct MRHIVertexBinding
 {
