@@ -331,9 +331,11 @@ void RHITestRender_Triangle(HWND Handle, int32 Width, int32 Height)
   elem.SlotIndex = 0;
   vertexElems.emplace_back(elem);
 
-  MEngine::RHI::MRHIVertexBinding bindings[MEngine::RHI::MaxVertexBindingCount];
-  bindings[0].Stride = sizeof(float) * 3;
-  bindings[0].InputRate = MEngine::RHI::ERHIVertexInputRate::PerVertex;
+  MEngine::RHI::MRHIVertexBinding bindings[MEngine::RHI::MaxVertexBindingCount]
+  {
+    // index 0
+    {sizeof(float) *3, MEngine::RHI::ERHIVertexInputRate::PerVertex},
+  };
   MEngine::RHI::MRHIVertexBindingDescriptor bindingDesc{1, bindings};
   
   RHIVertexInputLayoutRefPtr inputLayout = gRHIBackend->RHICreateVertexInputLayout(vertexElems, bindingDesc);

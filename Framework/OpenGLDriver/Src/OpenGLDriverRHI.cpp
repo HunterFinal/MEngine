@@ -44,8 +44,9 @@ MOpenGLRHIBackend::MOpenGLRHIBackend()
 {
   me_assert(g_GLBackend == nullptr);
   g_GLBackend = this;
-  const bool bInitSuccess = InitOpenGL();
-  me_assert(bInitSuccess);
+
+  me_assert(InitOpenGL());
+  
   m_device = CreateOpenGLDevice();
   me_assert(m_device != nullptr);
 
@@ -55,12 +56,17 @@ MOpenGLRHIBackend::MOpenGLRHIBackend()
 
 void MOpenGLRHIBackend::Initialize()
 {
+  // TODO Flush stream to console or application gui
+  // Should not use cout immediately
   std::cout << "OpenGL RHI Backend Initialize" << std::endl;
 }
 
 void MOpenGLRHIBackend::Shutdown()
 {
   DeleteAllShaderResources();
+
+  // TODO Flush stream to console or application gui
+  // Should not use cout immediately
   std::cout << "OpenGL RHI Backend Shutdown" << std::endl;
 }
 
@@ -78,11 +84,12 @@ MEngine::RHI::MRHIBufferWriter MOpenGLRHIBackend::RHICreateBufferWriter(MEngine:
   {
     // FIXME Wrap this inside another class to reduce human error
     // FIXME Maybe we should not new directly here?
-    MOpenGLBuffer* newGLBuffer = ::RHINewObject<MOpenGLBuffer>(&CmdList, bufferType, Descriptor, nullptr);
+    auto newGLBuffer = ::RHINewObject<MOpenGLBuffer>(&CmdList, bufferType, Descriptor, nullptr);
     auto defaultWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList&) mutable -> RHIBufferRefPtr
     {
       return std::move(Buffer);
     };
+
     return MEngine::RHI::MRHIBufferWriter{
       &CmdList, 
       newGLBuffer, 
@@ -92,7 +99,7 @@ MEngine::RHI::MRHIBufferWriter MOpenGLRHIBackend::RHICreateBufferWriter(MEngine:
     };
   }
 
-  MOpenGLBuffer* newGLBuffer = ::RHINewObject<MOpenGLBuffer>(&CmdList, bufferType, Descriptor, Descriptor.BufferInitData);
+  auto newGLBuffer = ::RHINewObject<MOpenGLBuffer>(&CmdList, bufferType, Descriptor, Descriptor.BufferInitData);
   auto mapWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList& CmdList) mutable -> RHIBufferRefPtr
   {
     CmdList.UnmapBuffer(Buffer);
@@ -113,7 +120,6 @@ void* MOpenGLRHIBackend::RHIMapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN
 {
   me_assert(Size > 0);
   me_assert(Buffer != nullptr);
-
   OPENGL_STATE_CHECK();
 
   MOpenGLBuffer* GLBuffer = OpenGLCast(Buffer);

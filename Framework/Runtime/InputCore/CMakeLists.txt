@@ -1,6 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.29.0)
-
-file(GLOB_RECURSE PRIVATE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+﻿file(GLOB_RECURSE PRIVATE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
 file(GLOB_RECURSE INTERNAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Internal/*.cpp)
 
 set( 
@@ -24,12 +22,6 @@ target_link_libraries(
   Core
 )
 
-target_compile_features(
-  InputCore
-  PRIVATE
-  cxx_std_20
-)
-
 target_compile_definitions(
   InputCore
   PRIVATE
@@ -46,16 +38,5 @@ target_include_directories(
   ${CMAKE_SOURCE_DIR}/Framework/Core/Include
   ${CMAKE_CURRENT_SOURCE_DIR}/Internal
 )
-
-if(MSVC)
-  target_compile_options(
-    InputCore 
-    PRIVATE 
-    /W4
-    /std:c++20
-  )
-else()
-  
-endif()
 
 MEngine_setup_target(InputCore)

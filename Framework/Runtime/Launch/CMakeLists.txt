@@ -1,6 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.10.0)
-
-set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Src)
+﻿set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Src)
 
 file(GLOB_RECURSE LAUNCH_SOURCE CONFIGURE_DEPENDS ${SRC_DIR}/*.cpp)
 
@@ -17,12 +15,6 @@ target_link_libraries(
   Application
 )
 
-target_compile_features(
-  Launch
-  PRIVATE
-  cxx_std_20
-)
-
 target_compile_definitions(
   Launch
   PRIVATE
@@ -35,16 +27,5 @@ target_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Include  
 )
-
-if(MSVC)
-  target_compile_options(
-    Launch 
-    PRIVATE 
-    /W4
-    /std:c++20
-  )
-else()
-  
-endif()
 
 MEngine_setup_target(Launch)

@@ -52,17 +52,89 @@ public:
     return sInstance;
   }
 
-  virtual void Initialize() override
+  virtual void AddKey(IN std::shared_ptr<IInputKeyProxy> InKeyProxy) override
   {
-    if (bIsInitialized)
+    me_assert(InKeyProxy != nullptr);
+    MInputKey inputKey = InKeyProxy->GetKey();
+    me_assert(!m_inputKeys.contains(inputKey));
+    m_inputKeys.emplace(inputKey, InKeyProxy);
+  }
+
+  virtual void AddPairedKey(IN std::shared_ptr<IInputKeyProxy> InPairedKeyProxy, IN const IInputKeyProxy& KeyX, IN const IInputKeyProxy& KeyY) override
+  {
+    me_assert((InPairedKeyProxy != nullptr) && (InPairedKeyProxy->IsAxis2D()));
+    me_assert(m_inputKeys.contains(KeyX.GetKey()) && m_inputKeys.contains(KeyY.GetKey()));
+    me_assert(KeyX.IsAxis1D() && KeyY.IsAxis1D());
+    me_assert((KeyX.GetPairedAxisType() == EPairedAxisType::Unpaired) && KeyY.GetPairedAxisType() == EPairedAxisType::Unpaired);
+    
+    const bool bCanAddPairedKey =  (InPairedKeyProxy != nullptr) && (InPairedKeyProxy->IsAxis2D())
+                                && m_inputKeys.contains(KeyX.GetKey()) && m_inputKeys.contains(KeyY.GetKey())
+                                && KeyX.IsAxis1D() && KeyY.IsAxis1D()
+                                && (KeyX.GetPairedAxisType() == EPairedAxisType::Unpaired) && (KeyY.GetPairedAxisType() == EPairedAxisType::Unpaired);
+    if (!bCanAddPairedKey)
     {
-      // TODO Add debug message
       return;
     }
 
-    bIsInitialized = true;
+    AddKey(InPairedKeyProxy);
 
-    std::unique_ptr<IInputProxyFactory> proxyFactory = std::make_unique<MInputKeyProxyFactory>();
+    m_inputKeys[KeyX.GetKey()]->SetPairedAxisType(EPairedAxisType::X);
+    m_inputKeys[KeyY.GetKey()]->SetPairedAxisType(EPairedAxisType::Y);
+
+    m_inputKeys[KeyX.GetKey()]->SetPairedAxisInputKey(InPairedKeyProxy->GetKey());
+    m_inputKeys[KeyY.GetKey()]->SetPairedAxisInputKey(InPairedKeyProxy->GetKey());
+
+    // TODO Maybe we should manage paired key proxy;
+
+  }
+
+  virtual std::shared_ptr<IInputKeyProxy> GetInputKeyProxy(IN const MInputKey& InKey) const override
+  {
+    auto foundItr = m_inputKeys.find(InKey);
+    if (foundItr == m_inputKeys.cend())
+    {
+      // TODO Add debug log
+      return std::shared_ptr<MInputKeyProxy>{nullptr};
+    }
+
+    return foundItr->second;
+  }
+
+  virtual int32 GetAllKeys(OUT std::vector<MInputKey>& OutKeys) const override
+  {
+    OutKeys.clear();
+    return -1;
+  }
+
+private:
+
+  std::unordered_map<MInputKey, std::shared_ptr<IInputKeyProxy>> m_inputKeys;
+
+
+private:
+  MInputKeyManager()
+    : m_inputKeys{}
+  { }
+  ~MInputKeyManager() = default;
+
+};
+
+IInputKeyManager& IInputKeyManager::GetInstance()
+{
+  return MInputKeyManager::GetInstance();
+}
+
+} // namespace MEngine::InputCore
+
+} // namespace MEngine
+
+// Extern session
+void InitializeInputCore()
+{
+
+  using namespace MEngine::InputCore;
+
+  std::unique_ptr<IInputProxyFactory> proxyFactory = std::make_unique<MInputKeyProxyFactory>();
 
     #define PROXY(...) proxyFactory->MakeInputKeyProxy(__VA_ARGS__)
 
@@ -70,6 +142,11 @@ public:
     {
       return StringView{InName};
     };
+
+    IInputKeyManager& inputManager = IInputKeyManager::GetInstance();
+
+    #define AddKey(proxy) inputManager.AddKey(proxy);
+    #define AddPairedKey(proxy, pairedKey1, pairedKey2) inputManager.AddPairedKey(proxy, pairedKey1, pairedKey2);
 
     AddKey(PROXY(GStaticKeys::Any, formatNameFunc(MTEXT("Any Key"))));
 
@@ -184,82 +261,11 @@ public:
     AddKey(PROXY(GStaticKeys::ScrollLock, formatNameFunc(MTEXT("Scroll Lock"))));
 
     #undef PROXY
-  }
-
-  virtual void AddKey(IN std::shared_ptr<IInputKeyProxy> InKeyProxy) override
-  {
-    me_assert(InKeyProxy != nullptr);
-    MInputKey inputKey = InKeyProxy->GetKey();
-    me_assert(!m_inputKeys.contains(inputKey));
-    m_inputKeys.emplace(inputKey, InKeyProxy);
-  }
-
-  virtual void AddPairedKey(IN std::shared_ptr<IInputKeyProxy> InPairedKeyProxy, IN const IInputKeyProxy& KeyX, IN const IInputKeyProxy& KeyY) override
-  {
-    me_assert((InPairedKeyProxy != nullptr) && (InPairedKeyProxy->IsAxis2D()));
-    me_assert(m_inputKeys.contains(KeyX.GetKey()) && m_inputKeys.contains(KeyY.GetKey()));
-    me_assert(KeyX.IsAxis1D() && KeyY.IsAxis1D());
-    me_assert((KeyX.GetPairedAxisType() == EPairedAxisType::Unpaired) && KeyY.GetPairedAxisType() == EPairedAxisType::Unpaired);
-    
-    const bool bCanAddPairedKey =  (InPairedKeyProxy != nullptr) && (InPairedKeyProxy->IsAxis2D())
-                                && m_inputKeys.contains(KeyX.GetKey()) && m_inputKeys.contains(KeyY.GetKey())
-                                && KeyX.IsAxis1D() && KeyY.IsAxis1D()
-                                && (KeyX.GetPairedAxisType() == EPairedAxisType::Unpaired) && (KeyY.GetPairedAxisType() == EPairedAxisType::Unpaired);
-    if (!bCanAddPairedKey)
-    {
-      return;
-    }
-
-    AddKey(InPairedKeyProxy);
-
-    m_inputKeys[KeyX.GetKey()]->SetPairedAxisType(EPairedAxisType::X);
-    m_inputKeys[KeyY.GetKey()]->SetPairedAxisType(EPairedAxisType::Y);
-
-    m_inputKeys[KeyX.GetKey()]->SetPairedAxisInputKey(InPairedKeyProxy->GetKey());
-    m_inputKeys[KeyY.GetKey()]->SetPairedAxisInputKey(InPairedKeyProxy->GetKey());
-
-    // TODO Maybe we should manage paired key proxy;
-
-  }
-
-  virtual std::shared_ptr<IInputKeyProxy> GetInputKeyProxy(IN const MInputKey& InKey) const override
-  {
-    auto foundItr = m_inputKeys.find(InKey);
-    if (foundItr == m_inputKeys.cend())
-    {
-      // TODO Add debug log
-      return std::shared_ptr<MInputKeyProxy>{nullptr};
-    }
-
-    return foundItr->second;
-  }
-
-  virtual int32 GetAllKeys(OUT std::vector<MInputKey>& OutKeys) const override
-  {
-    OutKeys.clear();
-    return -1;
-  }
-
-private:
-
-  std::unordered_map<MInputKey, std::shared_ptr<IInputKeyProxy>> m_inputKeys;
-
-  uint8 bIsInitialized : 1;
-
-private:
-  MInputKeyManager()
-    : m_inputKeys{}
-    , bIsInitialized{false}
-  { }
-  ~MInputKeyManager() = default;
-
-};
-
-IInputKeyManager& IInputKeyManager::GetInstance()
-{
-  return MInputKeyManager::GetInstance();
+    #undef AddKey
+    #undef AddPairedKey
 }
 
-} // namespace MEngine::InputCore
+void DeinitializeInputCore()
+{
 
-} // namespace MEngine
+}

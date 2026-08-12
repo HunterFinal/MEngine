@@ -1,6 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.29.0)
-
-file(GLOB_RECURSE CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+﻿file(GLOB_RECURSE CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
 
 add_library(
   Core 
@@ -12,12 +10,6 @@ target_link_libraries(
   Core
   PUBLIC
   spdlog::spdlog
-)
-
-target_compile_features(
-  Core 
-  PRIVATE 
-  cxx_std_20
 )
 
 # DLL define helper macro
@@ -39,17 +31,6 @@ target_include_directories(
   PRIVATE
   &{CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty
 )
-
-if(MSVC)
-  target_compile_options(
-    Core 
-    PRIVATE 
-    /W4
-    /std:c++20
-  )
-else()
-  
-endif()
 
 MEngine_setup_target(Core)
 

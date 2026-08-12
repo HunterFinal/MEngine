@@ -1,30 +1,30 @@
-﻿#pragma once
+﻿// #pragma once
 
-#ifndef _ME_CORE_THREAD_
-#define _ME_CORE_THREAD_
+// #ifndef _ME_CORE_THREAD_
+// #define _ME_CORE_THREAD_
 
-#include "CoreDefines.h"
-#include "Macro/AssertionMacros.h"
+// #include "CoreDefines.h"
+// #include "Macro/AssertionMacros.h"
 
-#include <thread>
+// #include <thread>
 
-namespace MEngine
-{
+// namespace MEngine
+// {
 
-namespace Thread
-{
+// namespace Thread
+// {
 
-class MThread
-{
+// class MThread
+// {
 
-public:
+// public:
 
-protected:
-  std::thread ThreadObject;
-};
+// protected:
+//   std::thread ThreadObject;
+// };
 
-} // namespace MEngine::Thread
+// } // namespace MEngine::Thread
 
-} // namespace MEngine
+// } // namespace MEngine
 
-#endif // _ME_CORE_THREAD_
+// #endif // _ME_CORE_THREAD_

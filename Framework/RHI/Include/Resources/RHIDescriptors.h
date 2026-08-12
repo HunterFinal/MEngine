@@ -115,6 +115,11 @@ struct MRHIVertexBinding
     , InputRate{MEngine::RHI::ERHIVertexInputRate::PerVertex}
   {}
 
+  MRHIVertexBinding(uint32 stride, MEngine::RHI::ERHIVertexInputRate inputRate)
+    : Stride{stride}
+    , InputRate{inputRate}
+  {}
+
   RHI_API friend bool operator==(IN const MRHIVertexBinding& Lhs, IN const MRHIVertexBinding& Rhs);
   RHI_API friend bool operator!=(IN const MRHIVertexBinding& Lhs, IN const MRHIVertexBinding& Rhs);
 

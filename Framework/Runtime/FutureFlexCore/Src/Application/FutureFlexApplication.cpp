@@ -9,6 +9,7 @@
 #include "Macro/AssertionMacros.h"
 
 #include "InputCoreAPI.h"
+#include "Modules/DynamicModuleManager.h"
 
 // TODO
 #include "Math/Vector2D.h"
@@ -72,9 +73,8 @@ namespace MEngine
     {
       me_assert(PlatformApplication != nullptr);
 
-      // Initialize Input key manager
-      MEngine::InputCore::IInputKeyManager& inputKeyManager = MEngine::InputCore::IInputKeyManager::GetInstance();
-      inputKeyManager.Initialize();
+      // Initialize InputCore
+      MEngine::Core::MDynamicModuleManager::Get().LoadModuleChecked<MEngine::InputCore::MInputCoreDynamicModule>("InputCore");
 
       s_platformApp = PlatformApplication;
       s_curtAppInstance = std::shared_ptr<MFutureFlexApplication>(new MFutureFlexApplication());

@@ -1,6 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.29.0)
-
-file(GLOB_RECURSE PRIVATE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+﻿file(GLOB_RECURSE PRIVATE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
 file(GLOB_RECURSE INTERNAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Internal/*.cpp)
 
 set(
@@ -28,12 +26,6 @@ target_include_directories(
   ${PROJECT_SOURCE_DIR}/Framework/Core/Include
 )
 
-target_compile_features(
-  Application 
-  PRIVATE 
-  cxx_std_20
-)
-
 # DLL define helper macro
 target_compile_definitions(
   Application
@@ -53,16 +45,5 @@ target_include_directories(
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Internal
 )
-
-if(MSVC)
-  target_compile_options(
-    Application 
-    PRIVATE 
-    /W4
-    /std:c++20
-  )
-else()
-  
-endif()
 
 MEngine_setup_target(Application)

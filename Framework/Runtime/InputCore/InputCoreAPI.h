@@ -7,6 +7,7 @@
 #include "Core/InputKeyTypes.h"
 #include "Globals/KeyGlobals.h"
 #include "IInputKeyManager.h"
+#include "InputCoreModule.h"
 
 
 #endif // _ME_RUNTIME_INPUTCORE_API_

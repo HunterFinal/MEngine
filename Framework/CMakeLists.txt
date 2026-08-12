@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.29.0)
-
 # use this BEFORE project()
 # can not generate compile_commands.json when using MSVC,
 # use Ninja to generate
@@ -16,12 +14,6 @@ add_executable(
   MEngine 
   WIN32 
   ${CMAKE_CURRENT_SOURCE_DIR}/EntryPoint.cpp
-)
-
-target_compile_features(
-  MEngine 
-  PRIVATE 
-  cxx_std_20
 )
 
 function(MEngine_setup_target target)
@@ -62,7 +54,6 @@ if(MSVC)
     MEngine 
     PRIVATE 
     /W4
-    /std:c++20
     /FI${CMAKE_CURRENT_SOURCE_DIR}/CoreAPI.h
     )
 else()

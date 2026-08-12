@@ -136,8 +136,10 @@ TEMPLATE_HEADER(ElementType)
 void DefaultAllocator<ElementType>::Allocate(IN SIZE_T ElementNum, IN SIZE_T ByteSizePerElement)
 {
   // overflow check
-  const bool bInvalidAlloc = (ByteSizePerElement < static_cast<SIZE_T>(1)) || (ByteSizePerElement > static_cast<SIZE_T>(std::numeric_limits<int32>::max()));
-  me_assert(!bInvalidAlloc);
+  {
+    const bool bInvalidAlloc = (ByteSizePerElement < static_cast<SIZE_T>(1)) || (ByteSizePerElement > static_cast<SIZE_T>(std::numeric_limits<int32>::max()));
+    me_assert(!bInvalidAlloc);
+  }
 
   // TODO m_data == nullptr: same as ::malloc(ElementNum * ByteSizePerElement);
   // TODO (ElementNum * ByteSizePerElement == 0) && (m_data != nullptr): free(m_data) first and return nullptr; 

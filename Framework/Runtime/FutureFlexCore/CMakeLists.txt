@@ -1,6 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.10.0)
-
-set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Src)
+﻿set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Src)
 
 file(GLOB_RECURSE FUTURE_FLEX_CORE_SOURCE CONFIGURE_DEPENDS ${SRC_DIR}/*.cpp)
 
@@ -16,12 +14,6 @@ target_link_libraries(
   Core
   InputCore
   Application
-)
-
-target_compile_features(
-  FutureFlexCore
-  PRIVATE
-  cxx_std_20
 )
 
 target_compile_definitions(
@@ -43,16 +35,5 @@ target_include_directories(
   ${CMAKE_SOURCE_DIR}/Framework/Application
   ${CMAKE_SOURCE_DIR}/Framework/Application/Include
 )
-
-if(MSVC)
-  target_compile_options(
-    FutureFlexCore 
-    PRIVATE 
-    /W4
-    /std:c++20
-  )
-else()
-  
-endif()
 
 MEngine_setup_target(FutureFlexCore)

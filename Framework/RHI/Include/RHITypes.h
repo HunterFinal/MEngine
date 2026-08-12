@@ -29,8 +29,6 @@ enum class EResourceType : uint8
 
 enum class EUniformBufferFieldBaseType : uint8
 {
-  VOID,
-
   FLOAT32,
 };
 

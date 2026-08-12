@@ -1,6 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.29.0)
-
-file(GLOB_RECURSE RHI_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+﻿file(GLOB_RECURSE RHI_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
 
 if (WIN32)
   add_subdirectory(Internal/Windows)
@@ -17,12 +15,6 @@ target_link_libraries(
   PUBLIC
   Core
   Platform_RHI_Impl
-)
-
-target_compile_features(
-  RHI 
-  PRIVATE 
-  cxx_std_20
 )
 
 # DLL define helper macro
@@ -44,17 +36,6 @@ target_include_directories(
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Internal
 )
-
-if(MSVC)
-  target_compile_options(
-    RHI 
-    PRIVATE 
-    /W4
-    /std:c++20
-  )
-else()
-  
-endif()
 
 MEngine_setup_target(RHI)
 
