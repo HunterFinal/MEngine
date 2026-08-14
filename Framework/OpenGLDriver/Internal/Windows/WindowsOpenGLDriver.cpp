@@ -56,15 +56,17 @@ namespace OpenGLDrv
 /**Windows specific OpenGL context */
 struct MOpenGLContext
 {
-  HWND WindowHandle;
-  HDC  DeviceCtx;
-  HGLRC RenderingCtx;
+  HWND WindowHandle = NULL;
+  HDC  DeviceCtx = NULL;
+  HGLRC RenderingCtx = NULL;
 
-  GLuint FBO; // A framebuffer object that shares between all vertices.
+  // A framebuffer object that shares between all vertices.
+  GLuint FBO = 0; 
 
   // NOTE: VAOs cannot be shared between OpenGL contexts.
-  GLuint VAO; // A vertex array object that shared between all vertices.
-  bool bDestroyWindowOnDispose;
+  // A vertex array object that shared between all vertices.
+  GLuint VAO = 0; 
+  bool bDestroyWindowOnDispose = false;
 
   MOpenGLContext()
     : WindowHandle{NULL}
@@ -159,6 +161,25 @@ static void GLCreateDummyWindow(OUT MOpenGLContext* OutCtx)
   GLInitPixelFormat(OutCtx->DeviceCtx);                                       
 }
 
+static void APIENTRY GLDebugCallback(
+    GLenum source, GLenum type, GLuint id, GLenum severity,
+    GLsizei length, const GLchar* message, const void* userParam)
+{
+    if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+        return;   // 太吵，先过滤掉
+
+    const char* sev = "?";
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH:   sev = "HIGH";   break;
+        case GL_DEBUG_SEVERITY_MEDIUM: sev = "MEDIUM"; break;
+        case GL_DEBUG_SEVERITY_LOW:    sev = "LOW";    break;
+    }
+    printf("[GL:%s] %s\n", sev, message);
+
+    if (severity == GL_DEBUG_SEVERITY_HIGH)
+        __debugbreak();   // 直接断在出错的那个 GL 调用上
+}
+
 /**Windows specific OpenGL device */
 struct MOpenGLDevice
 {
@@ -186,6 +207,13 @@ struct MOpenGLDevice
     glGenFramebuffers(1, &GLContext.FBO);
 
     GLSetupDefaultContextState();
+
+    // 20260814 Debug check
+    // Problem: Unmap called before resource create
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback(GLDebugCallback, nullptr);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
   }
 };
 
@@ -360,7 +388,7 @@ void PlatformSetupRenderTarget(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext)
   me_assert(GLContext != nullptr);
   GLContextMakeCurrent(GLContext->DeviceCtx, GLContext->RenderingCtx);
 
-  ::glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+  ::glClearColor(0.4f, 0.3f, 0.3f, 1.0f);
   ::glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -378,7 +406,7 @@ void PlatformSwapBuffers(IN MEngine::OpenGLDrv::MOpenGLContext* GLContext)
 
 namespace
 {
-  // Dummy Wndproc for dummy window creation use
+  // Dummy Wndproc for dummy window creation use case
   LRESULT GLDummyWndProc(IN HWND Hwnd, IN uint32 Msg, IN WPARAM WParam, IN LPARAM LParam)
   {
     return ::DefWindowProc(Hwnd, Msg, WParam, LParam);

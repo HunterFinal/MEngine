@@ -10,11 +10,8 @@ function(register_module_manifest TARGET_NAME)
   set_property(GLOBAL APPEND PROPERTY MODULE_NAMES "${TARGET_NAME}")
 endfunction()
 
-add_executable(
-  MEngine 
-  WIN32 
-  ${CMAKE_CURRENT_SOURCE_DIR}/EntryPoint.cpp
-)
+# Platform related source file will be add in Launch subdirectory
+add_executable(MEngine)
 
 function(MEngine_setup_target target)
   # Debug/Release specific macro
@@ -49,16 +46,19 @@ set_target_properties(
   RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/Execution/Debug"
   RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/Execution/Release")
 
+add_library(MEngine.ForceInclude INTERFACE)
+target_include_directories(MEngine.ForceInclude INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
 if(MSVC)
   target_compile_options(
-    MEngine 
-    PRIVATE 
+    MEngine.ForceInclude 
+    INTERFACE 
     /W4
-    /FI${CMAKE_CURRENT_SOURCE_DIR}/CoreAPI.h
+    /FI CoreAPI.h
     )
 else()
   # GCC or Clang
-  # add_definitions(-include ${CMAKE_CURRENT_SOURCE_DIR}/CoreAPI.h)
+  # add_definitions(-include CoreAPI.h)
 endif()
 
 add_subdirectory(Core)
@@ -69,6 +69,7 @@ add_subdirectory(RHI)
 add_subdirectory(Runtime)
 add_subdirectory(Utilities)
 add_subdirectory(Application)
+add_subdirectory(Launch)
 add_subdirectory(ThirdParty/spdlog)
 
 # Dependency

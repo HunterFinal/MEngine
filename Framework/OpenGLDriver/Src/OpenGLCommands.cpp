@@ -24,6 +24,9 @@ MOpenGLBufferInitializationCommand::~MOpenGLBufferInitializationCommand()
 
 void MOpenGLBufferInitializationCommand::Execute(OUT MEngine::RHI::MRHICommandList& CommandList)
 {
+  // Ignore unreferenced warning
+  (void)CommandList;
+
   OPENGL_STATE_CHECK();
 
   ::glGenBuffers(1, m_buffer->GLResourceAddress());
@@ -33,6 +36,6 @@ void MOpenGLBufferInitializationCommand::Execute(OUT MEngine::RHI::MRHICommandLi
   ::glBufferData(m_buffer->GLType(), m_buffer->GetSize(), m_data, m_buffer->GLUsage());
 }
 
-}
+} // namespace MEngine::OpenGLDrv
 
-}
+} // namespace MEngine

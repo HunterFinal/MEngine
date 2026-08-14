@@ -18,6 +18,7 @@ enum class EResourceType : uint8
   None,
 
   Buffer,
+  UniformBuffer,
   VertexShader,
   PixelShader,
   GraphicsPSO,

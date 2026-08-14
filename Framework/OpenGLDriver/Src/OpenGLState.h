@@ -16,19 +16,11 @@ class MOpenGLLinkedShaderProgram;
 
 struct MOpenGLDrawState
 {
-  MOpenGLLinkedShaderProgram* LinkedProgram;  
-  GLVertexShaderRefPtr        VertexShader;
-  GLPixelShaderRefPtr         PixelShader;
-  GLVertexInputLayoutRefPtr   InputLayout;
-  GLuint                      BoundVBO;
-
-  MOpenGLDrawState()
-    : LinkedProgram{nullptr}
-    , VertexShader{}
-    , PixelShader{}
-    , InputLayout{}
-    , BoundVBO{0}
-  { }
+  MOpenGLLinkedShaderProgram* LinkedProgram = nullptr;  
+  GLVertexShaderRefPtr        VertexShader  = {nullptr};
+  GLPixelShaderRefPtr         PixelShader   = {nullptr};
+  GLVertexInputLayoutRefPtr   InputLayout   = {nullptr};
+  GLuint                      BoundVBO      = 0;
 };
 
 } // namespace MEngine::OpenGLDrv 

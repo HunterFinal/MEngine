@@ -7,6 +7,11 @@
 #include "MathForward.h"
 #include "VectorConcepts.h"
 
+#ifdef _MSC_VER
+// MSVCの仕様により、無名共用体と無名構造体に対する警告メッセージを無視
+#pragma warning (disable : 4201)
+#endif
+
 namespace MEngine
 {
 

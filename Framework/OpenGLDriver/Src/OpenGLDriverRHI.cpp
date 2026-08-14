@@ -100,20 +100,41 @@ MEngine::RHI::MRHIBufferWriter MOpenGLRHIBackend::RHICreateBufferWriter(MEngine:
   }
 
   auto newGLBuffer = ::RHINewObject<MOpenGLBuffer>(&CmdList, bufferType, Descriptor, Descriptor.BufferInitData);
-  auto mapWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList& CmdList) mutable -> RHIBufferRefPtr
+
+  if (Descriptor.BufferInitData == nullptr)
   {
-    CmdList.UnmapBuffer(Buffer);
-    return std::move(Buffer);
+    // Use Map and Unmap to allow user to write buffer data
+    auto mapWriterFinalizer = [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList& CmdList) mutable -> RHIBufferRefPtr
+    {
+      CmdList.UnmapBuffer(Buffer);
+      return std::move(Buffer);
+    };
+  
+    // FIXME Wrap this inside another class to reduce human error
+    return MEngine::RHI::MRHIBufferWriter{
+      &CmdList, 
+      newGLBuffer, 
+      CmdList.MapBuffer(newGLBuffer, Descriptor.BufferSize, 0, MEngine::RHI::EResourceAccessMode::WriteOnly), 
+      Descriptor.BufferSize, 
+      MEngine::RHI::MRHIBufferWriter::WriterFinalizer{mapWriterFinalizer}
+    };
+  }
+
+  // Use initial data to write buffer
+  return MEngine::RHI::MRHIBufferWriter{
+    &CmdList,
+    newGLBuffer,
+    nullptr,
+    0,
+    MEngine::RHI::MRHIBufferWriter::WriterFinalizer
+    {
+      [Buffer = RHIBufferRefPtr{newGLBuffer}](MEngine::RHI::MRHICommandList& CmdList) mutable -> RHIBufferRefPtr
+      {
+        return std::move(Buffer);
+      }
+    }
   };
 
-  // FIXME Wrap this inside another class to reduce human error
-  return MEngine::RHI::MRHIBufferWriter{
-    &CmdList, 
-    newGLBuffer, 
-    CmdList.MapBuffer(newGLBuffer, Descriptor.BufferSize, 0, MEngine::RHI::EResourceAccessMode::WriteOnly), 
-    Descriptor.BufferSize, 
-    MEngine::RHI::MRHIBufferWriter::WriterFinalizer{mapWriterFinalizer}
-  };
 }
 
 void* MOpenGLRHIBackend::RHIMapBuffer(MEngine::RHI::MRHICommandList& CmdList, IN MEngine::RHI::MRHIBuffer* Buffer, IN uint32 Size, IN uint32 Offset, IN MEngine::RHI::EResourceAccessMode AccessMode)

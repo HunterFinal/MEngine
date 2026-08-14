@@ -13,24 +13,10 @@ namespace RHI
 
 struct MRHIVertexElement
 {
-  uint32 Offset;
-  MEngine::RHI::ERHIVertexFormat Format;
-  uint8 SlotIndex;
-  uint8 Location;
-
-  MRHIVertexElement()
-    : Offset{0}
-    , Format{MEngine::RHI::ERHIVertexFormat::None}
-    , SlotIndex{0}
-    , Location{0}
-  {}
-
-  MRHIVertexElement(IN uint32 InOffset, IN MEngine::RHI::ERHIVertexFormat InFormat, IN uint8 InSlotIndex, IN uint8 InLocation)
-    : Offset{InOffset}
-    , Format{InFormat}
-    , SlotIndex{InSlotIndex}
-    , Location{InLocation}
-  {}
+  const uint32 Offset = 0;
+  const MEngine::RHI::ERHIVertexFormat Format = MEngine::RHI::ERHIVertexFormat::None;
+  const uint8 Location = 0;
+  const uint8 SlotIndex = 0;
 
   RHI_API friend bool operator==(IN const MRHIVertexElement& Lhs, IN const MRHIVertexElement& Rhs);
   RHI_API friend bool operator!=(IN const MRHIVertexElement& Lhs, IN const MRHIVertexElement& Rhs);

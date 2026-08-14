@@ -43,9 +43,10 @@ MOpenGLBuffer::MOpenGLBuffer(IN MEngine::RHI::MRHICommandList* CmdList, IN GLenu
     }
     else
     {
+      // Dummy
       // TODO Bad dummy
-      MEngine::RHI::MRHICommandList dummy{};
-      MEngine::OpenGLDrv::MOpenGLBufferInitializationCommand{this, Data}.Execute(dummy);
+      MEngine::RHI::MRHICommandList _{};
+      MEngine::OpenGLDrv::MOpenGLBufferInitializationCommand{this, Data}.Execute(_);
     }
   }
 } 
@@ -63,7 +64,10 @@ void MOpenGLBuffer::BindToOpenGL()
 void* MOpenGLBuffer::MOpenGLBuffer::Map(IN uint32 InSize, IN uint32 InOffset)
 {
   // Overflow check
-  me_assert(InSize + InOffset <= GetDesc().BufferSize);
+  {
+    const uint32 bufferSize = GetDesc().BufferSize;
+    me_assert(InSize <= bufferSize && InOffset <= bufferSize - InSize);
+  }
   // Mapping is not allowed twice
   me_assert(!m_bIsMapping);
 
@@ -101,6 +105,8 @@ void MOpenGLBuffer::Unmap()
 
     m_bIsMapping = false;
   }
+
+
 }
 
 void MOpenGLBuffer::ReleaseResource()

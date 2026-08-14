@@ -15,7 +15,7 @@
 
 // TODO
 #include <memory>
-#include <set>
+#include <vector>
 
 namespace MEngine
 {
@@ -25,25 +25,15 @@ namespace RHI
 
 struct MRHIBufferDescriptor
 {
-  uint32 BufferSize;
-
-  uint32 ElementStride;
-
+  uint32 BufferSize = 0;
+  uint32 ElementStride = 0;
   EBufferUsageType BufferUsage = EBufferUsageType::None;
-
-  const void* BufferInitData;
+  const void* BufferInitData = nullptr;
 
   RHI_API static const MRHIBufferDescriptor NullDesc;
 
   RHI_API friend bool operator==(const MRHIBufferDescriptor& Lhs, const MRHIBufferDescriptor& Rhs);
   RHI_API friend bool operator!=(const MRHIBufferDescriptor& Lhs, const MRHIBufferDescriptor& Rhs);
-
-  constexpr MRHIBufferDescriptor()
-    : BufferSize{0}
-    , ElementStride{0}
-    , BufferUsage{EBufferUsageType::None}
-    , BufferInitData{nullptr}
-  { }
 
   constexpr MRHIBufferDescriptor(IN uint32 Size, IN uint32 Stride, IN EBufferUsageType Usage, IN const void* Data)
     : BufferSize{Size}
@@ -91,13 +81,12 @@ struct MRHIBufferDescriptor
 struct MRHIUniformBufferField
 {
   uint32 Offset;
-
   EUniformBufferFieldBaseType BaseType;
 };
 
 struct MRHIUniformBufferDescriptor
 {
-  std::set<MRHIUniformBufferField> UniformBufferFields;
+  std::vector<MRHIUniformBufferField> UniformBufferFields;
 
   uint32 UniformBufferSize;
   uint8  UniformBufferBindingSlot;
@@ -107,18 +96,8 @@ struct MRHIUniformBufferDescriptor
 
 struct MRHIVertexBinding
 {
-  const uint32 Stride;
-  const MEngine::RHI::ERHIVertexInputRate InputRate;
-
-  constexpr MRHIVertexBinding()
-    : Stride{0}
-    , InputRate{MEngine::RHI::ERHIVertexInputRate::PerVertex}
-  {}
-
-  MRHIVertexBinding(uint32 stride, MEngine::RHI::ERHIVertexInputRate inputRate)
-    : Stride{stride}
-    , InputRate{inputRate}
-  {}
+  const uint32 Stride = 0;
+  const MEngine::RHI::ERHIVertexInputRate InputRate = MEngine::RHI::ERHIVertexInputRate::PerVertex;
 
   RHI_API friend bool operator==(IN const MRHIVertexBinding& Lhs, IN const MRHIVertexBinding& Rhs);
   RHI_API friend bool operator!=(IN const MRHIVertexBinding& Lhs, IN const MRHIVertexBinding& Rhs);
